@@ -22,7 +22,6 @@ const apiLimiter = rateLimit({
 });
 
 const mongoose = require('mongoose');
-const sequelize = require('./db');
 
 mongoose
 	.connect(keys.MONGO_URI, {
@@ -31,11 +30,6 @@ mongoose
 		useFindAndModify: false,
 	})
 	.then(() => consola.success('MongoDB'))
-	.catch(err => consola.error(err));
-
-sequelize
-	.sync()
-	.then(() => consola.success('MySQL'))
 	.catch(err => consola.error(err));
 
 // middleware

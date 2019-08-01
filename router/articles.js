@@ -49,7 +49,7 @@ router.put('/:articleId', articleValidators, async (req, res) => {
 });
 
 router.delete('/:articleId', async (req, res) => {
-	const article = await Article.findOneAndRemove({_id: req.params.articleId});
+	const article = await Article.findByIdAndRemove({_id: req.params.articleId});
 	await Comment.deleteMany({articleId: req.params.articleId});
 
 	res.json({article});
@@ -65,7 +65,7 @@ router.get('/views/:articleId', async (req, res) => {
 	res.json({article});
 });
 
-router.post('/comments/add', commentValidators, async (req, res) => {
+router.post('/comments', commentValidators, async (req, res) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.json({errors: errors.array()});
@@ -76,6 +76,12 @@ router.post('/comments/add', commentValidators, async (req, res) => {
 
 	article.comments.push(comment._id);
 	await article.save();
+
+	res.json({comment});
+});
+
+router.delete('/comments/:commentId', async (req, res) => {
+	const comment = await Comment.findByIdAndRemove({_id: req.params.commentId});
 
 	res.json({comment});
 });

@@ -1,7 +1,12 @@
 .DS_Store
 node_modules
 keys/keys.dev.js
-yarn.lock
+/package-lock.json
+/.eslintrc.json
+/.eslintignore
+/.prettierrc
+/.env
+/info.txt
 
 # local env files
 .env.local
