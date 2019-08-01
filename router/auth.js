@@ -53,7 +53,7 @@ router.post('/login', loginValidators, async (req, res) => {
 router.get('/verify/:token', async (req, res) => {
 	const session = await UserSession.findOne({_id: req.params.token, isRemoved: false});
 
-	if (session && !session.isRemoved) {
+	if (session) {
 		const user = await User.findById(session.userId);
 		return res.json({user, success: true});
 	}
