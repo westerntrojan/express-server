@@ -1,12 +1,13 @@
 .DS_Store
 node_modules
 keys/keys.dev.js
-/package-lock.json
-/.eslintrc.json
-/.eslintignore
-/.prettierrc
-/.env
-/info.txt
+package-lock.json
+.eslintrc.json
+.eslintignore
+.prettierrc
+.env
+info.txt
+graphql
 
 # local env files
 .env.local

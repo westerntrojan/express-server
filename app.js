@@ -9,10 +9,10 @@ const compression = require('compression');
 const consola = require('consola');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const expressPlayground = require('graphql-playground-middleware-express').default;
-require('dotenv').config({path: '.env.local'});
+require('dotenv').config();
 
-const keys = require('./keys');
 const router = require('./router');
 
 const app = express();
@@ -21,10 +21,8 @@ const apiLimiter = rateLimit({
 	max: 100,
 });
 
-const mongoose = require('mongoose');
-
 mongoose
-	.connect(keys.MONGO_URI, {
+	.connect(process.env.MONGO_URI, {
 		useNewUrlParser: true,
 		useCreateIndex: true,
 		useFindAndModify: false,

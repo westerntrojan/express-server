@@ -8,8 +8,8 @@ const resolvers = require('./resolvers');
 const pubsub = new PubSub();
 
 module.exports = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: ({req}) => ({req, pubsub}),
-  validationRules: [depthLimit(5), createComplexityLimitRule(1000)],
+	typeDefs,
+	resolvers,
+	context: ({req}) => ({req, pubsub}),
+	validationRules: [depthLimit(5), createComplexityLimitRule(1000)],
 });

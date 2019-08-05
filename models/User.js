@@ -16,6 +16,14 @@ const UserSchema = new Schema({
 		trim: true,
 		required: true,
 	},
+	articles: {
+		type: Number,
+		default: 0,
+	},
+	comments: {
+		type: Number,
+		default: 0,
+	},
 	isRemoved: {
 		type: Boolean,
 		default: false,

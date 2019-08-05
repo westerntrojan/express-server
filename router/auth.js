@@ -51,24 +51,32 @@ router.post('/login', loginValidators, async (req, res) => {
 });
 
 router.get('/verify/:token', async (req, res) => {
-	const session = await UserSession.findOne({_id: req.params.token, isRemoved: false});
+	try {
+		const session = await UserSession.findOne({_id: req.params.token, isRemoved: false});
 
-	if (session) {
-		const user = await User.findById(session.userId);
-		return res.json({user, success: true});
+		if (session) {
+			const user = await User.findById(session.userId);
+			return res.json({user, success: true});
+		}
+
+		res.json({success: false});
+	} catch (e) {
+		res.json({success: false});
 	}
-
-	res.json({success: false});
 });
 
 router.get('/logout/:token', async (req, res) => {
-	await UserSession.findOneAndUpdate(
-		{_id: req.params.token, isRemoved: false},
-		{$set: {isRemoved: true}},
-		{new: true}
-	);
+	try {
+		await UserSession.update(
+			{_id: req.params.token, isRemoved: false},
+			{$set: {isRemoved: true}},
+			{new: true}
+		);
 
-	res.json({success: true});
+		res.json({success: true});
+	} catch (e) {
+		res.json({success: false});
+	}
 });
 
 module.exports = router;
