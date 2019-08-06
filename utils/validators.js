@@ -6,15 +6,15 @@ exports.articleValidators = [
 		.withMessage('Invalid Title(Max: 40)')
 		.trim(),
 	check('text')
-		.isLength({max: 240})
-		.withMessage('Invalid Text(Max: 240)')
+		.isLength({max: 4000})
+		.withMessage('Invalid Text(Max: 4000)')
 		.trim(),
 ];
 
 exports.commentValidators = [
 	check('text')
-		.isLength({max: 240})
-		.withMessage('Invalid Text(Max: 240)')
+		.isLength({max: 4000})
+		.withMessage('Invalid Text(Max: 400)')
 		.trim(),
 ];
 
