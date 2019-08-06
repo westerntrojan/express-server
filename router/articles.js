@@ -75,6 +75,10 @@ router.delete('/:articleId', async (req, res) => {
 	const article = await Article.findByIdAndRemove(req.params.articleId);
 	await Comment.remove({articleId: req.params.articleId});
 
+	const user = await User.findById(article.user._id);
+	user.articles = user.articles - 1;
+	user.save();
+
 	res.json({article});
 });
 
@@ -117,6 +121,10 @@ router.post('/comments', commentValidators, async (req, res) => {
 
 router.delete('/comments/:commentId', async (req, res) => {
 	const comment = await Comment.findByIdAndRemove(req.params.commentId);
+
+	const user = await User.findById(comment.user._id);
+	user.comments = user.comments - 1;
+	user.save();
 
 	res.json({comment});
 });
