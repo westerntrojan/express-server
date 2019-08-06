@@ -49,6 +49,12 @@
 		"morgan": "^1.9.1",
 		"response-time": "^2.3.2"
 	},
+	"eslintConfig": {
+		"extends": [
+			"eslint:recommended",
+			"plugin:node/recommended"
+		]
+	},
 	"husky": {
 		"hooks": {
 			"pre-commit": "pretty-quick --staged"

@@ -12,12 +12,17 @@ router.post('/register', registerValidators, async (req, res) => {
 		return res.json({errors: errors.array()});
 	}
 
-	let user = await User.findOne({email: req.body.email, isRemoved: false});
-	if (user) {
+	let emailValidate = await User.findOne({email: req.body.email, isRemoved: false});
+	if (emailValidate) {
 		return res.json({errors: [{msg: 'User exists'}]});
 	}
 
-	user = await User.create({
+	let usernameValidate = await User.findOne({username: req.body.username});
+	if (usernameValidate) {
+		return res.json({errors: [{msg: 'Username not available'}]});
+	}
+
+	const user = await User.create({
 		username: req.body.username,
 		email: req.body.email,
 		password: await hash(req.body.password),

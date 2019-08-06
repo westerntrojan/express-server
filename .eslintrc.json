@@ -1,36 +1,36 @@
 {
-  "env": {
-    "commonjs": true,
-    "es6": true,
-    "node": true
-  },
-  "extends": [
-    "eslint:recommended",
-    "plugin:node/recommended",
-    "plugin:prettier/recommended",
-    "plugin:security/recommended"
-  ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
-  "plugins": ["security"],
-  "parserOptions": {
-    "ecmaVersion": 2018
-  },
-  "rules": {
-    "prettier/prettier": "error",
-    "indent": [
-      "error",
-      "tab",
-      {
-        "SwitchCase": 1
-      }
-    ],
-    "quotes": ["error", "single"],
-    "semi": ["error", "always"],
-    "linebreak-style": ["error", "windows"],
-    "no-unused-vars": "warn",
-    "no-console": "off"
-  }
+	"env": {
+		"commonjs": true,
+		"es6": true,
+		"node": true
+	},
+	"extends": [
+		"eslint:recommended",
+		"plugin:node/recommended",
+		"plugin:prettier/recommended",
+		"plugin:security/recommended"
+	],
+	"globals": {
+		"Atomics": "readonly",
+		"SharedArrayBuffer": "readonly"
+	},
+	"plugins": ["security"],
+	"parserOptions": {
+		"ecmaVersion": 2018
+	},
+	"rules": {
+		"prettier/prettier": "error",
+		"indent": [
+			"error",
+			"tab",
+			{
+				"SwitchCase": 1
+			}
+		],
+		"quotes": ["error", "single"],
+		"semi": ["error", "always"],
+		"linebreak-style": ["error", "windows"],
+		"no-unused-vars": "warn",
+		"no-console": "off"
+	}
 }
