@@ -19,11 +19,7 @@ router.put('/:userId', editUserValidators, async (req, res) => {
 		return res.json({errors: errors.array()});
 	}
 
-	const user = await User.findOneAndUpdate(
-		{_id: req.params.userId, isRemoved: false},
-		{$set: req.body},
-		{new: true}
-	);
+	const user = await User.findOneAndUpdate({_id: req.params.userId}, {$set: req.body}, {new: true});
 
 	res.json({user});
 });

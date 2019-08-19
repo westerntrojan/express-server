@@ -7,7 +7,7 @@ scalar Password
 input AddArticleInput {
 	title: String!
 	text: String!
-	category: ArticleCategory=OTHER
+	image: String!
 }
 
 input EditArticleInput {
@@ -15,33 +15,6 @@ input EditArticleInput {
 	title: String
 	text: String
 	views: Int
-	category: ArticleCategory=OTHER
-}
-
-input AddCommentInput {
-	articleId: ID!
-	username: String!
-	text: String!
-}
-
-enum ArticleCategory{
-	GAMES
-	NEWS
-	OTHER
-}
-
-type File {
-	filename: String
-	mimetype: String
-	encoding: String
-}
-
-type Comment {
-	_id: ID!
-	articleId: String!
-	username: String!
-	text: String!
-	created_at: DateTime!
 }
 
 type Article {
@@ -50,14 +23,12 @@ type Article {
 	text: String!
 	views: Int!
 	image: String!
-	category: ArticleCategory
-	comments: [Comment]
 	created_at: DateTime!
 }
 
 type Query {
 	totalArticles: Int!
-	articles(first: Int=10): [Article!]!
+	articles(first: Int = 10): [Article!]!
 	article(articleId: ID!): Article!
 }
 
@@ -65,9 +36,4 @@ type Mutation {
 	addArticle(input: AddArticleInput!): Article!
 	editArticle(input: EditArticleInput!): Article!
 	removeArticle(articleId: ID!): Article!
-	addComment(input: AddCommentInput!): Comment!
-}
-
-type Subscription {
-	newComment: Comment!
 }

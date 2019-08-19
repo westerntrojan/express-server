@@ -1,5 +1,5 @@
 {
-	"name": "express.js",
+	"name": "express-graphql-server",
 	"version": "1.0.0",
 	"description": "",
 	"main": "server.js",

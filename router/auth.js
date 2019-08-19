@@ -14,7 +14,7 @@ router.post('/register', registerValidators, async (req, res) => {
 
 	let emailValidate = await User.findOne({email: req.body.email});
 	if (emailValidate) {
-		return res.json({errors: [{msg: 'User exists'}]});
+		return res.json({errors: [{msg: 'This email is already registered'}]});
 	}
 
 	let usernameValidate = await User.findOne({username: req.body.username});

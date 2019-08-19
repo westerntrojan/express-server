@@ -52,8 +52,8 @@ app.use('/playground', expressPlayground({endpoint: '/graphql'}));
 // router
 app.use('/api', router);
 
-app.use((req, res) => {
-	res.status(404).send('Sorry cant find that!');
-});
+// app.use((req, res) => {
+// 	res.status(404).send('Sorry cant find that!');
+// });
 
 module.exports = app;

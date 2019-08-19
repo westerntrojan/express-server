@@ -14,7 +14,7 @@
 		"Atomics": "readonly",
 		"SharedArrayBuffer": "readonly"
 	},
-	"plugins": ["security"],
+	"plugins": ["security", "prettier"],
 	"parserOptions": {
 		"ecmaVersion": 2018
 	},
