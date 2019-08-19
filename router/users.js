@@ -26,7 +26,7 @@ router.put('/:userId', editUserValidators, async (req, res) => {
 
 router.delete('/:userId', async (req, res) => {
 	const user = await User.findOneAndUpdate(
-		{_id: req.params.userId, isRemoved: false},
+		{_id: req.params.userId},
 		{$set: {isRemoved: true}},
 		{new: true}
 	);
