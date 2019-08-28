@@ -5,6 +5,4 @@
 - MongoDB/Mongoose
 - Apollo Server Express
 
-### Other
-- ESLint/Prettier
 
