@@ -1,4 +1,4 @@
-const router = require('express').Router();
+import {Request, Response, Router} from 'express';
 const {validationResult} = require('express-validator');
 
 const {articleValidators, commentValidators} = require('../utils/validators');
@@ -7,7 +7,9 @@ const Article = require('../models/Article');
 const Comment = require('../models/Comment');
 const User = require('../models/User');
 
-router.get('/', async (req, res) => {
+const router = Router();
+
+router.get('/', async (req: Request, res: Response) => {
 	const articles = await Article.find()
 		.sort({created_at: -1})
 		.populate('comments', null, null, {
@@ -21,7 +23,7 @@ router.get('/', async (req, res) => {
 	res.json({articles});
 });
 
-router.post('/', articleValidators, async (req, res) => {
+router.post('/', articleValidators, async (req: Request, res: Response) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.json({errors: errors.array()});
@@ -36,7 +38,7 @@ router.post('/', articleValidators, async (req, res) => {
 	res.json({article});
 });
 
-router.get('/:articleId', async (req, res) => {
+router.get('/:articleId', async (req: Request, res: Response) => {
 	const article = await Article.findById(req.params.articleId)
 		.populate('comments', null, null, {
 			sort: {created_at: -1},
@@ -49,7 +51,7 @@ router.get('/:articleId', async (req, res) => {
 	res.json({article});
 });
 
-router.put('/:articleId', articleValidators, async (req, res) => {
+router.put('/:articleId', articleValidators, async (req: Request, res: Response) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.json({errors: errors.array()});
@@ -71,7 +73,7 @@ router.put('/:articleId', articleValidators, async (req, res) => {
 	res.json({article});
 });
 
-router.delete('/:articleId', async (req, res) => {
+router.delete('/:articleId', async (req: Request, res: Response) => {
 	const article = await Article.findByIdAndRemove(req.params.articleId);
 	await Comment.remove({articleId: req.params.articleId});
 
@@ -82,7 +84,7 @@ router.delete('/:articleId', async (req, res) => {
 	res.json({article});
 });
 
-router.get('/views/:articleId', async (req, res) => {
+router.get('/views/:articleId', async (req: Request, res: Response) => {
 	const article = await Article.findById(req.params.articleId)
 		.populate('comments', null, null, {
 			sort: {created_at: -1},
@@ -98,7 +100,7 @@ router.get('/views/:articleId', async (req, res) => {
 	res.json({article});
 });
 
-router.post('/comments', commentValidators, async (req, res) => {
+router.post('/comments', commentValidators, async (req: Request, res: Response) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.json({errors: errors.array()});
@@ -119,7 +121,7 @@ router.post('/comments', commentValidators, async (req, res) => {
 	res.json({comment});
 });
 
-router.delete('/comments/:commentId', async (req, res) => {
+router.delete('/comments/:commentId', async (req: Request, res: Response) => {
 	const comment = await Comment.findByIdAndRemove(req.params.commentId);
 
 	const user = await User.findById(comment.user._id);

@@ -1,4 +1,5 @@
-const express = require('express');
+import express, {Application, Request, Response} from 'express';
+
 const morgan = require('morgan');
 const errorHandler = require('errorhandler');
 const helmet = require('helmet');
@@ -15,7 +16,7 @@ require('dotenv').config();
 
 const router = require('./router');
 
-const app = express();
+const app: Application = express();
 const apiLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
 	max: 100,
@@ -28,10 +29,10 @@ mongoose
 		useFindAndModify: false,
 	})
 	.then(() => consola.success('MongoDB'))
-	.catch(err => consola.error(err));
+	.catch((err: object) => consola.error(err));
 
 // middleware
-if (app.get('env') === 'production') {
+if (process.env.NODE_ENV === 'production') {
 	app.use(morgan('combined'));
 } else {
 	app.use(morgan('dev'));
@@ -52,6 +53,7 @@ app.use('/playground', expressPlayground({endpoint: '/graphql'}));
 // router
 app.use('/api', router);
 
+// 404
 // app.use((req, res) => {
 // 	res.status(404).send('Sorry cant find that!');
 // });

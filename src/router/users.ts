@@ -1,4 +1,4 @@
-const router = require('express').Router();
+import {Request, Response, Router} from 'express';
 const {validationResult} = require('express-validator');
 
 const User = require('../models/User');
@@ -7,13 +7,15 @@ const Article = require('../models/Article');
 const Comment = require('../models/Comment');
 const {editUserValidators} = require('../utils/validators');
 
-router.get('/:userId', async (req, res) => {
+const router = Router();
+
+router.get('/:userId', async (req: Request, res: Response) => {
 	const user = await User.findById(req.params.userId);
 
 	res.json({user});
 });
 
-router.put('/:userId', editUserValidators, async (req, res) => {
+router.put('/:userId', editUserValidators, async (req: Request, res: Response) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.json({errors: errors.array()});
@@ -24,7 +26,7 @@ router.put('/:userId', editUserValidators, async (req, res) => {
 	res.json({user});
 });
 
-router.delete('/:userId', async (req, res) => {
+router.delete('/:userId', async (req: Request, res: Response) => {
 	const user = await User.findOneAndUpdate(
 		{_id: req.params.userId},
 		{$set: {isRemoved: true}},

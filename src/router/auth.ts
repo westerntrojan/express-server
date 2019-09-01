@@ -1,4 +1,4 @@
-const router = require('express').Router();
+import {Request, Response, Router} from 'express';
 const {validationResult} = require('express-validator');
 
 const User = require('../models/User');
@@ -6,18 +6,20 @@ const UserSession = require('../models/UserSession');
 const {registerValidators, loginValidators} = require('../utils/validators');
 const {hash, compare} = require('../utils/auth');
 
-router.post('/register', registerValidators, async (req, res) => {
+const router = Router();
+
+router.post('/register', registerValidators, async (req: Request, res: Response) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.json({errors: errors.array()});
 	}
 
-	let emailValidate = await User.findOne({email: req.body.email});
+	const emailValidate = await User.findOne({email: req.body.email});
 	if (emailValidate) {
 		return res.json({errors: [{msg: 'This email is already registered'}]});
 	}
 
-	let usernameValidate = await User.findOne({username: req.body.username});
+	const usernameValidate = await User.findOne({username: req.body.username});
 	if (usernameValidate) {
 		return res.json({errors: [{msg: 'Username not available'}]});
 	}
@@ -33,7 +35,7 @@ router.post('/register', registerValidators, async (req, res) => {
 	res.json({user, token: session._id});
 });
 
-router.post('/login', loginValidators, async (req, res) => {
+router.post('/login', loginValidators, async (req: Request, res: Response) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.json({errors: errors.array()});
@@ -55,7 +57,7 @@ router.post('/login', loginValidators, async (req, res) => {
 	res.json({errors: [{msg: 'User not found'}]});
 });
 
-router.get('/verify/:token', async (req, res) => {
+router.get('/verify/:token', async (req: Request, res: Response) => {
 	try {
 		const session = await UserSession.findOne({_id: req.params.token, isRemoved: false});
 
@@ -70,7 +72,7 @@ router.get('/verify/:token', async (req, res) => {
 	}
 });
 
-router.get('/logout/:token', async (req, res) => {
+router.get('/logout/:token', async (req: Request, res: Response) => {
 	try {
 		await UserSession.update(
 			{_id: req.params.token, isRemoved: false},

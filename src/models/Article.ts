@@ -1,6 +1,6 @@
-const {Schema, model} = require('mongoose');
+import {Schema, model} from 'mongoose';
 
-const ArticleSchema = new Schema({
+const ArticleSchema: Schema = new Schema({
 	user: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',

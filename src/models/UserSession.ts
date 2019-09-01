@@ -1,6 +1,6 @@
-const {Schema, model} = require('mongoose');
+import {Schema, model} from 'mongoose';
 
-const UserSessionSchema = new Schema({
+const UserSessionSchema: Schema = new Schema({
 	userId: {
 		type: String,
 		default: 0,

@@ -1,6 +1,6 @@
-const {Schema, model} = require('mongoose');
+import {Schema, model} from 'mongoose';
 
-const UserSchema = new Schema({
+const UserSchema: Schema = new Schema({
 	username: {
 		type: String,
 		trim: true,
