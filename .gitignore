@@ -25,4 +25,5 @@ yarn-error.log*
 .eslintignore
 .eslintrc.json
 .prettierrc
+.env
 info.txt
