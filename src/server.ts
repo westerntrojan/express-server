@@ -1,9 +1,8 @@
-const http = require('http');
-const consola = require('consola');
-require('graphql-import-node');
+import http from 'http';
+import consola from 'consola';
 
-const app = require('./app');
-const graphql = require('./graphql');
+import app from './app';
+import graphql from './graphql';
 
 const httpServer = http.createServer(app);
 httpServer.timeout = 5000;

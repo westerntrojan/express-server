@@ -1,19 +1,19 @@
 import {Request, Response, Router} from 'express';
-const {validationResult} = require('express-validator');
+import {validationResult} from 'express-validator';
 
-const {articleValidators, commentValidators} = require('../utils/validators');
+import {articleValidators, commentValidators} from '../utils/validators';
 
-const Article = require('../models/Article');
-const Comment = require('../models/Comment');
-const User = require('../models/User');
+import Article from '../models/Article';
+import Comment from '../models/Comment';
+import User from '../models/User';
 
 const router = Router();
 
 router.get('/', async (req: Request, res: Response) => {
 	const articles = await Article.find()
-		.sort({created_at: -1})
+		.sort({created: -1})
 		.populate('comments', null, null, {
-			sort: {created_at: -1},
+			sort: {created: -1},
 			populate: {
 				path: 'user',
 			},
@@ -31,7 +31,7 @@ router.post('/', articleValidators, async (req: Request, res: Response) => {
 
 	const article = await Article.create(req.body);
 
-	const user = await User.findById(req.body.user);
+	const user: any = await User.findById(req.body.user);
 	user.articles = user.articles + 1;
 	user.save();
 
@@ -41,7 +41,7 @@ router.post('/', articleValidators, async (req: Request, res: Response) => {
 router.get('/:articleId', async (req: Request, res: Response) => {
 	const article = await Article.findById(req.params.articleId)
 		.populate('comments', null, null, {
-			sort: {created_at: -1},
+			sort: {created: -1},
 			populate: {
 				path: 'user',
 			},
@@ -63,7 +63,7 @@ router.put('/:articleId', articleValidators, async (req: Request, res: Response)
 		{new: true}
 	)
 		.populate('comments', null, null, {
-			sort: {created_at: -1},
+			sort: {created: -1},
 			populate: {
 				path: 'user',
 			},
@@ -74,10 +74,10 @@ router.put('/:articleId', articleValidators, async (req: Request, res: Response)
 });
 
 router.delete('/:articleId', async (req: Request, res: Response) => {
-	const article = await Article.findByIdAndRemove(req.params.articleId);
+	const article: any = await Article.findByIdAndRemove(req.params.articleId);
 	await Comment.remove({articleId: req.params.articleId});
 
-	const user = await User.findById(article.user._id);
+	const user: any = await User.findById(article.user._id);
 	user.articles = user.articles - 1;
 	user.save();
 
@@ -85,9 +85,9 @@ router.delete('/:articleId', async (req: Request, res: Response) => {
 });
 
 router.get('/views/:articleId', async (req: Request, res: Response) => {
-	const article = await Article.findById(req.params.articleId)
+	const article: any = await Article.findById(req.params.articleId)
 		.populate('comments', null, null, {
-			sort: {created_at: -1},
+			sort: {created: -1},
 			populate: {
 				path: 'user',
 			},
@@ -107,14 +107,14 @@ router.post('/comments', commentValidators, async (req: Request, res: Response) 
 	}
 
 	let comment = await Comment.create(req.body);
-	const article = await Article.findById(req.body.articleId);
+	const article: any = await Article.findById(req.body.articleId);
 
 	article.comments.push(comment._id);
 	await article.save();
 
 	comment = await comment.populate('user').execPopulate();
 
-	const user = await User.findById(req.body.user);
+	const user: any = await User.findById(req.body.user);
 	user.comments = user.comments + 1;
 	await user.save();
 
@@ -122,13 +122,13 @@ router.post('/comments', commentValidators, async (req: Request, res: Response) 
 });
 
 router.delete('/comments/:commentId', async (req: Request, res: Response) => {
-	const comment = await Comment.findByIdAndRemove(req.params.commentId);
+	const comment: any = await Comment.findByIdAndRemove(req.params.commentId);
 
-	const user = await User.findById(comment.user._id);
+	const user: any = await User.findById(comment.user._id);
 	user.comments = user.comments - 1;
 	user.save();
 
 	res.json({comment});
 });
 
-module.exports = router;
+export default router;

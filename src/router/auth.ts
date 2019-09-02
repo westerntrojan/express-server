@@ -1,10 +1,10 @@
 import {Request, Response, Router} from 'express';
-const {validationResult} = require('express-validator');
+import {validationResult} from 'express-validator';
 
-const User = require('../models/User');
-const UserSession = require('../models/UserSession');
-const {registerValidators, loginValidators} = require('../utils/validators');
-const {hash, compare} = require('../utils/auth');
+import User from '../models/User';
+import UserSession from '../models/UserSession';
+import {registerValidators, loginValidators} from '../utils/validators';
+import {hash, compare} from '../utils/auth';
 
 const router = Router();
 
@@ -41,7 +41,7 @@ router.post('/login', loginValidators, async (req: Request, res: Response) => {
 		return res.json({errors: errors.array()});
 	}
 
-	const user = await User.findOne({username: req.body.username, isRemoved: false});
+	const user: any = await User.findOne({username: req.body.username, isRemoved: false});
 
 	if (user) {
 		const password = await compare(req.body.password, user.password);
@@ -59,7 +59,7 @@ router.post('/login', loginValidators, async (req: Request, res: Response) => {
 
 router.get('/verify/:token', async (req: Request, res: Response) => {
 	try {
-		const session = await UserSession.findOne({_id: req.params.token, isRemoved: false});
+		const session: any = await UserSession.findOne({_id: req.params.token, isRemoved: false});
 
 		if (session) {
 			const user = await User.findById(session.userId);
@@ -86,4 +86,4 @@ router.get('/logout/:token', async (req: Request, res: Response) => {
 	}
 });
 
-module.exports = router;
+export default router;

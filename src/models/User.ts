@@ -1,4 +1,4 @@
-import {Schema, model} from 'mongoose';
+import {Schema, model, Document} from 'mongoose';
 
 const UserSchema: Schema = new Schema({
 	username: {
@@ -32,10 +32,21 @@ const UserSchema: Schema = new Schema({
 		type: Boolean,
 		default: false,
 	},
-	created_at: {
+	created: {
 		type: Date,
 		default: Date.now,
 	},
 });
 
-module.exports = model('users', UserSchema);
+export interface UserInterface extends Document {
+	username: string;
+	email: string;
+	password: string;
+	articles: number;
+	comments: number;
+	role: number;
+	isRemoved: boolean;
+	created: string;
+}
+
+export default model('users', UserSchema);

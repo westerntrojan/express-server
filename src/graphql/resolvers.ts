@@ -1,12 +1,12 @@
-const {
+import {
 	GraphQLDateTime,
 	GraphQLEmail,
 	GraphQLURL,
 	GraphQLLimitedString,
 	GraphQLPassword,
-} = require('graphql-custom-types');
+} from 'graphql-custom-types';
 
-const Article = require('../models/Article');
+import Article from '../models/Article';
 
 interface AddArticle {
 	title: string;
@@ -22,7 +22,7 @@ interface EditArticle {
 	views?: number;
 }
 
-module.exports = {
+export default {
 	DateTime: GraphQLDateTime,
 	Email: GraphQLEmail,
 	URL: GraphQLURL,

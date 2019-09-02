@@ -1,7 +1,13 @@
-const router = require('express').Router();
+import {Router} from 'express';
 
-router.use('/articles', require('./articles'));
-router.use('/auth', require('./auth'));
-router.use('/users', require('./users'));
+import articlesRouter from './articles';
+import authRouter from './auth';
+import usersRouter from './users';
 
-module.exports = router;
+const router = Router();
+
+router.use('/articles', articlesRouter);
+router.use('/auth', authRouter);
+router.use('/users', usersRouter);
+
+export default router;

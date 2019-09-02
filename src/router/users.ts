@@ -1,11 +1,11 @@
 import {Request, Response, Router} from 'express';
-const {validationResult} = require('express-validator');
+import {validationResult} from 'express-validator';
 
-const User = require('../models/User');
-const UserSession = require('../models/UserSession');
-const Article = require('../models/Article');
-const Comment = require('../models/Comment');
-const {editUserValidators} = require('../utils/validators');
+import User from '../models/User';
+import UserSession from '../models/UserSession';
+import Article from '../models/Article';
+import Comment from '../models/Comment';
+import {editUserValidators} from '../utils/validators';
 
 const router = Router();
 
@@ -27,7 +27,7 @@ router.put('/:userId', editUserValidators, async (req: Request, res: Response) =
 });
 
 router.delete('/:userId', async (req: Request, res: Response) => {
-	const user = await User.findOneAndUpdate(
+	const user: any = await User.findOneAndUpdate(
 		{_id: req.params.userId},
 		{$set: {isRemoved: true}},
 		{new: true}
@@ -45,4 +45,4 @@ router.delete('/:userId', async (req: Request, res: Response) => {
 	res.json({user});
 });
 
-module.exports = router;
+export default router;

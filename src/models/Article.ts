@@ -1,4 +1,4 @@
-import {Schema, model} from 'mongoose';
+import {Schema, model, Document} from 'mongoose';
 
 const ArticleSchema: Schema = new Schema({
 	user: {
@@ -30,10 +30,20 @@ const ArticleSchema: Schema = new Schema({
 			ref: 'comments',
 		},
 	],
-	created_at: {
+	created: {
 		type: Date,
 		default: Date.now,
 	},
 });
 
-module.exports = model('articles', ArticleSchema);
+export interface ArticleInterface extends Document {
+	user: any;
+	title: string;
+	text: string;
+	image?: string;
+	views: number;
+	comments?: any[];
+	created: string;
+}
+
+export default model('articles', ArticleSchema);

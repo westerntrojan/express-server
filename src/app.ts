@@ -1,35 +1,32 @@
-import express, {Application, Request, Response} from 'express';
+import express, {Application} from 'express';
+import morgan from 'morgan';
+import errorHandler from 'errorhandler';
+import helmet from 'helmet';
+import hpp from 'hpp';
+import responseTime from 'response-time';
+import rateLimit from 'express-rate-limit';
+import compression from 'compression';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import expressPlayground from 'graphql-playground-middleware-express';
+import dotenv from 'dotenv';
 
-const morgan = require('morgan');
-const errorHandler = require('errorhandler');
-const helmet = require('helmet');
-const hpp = require('hpp');
-const responseTime = require('response-time');
-const rateLimit = require('express-rate-limit');
-const compression = require('compression');
-const consola = require('consola');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const expressPlayground = require('graphql-playground-middleware-express').default;
-require('dotenv').config();
+import router from './router';
 
-const router = require('./router');
+dotenv.config();
 
 const app: Application = express();
-const apiLimiter = rateLimit({
+const apiLimiter = new rateLimit({
 	windowMs: 15 * 60 * 1000,
 	max: 100,
 });
 
-mongoose
-	.connect(process.env.MONGO_URI, {
-		useNewUrlParser: true,
-		useCreateIndex: true,
-		useFindAndModify: false,
-	})
-	.then(() => consola.success('MongoDB'))
-	.catch((err: object) => consola.error(err));
+mongoose.connect(`${process.env.MONGO_URI}`, {
+	useNewUrlParser: true,
+	useCreateIndex: true,
+	useFindAndModify: false,
+});
 
 // middleware
 if (process.env.NODE_ENV === 'production') {
@@ -50,7 +47,7 @@ app.use(bodyParser.json());
 // /playground, /graphql
 app.use('/playground', expressPlayground({endpoint: '/graphql'}));
 
-// router
+// router;
 app.use('/api', router);
 
 // 404
@@ -58,4 +55,4 @@ app.use('/api', router);
 // 	res.status(404).send('Sorry cant find that!');
 // });
 
-module.exports = app;
+export default app;

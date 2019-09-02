@@ -1,6 +1,6 @@
-const {check} = require('express-validator');
+import {check} from 'express-validator';
 
-exports.articleValidators = [
+export const articleValidators = [
 	check('title')
 		.isLength({max: 40})
 		.withMessage('Invalid Title(Max: 40)')
@@ -11,14 +11,14 @@ exports.articleValidators = [
 		.trim(),
 ];
 
-exports.commentValidators = [
+export const commentValidators = [
 	check('text')
 		.isLength({max: 4000})
 		.withMessage('Invalid Text(Max: 400)')
 		.trim(),
 ];
 
-exports.registerValidators = [
+export const registerValidators = [
 	check('username')
 		.isLength({max: 40})
 		.withMessage('Invalid Username(Max: 40)')
@@ -34,7 +34,7 @@ exports.registerValidators = [
 		.trim(),
 ];
 
-exports.loginValidators = [
+export const loginValidators = [
 	check('username')
 		.isLength({max: 40})
 		.withMessage('Invalid Username(Max: 40)')
@@ -45,7 +45,7 @@ exports.loginValidators = [
 		.trim(),
 ];
 
-exports.editUserValidators = [
+export const editUserValidators = [
 	check('username')
 		.isLength({max: 40})
 		.withMessage('Invalid Username(Max: 40)')

@@ -1,4 +1,4 @@
-import {Schema, model} from 'mongoose';
+import {Schema, model, Document} from 'mongoose';
 
 const CommentSchema: Schema = new Schema({
 	articleId: {
@@ -14,10 +14,17 @@ const CommentSchema: Schema = new Schema({
 		trim: true,
 		required: true,
 	},
-	created_at: {
+	created: {
 		type: Date,
 		default: Date.now,
 	},
 });
 
-module.exports = model('comments', CommentSchema);
+export interface CommentInterface extends Document {
+	articleId: string;
+	user: any;
+	text: string;
+	created: string;
+}
+
+export default model('comments', CommentSchema);

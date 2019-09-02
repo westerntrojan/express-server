@@ -1,4 +1,4 @@
-import {Schema, model} from 'mongoose';
+import {Schema, model, Document} from 'mongoose';
 
 const UserSessionSchema: Schema = new Schema({
 	userId: {
@@ -9,10 +9,16 @@ const UserSessionSchema: Schema = new Schema({
 		type: Boolean,
 		default: false,
 	},
-	created_at: {
+	created: {
 		type: Date,
 		default: Date.now,
 	},
 });
 
-module.exports = model('sessions', UserSessionSchema);
+export interface UserSessionInterface extends Document {
+	userId: string;
+	isRemoved: boolean;
+	created: string;
+}
+
+export default model('sessions', UserSessionSchema);

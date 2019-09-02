@@ -1,13 +1,13 @@
-const {ApolloServer, PubSub} = require('apollo-server-express');
-const depthLimit = require('graphql-depth-limit');
-const {createComplexityLimitRule} = require('graphql-validation-complexity');
+import {ApolloServer, PubSub} from 'apollo-server-express';
+import depthLimit from 'graphql-depth-limit';
+import {createComplexityLimitRule} from 'graphql-validation-complexity';
 
-const typeDefs = require('./typeDefs');
-const resolvers = require('./resolvers');
+import typeDefs from './typeDefs';
+import resolvers from './resolvers';
 
 const pubsub = new PubSub();
 
-module.exports = new ApolloServer({
+export default new ApolloServer({
 	typeDefs,
 	resolvers,
 	context: ({req}: any) => ({req, pubsub}),
