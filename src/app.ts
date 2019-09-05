@@ -7,6 +7,7 @@ import responseTime from 'response-time';
 import rateLimit from 'express-rate-limit';
 import compression from 'compression';
 import cors from 'cors';
+import consola from 'consola';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import expressPlayground from 'graphql-playground-middleware-express';
@@ -22,11 +23,14 @@ const apiLimiter = new rateLimit({
 	max: 100,
 });
 
-mongoose.connect(`${process.env.MONGO_URI}`, {
-	useNewUrlParser: true,
-	useCreateIndex: true,
-	useFindAndModify: false,
-});
+mongoose
+	.connect(`${process.env.MONGO_URI}`, {
+		useNewUrlParser: true,
+		useCreateIndex: true,
+		useFindAndModify: false,
+	})
+	.then(() => consola.success('MongoDB'))
+	.catch(() => consola.error('MongoDB'));
 
 // middleware
 if (process.env.NODE_ENV === 'production') {
