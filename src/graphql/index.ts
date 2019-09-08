@@ -10,6 +10,6 @@ const pubsub = new PubSub();
 export default new ApolloServer({
 	typeDefs,
 	resolvers,
-	context: ({req}: any) => ({req, pubsub}),
+	context: ({req, connection}: any) => ({pubsub}),
 	validationRules: [depthLimit(5), createComplexityLimitRule(1000)],
 });

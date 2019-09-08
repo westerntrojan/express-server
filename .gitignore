@@ -27,3 +27,4 @@ yarn-error.log*
 .prettierrc
 .env
 info.txt
+src/data

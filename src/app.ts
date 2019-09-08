@@ -48,11 +48,11 @@ app.use(compression());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-// /playground, /graphql
-app.use('/playground', expressPlayground({endpoint: '/graphql'}));
-
 // router;
 app.use('/api', router);
+
+// /playground, /graphql
+app.get('/playground', expressPlayground({endpoint: '/graphql'}));
 
 // 404
 // app.use((req, res) => {
