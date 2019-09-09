@@ -1,5 +1,6 @@
 import http from 'http';
 import consola from 'consola';
+import 'graphql-import-node';
 
 import app from './app';
 import graphql from './graphql';
