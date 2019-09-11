@@ -102,7 +102,7 @@ export default {
 
 			const newFilename = moment().format('DD-MM-YYYY_HH-mm-ss') + path.extname(filename);
 
-			const toPath = path.join(__dirname, '../data', `${newFilename}`);
+			const toPath = path.join(__dirname, '../data', newFilename);
 			const stream = createReadStream();
 
 			return new Promise((resolve, reject) => {

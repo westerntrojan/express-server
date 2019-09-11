@@ -1,0 +1,54 @@
+{"message":"MongoDB","level":"info","service":"user-service"}
+{"message":"MongoDB","level":"info"}
+{"message":"MongoDB","level":"error"}
+{"message":"MongoDB","level":"error"}
+{"message":"MongoDB","level":"error"}
+{"message":"MongoDB","level":"error"}
+{"message":"MongoDB","level":"info","service":"express.js"}
+{"message":"MongoDB","level":"info"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-10 10:59:42"}
+{"message":"MongoDB","level":"error","timestamp":"2019-09-10 11:00:25"}
+{"additional":"properties","are":"passed along","level":"info","message":"MongoDB","timestamp":"2019-09-10 11:07:32"}
+{ message: 'MongoDB', level: 'info', timestamp: '2019-09-10 11:09:34' }
+{"message":"MongoDB","level":"info","timestamp":"2019-09-10 11:13:57"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-10 11:14:12"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-10 11:15:43"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-10 11:45:31"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-10 11:45:32"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-10 11:46:57"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-10 11:47:04"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-10 11:47:05"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-10 22:19:09"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-10 22:19:11"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 01:17:30"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 01:17:31"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 01:53:50"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 01:53:51"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 01:56:03"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 01:56:04"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 01:56:16"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 01:56:17"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 02:23:05"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 02:23:06"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 16:04:59"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 16:05:00"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 18:07:50"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 18:07:51"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 18:18:09"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 18:18:10"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 18:20:38"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 18:20:39"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 18:21:06"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 18:21:08"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 18:28:37"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 18:28:39"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 18:29:00"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 18:29:01"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 20:10:24"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 20:10:25"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 20:10:55"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 20:10:56"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 21:47:47"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 21:47:48"}
+{"message":"Server listening on http://127.0.0.1:8080","level":"info","timestamp":"2019-09-11 22:57:07"}
+{"message":"MongoDB","level":"info","timestamp":"2019-09-11 22:57:08"}
