@@ -7,8 +7,7 @@
 		"start": "node build/server.js",
 		"dev": "nodemon src/server.ts",
 		"build": "tsc -p .",
-		"lint": "eslint src/**/*.ts",
-		"lint:fix": "eslint --fix src/**/*.ts"
+		"lint": "eslint --fix src/**/*.ts"
 	},
 	"keywords": [],
 	"author": "",
@@ -37,9 +36,9 @@
 		"eslint-plugin-prettier": "^3.1.0",
 		"eslint-plugin-security": "^1.4.0",
 		"husky": "^3.0.1",
+		"lint-staged": "^9.2.5",
 		"nodemon": "^1.19.0",
 		"prettier": "^1.18.2",
-		"pretty-quick": "^1.11.1",
 		"ts-node": "^8.3.0",
 		"typescript": "^3.6.2"
 	},
@@ -71,9 +70,15 @@
 		"response-time": "^2.3.2",
 		"winston": "^3.2.1"
 	},
+	"lint-staged": {
+		"*.ts": [
+			"npm run lint:js",
+			"git add"
+		]
+	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "pretty-quick --staged"
+			"pre-commit": "lint-staged"
 		}
 	}
 }
