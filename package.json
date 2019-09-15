@@ -72,7 +72,7 @@
 	},
 	"lint-staged": {
 		"*.ts": [
-			"npm run lint:js",
+			"npm run lint",
 			"git add"
 		]
 	},
