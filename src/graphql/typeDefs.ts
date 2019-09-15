@@ -46,23 +46,24 @@ export default gql`
 	}
 
 	input AddArticleInput {
+		user: ID!
 		title: String!
 		text: String!
 		image: String
 	}
 
 	input EditArticleInput {
-		articleId: ID!
+		_id: ID!
 		title: String!
 		text: String!
 		image: String
 		views: Int
 	}
 
-	input AddComment {
+	input AddCommentInput {
 		articleId: String!
-		user: String!
 		text: String!
+		user: String!
 	}
 
 	enum SortDirection {
@@ -85,17 +86,15 @@ export default gql`
 			sort: SortDirection = desc
 		): [Article!]!
 		article(articleId: ID!): Article!
+		users: [User!]
+		user(userId: ID!): User!
 	}
 
 	type Mutation {
 		addArticle(input: AddArticleInput!): Article!
 		editArticle(input: EditArticleInput!): Article!
 		removeArticle(articleId: ID!): Article!
-		addComment(input: AddComment!): Comment!
+		addComment(input: AddCommentInput!): Comment!
 		uploadFile(file: Upload!): File!
-	}
-
-	type Subscription {
-		newComment: Comment!
 	}
 `;

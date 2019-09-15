@@ -22,9 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-.eslintignore
-.eslintrc.json
-.prettierrc
 .env
 info.txt
 src/data

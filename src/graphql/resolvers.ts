@@ -21,21 +21,22 @@ interface Articles {
 	sortBy: string;
 }
 
-interface AddArticle {
+interface AddArticleInput {
+	user: string;
 	title: string;
 	text: string;
 	image?: string;
 }
 
-interface EditArticle {
-	articleId: string;
-	title?: string;
-	text?: string;
+interface EditArticleInput {
+	_id: string;
+	title: string;
+	text: string;
 	image?: string;
 	views?: number;
 }
 
-interface AddComment {
+interface AddCommentInput {
 	articleId: string;
 	user: string;
 	text: string;
@@ -77,25 +78,36 @@ export default {
 				.sort([[args.sortBy, args.sort]]);
 		},
 		article: async (_: any, args: {articleId: string}) => await Article.findById(args.articleId),
+		users: async () => await User.find(),
+		user: async (_: any, args: {userId: string}) => await User.findById(args.userId),
 	},
 
 	Mutation: {
-		addArticle: async (_: any, args: {input: AddArticle}) => {
+		addArticle: async (_: any, args: {input: AddArticleInput}) => {
+			const user: any = await User.findById(args.input.user);
+			user.articles = user.articles + 1;
+			user.save();
+
 			return await Article.create(args.input);
 		},
-		editArticle: async (_: any, args: {input: EditArticle}) => {
-			return await Article.findOneAndUpdate(
-				{_id: args.input.articleId},
-				{$set: args.input},
-				{new: true}
-			);
+		editArticle: async (_: any, args: {input: EditArticleInput}) => {
+			return await Article.findOneAndUpdate({_id: args.input._id}, {$set: args.input}, {new: true});
 		},
 		removeArticle: async (_: any, args: {articleId: string}) => {
 			return await Article.findOneAndRemove({_id: args.articleId});
 		},
-		addComment: async (_: any, args: {input: AddComment}, {pubsub}: any) => {
-			pubsub.publish('comment-added', {newComment: args.input});
-			return await Comment.create(args.input);
+		addComment: async (_: any, args: {input: AddCommentInput}) => {
+			const comment = await Comment.create(args.input);
+			const article: any = await Article.findById(args.input.articleId);
+
+			article.comments.push(comment._id);
+			await article.save();
+
+			const user: any = await User.findById(args.input.user);
+			user.comments = user.comments + 1;
+			await user.save();
+
+			return comment;
 		},
 		uploadFile: async (_: any, args: any) => {
 			const {createReadStream, filename} = await args.file;
@@ -111,14 +123,6 @@ export default {
 					.on('error', (error: any) => reject(error))
 					.on('finish', () => resolve(args.file));
 			});
-		},
-	},
-
-	Subscription: {
-		newComment: {
-			subscribe: (_: any, args: any, {pubsub}: any) => {
-				return pubsub.asyncIterator('comment-added');
-			},
 		},
 	},
 };
