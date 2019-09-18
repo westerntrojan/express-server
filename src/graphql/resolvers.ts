@@ -13,6 +13,7 @@ import moment from 'moment';
 import Article from '../models/Article';
 import Comment from '../models/Comment';
 import User from '../models/User';
+import UserSession from '../models/UserSession';
 
 interface Articles {
 	first: number;
@@ -40,6 +41,11 @@ interface AddCommentInput {
 	articleId: string;
 	user: string;
 	text: string;
+}
+interface EditUserInput {
+	_id: string;
+	username: string;
+	email: string;
 }
 
 export default {
@@ -94,7 +100,14 @@ export default {
 			return await Article.findOneAndUpdate({_id: args.input._id}, {$set: args.input}, {new: true});
 		},
 		removeArticle: async (_: any, args: {articleId: string}) => {
-			return await Article.findOneAndRemove({_id: args.articleId});
+			const article: any = await Article.findByIdAndRemove(args.articleId);
+			await Comment.remove({articleId: args.articleId});
+
+			const user: any = await User.findById(article.user._id);
+			user.articles = user.articles - 1;
+			user.save();
+
+			return article;
 		},
 		addComment: async (_: any, args: {input: AddCommentInput}) => {
 			const comment = await Comment.create(args.input);
@@ -108,6 +121,38 @@ export default {
 			await user.save();
 
 			return comment;
+		},
+		removeComment: async (_: any, args: {commentId: string}) => {
+			const comment: any = await Comment.findByIdAndRemove(args.commentId);
+
+			const user: any = await User.findById(comment.user._id);
+			user.comments = user.comments - 1;
+			user.save();
+
+			return comment;
+		},
+		editUser: async (_: any, args: {input: EditUserInput}) => {
+			const user = await User.findByIdAndUpdate(args.input._id, {$set: args.input}, {new: true});
+
+			return user;
+		},
+		removeUser: async (_: any, args: {userId: string}) => {
+			const user: any = await User.findByIdAndUpdate(
+				args.userId,
+				{$set: {isRemoved: true}},
+				{new: true},
+			);
+
+			await UserSession.update(
+				{userId: args.userId, isRemoved: false},
+				{$set: {isRemoved: true}},
+				{new: true},
+			);
+
+			await Article.remove({user: user._id});
+			await Comment.remove({user: user._id});
+
+			return user;
 		},
 		uploadFile: async (_: any, args: any) => {
 			const {createReadStream, filename} = await args.file;

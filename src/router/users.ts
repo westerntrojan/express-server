@@ -30,13 +30,13 @@ router.delete('/:userId', async (req: Request, res: Response) => {
 	const user: any = await User.findOneAndUpdate(
 		{_id: req.params.userId},
 		{$set: {isRemoved: true}},
-		{new: true}
+		{new: true},
 	);
 
 	await UserSession.update(
 		{userId: req.params.userId, isRemoved: false},
 		{$set: {isRemoved: true}},
-		{new: true}
+		{new: true},
 	);
 
 	await Article.remove({user: user._id});

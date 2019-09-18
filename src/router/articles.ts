@@ -60,7 +60,7 @@ router.put('/:articleId', articleValidators, async (req: Request, res: Response)
 	const article = await Article.findByIdAndUpdate(
 		req.params.articleId,
 		{$set: req.body},
-		{new: true}
+		{new: true},
 	)
 		.populate('comments', null, null, {
 			sort: {created: -1},

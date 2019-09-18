@@ -66,6 +66,12 @@ export default gql`
 		user: String!
 	}
 
+	input EditUserInput {
+		_id: ID!
+		username: String!
+		email: String!
+	}
+
 	enum SortDirection {
 		asc
 		desc
@@ -95,6 +101,9 @@ export default gql`
 		editArticle(input: EditArticleInput!): Article!
 		removeArticle(articleId: ID!): Article!
 		addComment(input: AddCommentInput!): Comment!
+		removeComment(commentId: ID!): Comment!
+		editUser(input: EditUserInput!): User!
+		removeUser(userId: ID!): User!
 		uploadFile(file: Upload!): File!
 	}
 `;

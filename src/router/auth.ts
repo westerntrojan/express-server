@@ -14,12 +14,12 @@ router.post('/register', registerValidators, async (req: Request, res: Response)
 		return res.json({errors: errors.array()});
 	}
 
-	const emailValidate = await User.findOne({email: req.body.email});
+	const emailValidate = await User.findOne({email: req.body.email, isRemoved: false});
 	if (emailValidate) {
 		return res.json({errors: [{msg: 'This email is already registered'}]});
 	}
 
-	const usernameValidate = await User.findOne({username: req.body.username});
+	const usernameValidate = await User.findOne({username: req.body.username, isRemoved: false});
 	if (usernameValidate) {
 		return res.json({errors: [{msg: 'Username not available'}]});
 	}
@@ -77,7 +77,7 @@ router.get('/logout/:token', async (req: Request, res: Response) => {
 		await UserSession.update(
 			{_id: req.params.token, isRemoved: false},
 			{$set: {isRemoved: true}},
-			{new: true}
+			{new: true},
 		);
 
 		res.json({success: true});

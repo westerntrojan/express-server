@@ -6,7 +6,7 @@
 	"jsxBracketSameLine": false,
 	"useTabs": true,
 	"tabWidth": 2,
-	"trailingComma": "es5",
+	"trailingComma": "all",
 	"bracketSpacing": false,
 	"rcVerbose": true
 }
