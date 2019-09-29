@@ -42,6 +42,7 @@ interface AddCommentInput {
 	user: string;
 	text: string;
 }
+
 interface EditUserInput {
 	_id: string;
 	username: string;
@@ -160,12 +161,10 @@ export default {
 			const newFilename = moment().format('DD-MM-YYYY_HH-mm-ss') + path.extname(filename);
 
 			const toPath = path.join(__dirname, '../data', newFilename);
-			const stream = createReadStream();
 
-			return new Promise((resolve, reject) => {
-				stream
+			return new Promise(resolve => {
+				createReadStream()
 					.pipe(fs.createWriteStream(toPath))
-					.on('error', (error: any) => reject(error))
 					.on('finish', () => resolve(args.file));
 			});
 		},

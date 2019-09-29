@@ -1,4 +1,4 @@
-import express, {Application} from 'express';
+import express, {Application, Request, Response, NextFunction} from 'express';
 import morgan from 'morgan';
 import errorHandler from 'errorhandler';
 import helmet from 'helmet';
@@ -12,10 +12,11 @@ import mongoose from 'mongoose';
 import expressPlayground from 'graphql-playground-middleware-express';
 import dotenv from 'dotenv';
 
-import logger from './utils/logger';
+import getLogger from './utils/logger';
 import router from './router';
 
 dotenv.config();
+const logger = getLogger(module);
 
 const app: Application = express();
 const apiLimiter = new rateLimit({
@@ -52,11 +53,17 @@ app.use(bodyParser.json());
 app.use('/api', router);
 
 // /playground, /graphql
-app.get('/playground', expressPlayground({endpoint: '/graphql'}));
+app.use('/playground', expressPlayground({endpoint: '/graphql'}));
 
 // 404
 // app.use((req, res) => {
-// 	res.status(404).send('Sorry cant find that!');
+// 	res.status(404).send('Sorry cant find that !');
 // });
+
+// 500
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+	console.error(err.stack);
+	res.status(500).send('Something broke !');
+});
 
 export default app;
