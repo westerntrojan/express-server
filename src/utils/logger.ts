@@ -4,15 +4,21 @@ interface Module {
 	filename: string;
 }
 
+const myFormat = format.printf(({level, message, label, timestamp}) => {
+	return `${timestamp} [${label}] ${level}: ${message}`;
+});
+
 export default (module: Module) => {
+	const filename = module.filename
+		.split(process.platform === 'win32' ? '\\' : '/')
+		.slice(-2)
+		.join('/');
+
 	const logger = createLogger({
 		level: 'info',
 		format: format.combine(
 			format.label({
-				label: module.filename
-					.split(process.platform === 'win32' ? '\\' : '/')
-					.slice(-1)
-					.join(),
+				label: filename,
 			}),
 			format.timestamp({
 				format: 'YYYY-MM-DD HH:mm:ss',
@@ -20,6 +26,7 @@ export default (module: Module) => {
 			format.errors({stack: true}),
 			format.splat(),
 			format.json(),
+			myFormat,
 		),
 		transports: [
 			//

@@ -1,8 +1,6 @@
-# Express-GraphQL Server
+# Express Server
 
 ### Server
-- Node.js/Express.js
-- MongoDB/Mongoose
-- Apollo Server Express
 
-
+- Node.js / Express.js
+- MongoDB / Mongoose

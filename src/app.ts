@@ -9,7 +9,6 @@ import compression from 'compression';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-import expressPlayground from 'graphql-playground-middleware-express';
 import dotenv from 'dotenv';
 
 import getLogger from './utils/logger';
@@ -52,13 +51,10 @@ app.use(bodyParser.json());
 // router;
 app.use('/api', router);
 
-// /playground, /graphql
-app.use('/playground', expressPlayground({endpoint: '/graphql'}));
-
 // 404
-// app.use((req, res) => {
-// 	res.status(404).send('Sorry cant find that !');
-// });
+app.use((req, res) => {
+	res.status(404).send('Sorry cant find that !');
+});
 
 // 500
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
