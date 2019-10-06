@@ -26,6 +26,10 @@ const UserSchema: Schema = new Schema({
 		type: Number,
 		default: 0,
 	},
+	messages: {
+		type: Number,
+		default: 0,
+	},
 	role: {
 		type: Number,
 		default: 2,

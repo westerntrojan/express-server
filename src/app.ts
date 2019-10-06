@@ -1,4 +1,4 @@
-import express, {Application, Request, Response, NextFunction} from 'express';
+import express, {Application, Request, Response} from 'express';
 import morgan from 'morgan';
 import errorHandler from 'errorhandler';
 import helmet from 'helmet';
@@ -57,7 +57,7 @@ app.use((req, res) => {
 });
 
 // 500
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response) => {
 	console.error(err.stack);
 	res.status(500).send('Something broke !');
 });

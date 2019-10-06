@@ -5,6 +5,7 @@ import User from '../models/User';
 import UserSession from '../models/UserSession';
 import Article from '../models/Article';
 import Comment from '../models/Comment';
+import Message from '../models/Message';
 import {editUserValidators} from '../utils/validators';
 
 const router = Router();
@@ -39,8 +40,10 @@ router.delete('/:userId', async (req: Request, res: Response) => {
 		{new: true},
 	);
 
+	await UserSession.remove({userId: user._id});
 	await Article.remove({user: user._id});
 	await Comment.remove({user: user._id});
+	await Message.remove({user: user._id});
 
 	res.json({user});
 });

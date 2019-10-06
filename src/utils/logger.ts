@@ -4,10 +4,6 @@ interface Module {
 	filename: string;
 }
 
-const myFormat = format.printf(({level, message, label, timestamp}) => {
-	return `${timestamp} [${label}] ${level}: ${message}`;
-});
-
 export default (module: Module) => {
 	const filename = module.filename
 		.split(process.platform === 'win32' ? '\\' : '/')
@@ -26,7 +22,6 @@ export default (module: Module) => {
 			format.errors({stack: true}),
 			format.splat(),
 			format.json(),
-			myFormat,
 		),
 		transports: [
 			//
