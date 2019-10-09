@@ -30,7 +30,7 @@ mongoose
 		useFindAndModify: false,
 	})
 	.then(() => logger.info('MongoDB'))
-	.catch(() => logger.error('MongoDB'));
+	.catch((err: Error) => logger.error(err.message));
 
 // middleware
 if (process.env.NODE_ENV === 'production') {
@@ -45,7 +45,7 @@ app.use(responseTime());
 app.use('/api/', apiLimiter);
 app.use('/api/', cors());
 app.use(compression());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true, limit: '1mb'}));
 app.use(bodyParser.json());
 
 // router;
