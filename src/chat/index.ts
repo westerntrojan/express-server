@@ -1,8 +1,12 @@
 import http from 'http';
 import socketIo from 'socket.io';
+import redis from 'redis';
 import {Document} from 'mongoose';
 
 import Message from '../Models/Message';
+
+const redisSub = redis.createClient();
+const redisPub = redis.createClient();
 
 export default (server: http.Server) => {
 	const io = socketIo(server);
@@ -26,7 +30,12 @@ export default (server: http.Server) => {
 			let newMessage: Document | null = await Message.create(message);
 			newMessage = await Message.findById(newMessage._id).populate('user');
 
-			io.sockets.emit('new_message', {message: newMessage});
+			redisPub.publish('new_message', JSON.stringify({message: newMessage}));
+		});
+
+		redisSub.subscribe('new_message');
+		redisSub.on('message', (channel, message) => {
+			io.sockets.emit('new_message', JSON.parse(message));
 		});
 
 		client.on('remove_message', _id => {
