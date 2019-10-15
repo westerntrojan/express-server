@@ -22,9 +22,9 @@ const CommentSchema: Schema = new Schema({
 
 export interface CommentInterface extends Document {
 	articleId: string;
-	user: any;
+	user: string;
 	text: string;
 	created: string;
 }
 
-export default model('comments', CommentSchema);
+export default model<CommentInterface>('comments', CommentSchema);

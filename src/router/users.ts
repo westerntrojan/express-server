@@ -2,7 +2,6 @@ import {Request, Response, Router} from 'express';
 import {validationResult} from 'express-validator';
 
 import User from '../models/User';
-import UserSession from '../models/UserSession';
 import Article from '../models/Article';
 import Comment from '../models/Comment';
 import Message from '../models/Message';
@@ -10,10 +9,20 @@ import {editUserValidators} from '../utils/validators';
 
 const router = Router();
 
-router.get('/:userId', async (req: Request, res: Response) => {
-	const user = await User.findById(req.params.userId);
+const getStatistics = async (userId: string) => {
+	const articles = await Article.find({user: userId}).countDocuments();
+	const comments = await Comment.find({user: userId}).countDocuments();
+	const messages = await Message.find({user: userId}).countDocuments();
 
-	res.json({user});
+	return {articles, comments, messages};
+};
+
+router.get('/:userId', async (req: Request, res: Response) => {
+	const user: any = await User.findById(req.params.userId);
+
+	const statistics = await getStatistics(req.params.userId);
+
+	res.json({user: {...user._doc, ...statistics}});
 });
 
 router.put('/:userId', editUserValidators, async (req: Request, res: Response) => {
@@ -22,30 +31,15 @@ router.put('/:userId', editUserValidators, async (req: Request, res: Response) =
 		return res.json({errors: errors.array()});
 	}
 
-	const user = await User.findOneAndUpdate({_id: req.params.userId}, {$set: req.body}, {new: true});
-
-	res.json({user});
-});
-
-router.delete('/:userId', async (req: Request, res: Response) => {
 	const user: any = await User.findOneAndUpdate(
 		{_id: req.params.userId},
-		{$set: {isRemoved: true}},
+		{$set: req.body},
 		{new: true},
 	);
 
-	await UserSession.update(
-		{userId: req.params.userId, isRemoved: false},
-		{$set: {isRemoved: true}},
-		{new: true},
-	);
+	const statistics = await getStatistics(req.params.userId);
 
-	await UserSession.remove({userId: user._id});
-	await Article.remove({user: user._id});
-	await Comment.remove({user: user._id});
-	await Message.remove({user: user._id});
-
-	res.json({user});
+	res.json({user: {...user._doc, ...statistics}});
 });
 
 export default router;

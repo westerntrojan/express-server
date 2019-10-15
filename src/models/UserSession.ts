@@ -18,7 +18,7 @@ const UserSessionSchema: Schema = new Schema({
 export interface UserSessionInterface extends Document {
 	userId: string;
 	isRemoved: boolean;
-	created: string;
+	crated: string;
 }
 
-export default model('sessions', UserSessionSchema);
+export default model<UserSessionInterface>('sessions', UserSessionSchema);

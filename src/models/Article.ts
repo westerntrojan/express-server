@@ -1,5 +1,7 @@
 import {Schema, model, Document} from 'mongoose';
 
+import {IComment} from './Comment';
+
 const ArticleSchema: Schema = new Schema({
 	user: {
 		type: Schema.Types.ObjectId,
@@ -37,13 +39,13 @@ const ArticleSchema: Schema = new Schema({
 });
 
 export interface ArticleInterface extends Document {
-	user: any;
+	user: string;
 	title: string;
 	text: string;
 	image?: string;
-	views: number;
-	comments?: any[];
+	views?: number;
+	comments: [IComment];
 	created: string;
 }
 
-export default model('articles', ArticleSchema);
+export default model<ArticleInterface>('articles', ArticleSchema);

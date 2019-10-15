@@ -3,6 +3,9 @@ import {validationResult} from 'express-validator';
 
 import User from '../models/User';
 import UserSession from '../models/UserSession';
+import Article from '../models/Article';
+import Comment from '../models/Comment';
+import Message from '../models/Message';
 import {registerValidators, loginValidators} from '../utils/validators';
 import {hash, compare} from '../utils/auth';
 
@@ -84,6 +87,27 @@ router.get('/logout/:token', async (req: Request, res: Response) => {
 	} catch (e) {
 		res.json({success: false});
 	}
+});
+
+router.delete('/:userId', async (req: Request, res: Response) => {
+	const user: any = await User.findOneAndUpdate(
+		{_id: req.params.userId},
+		{$set: {isRemoved: true}},
+		{new: true},
+	);
+
+	await UserSession.update(
+		{userId: req.params.userId, isRemoved: false},
+		{$set: {isRemoved: true}},
+		{new: true},
+	);
+
+	await UserSession.remove({userId: user._id});
+	await Article.remove({user: user._id});
+	await Comment.remove({user: user._id});
+	await Message.remove({user: user._id});
+
+	res.json({user});
 });
 
 export default router;

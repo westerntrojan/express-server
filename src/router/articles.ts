@@ -5,7 +5,6 @@ import {articleValidators, commentValidators} from '../utils/validators';
 
 import Article from '../models/Article';
 import Comment from '../models/Comment';
-import User from '../models/User';
 
 const router = Router();
 
@@ -30,10 +29,6 @@ router.post('/', articleValidators, async (req: Request, res: Response) => {
 	}
 
 	const article = await Article.create(req.body);
-
-	const user: any = await User.findById(req.body.user);
-	user.articles = user.articles + 1;
-	user.save();
 
 	res.json({article});
 });
@@ -77,10 +72,6 @@ router.delete('/:articleId', async (req: Request, res: Response) => {
 	const article: any = await Article.findByIdAndRemove(req.params.articleId);
 	await Comment.remove({articleId: req.params.articleId});
 
-	const user: any = await User.findById(article.user._id);
-	user.articles = user.articles - 1;
-	user.save();
-
 	res.json({article});
 });
 
@@ -114,19 +105,11 @@ router.post('/comments', commentValidators, async (req: Request, res: Response) 
 
 	comment = await comment.populate('user').execPopulate();
 
-	const user: any = await User.findById(req.body.user);
-	user.comments = user.comments + 1;
-	await user.save();
-
 	res.json({comment});
 });
 
 router.delete('/comments/:commentId', async (req: Request, res: Response) => {
-	const comment: any = await Comment.findByIdAndRemove(req.params.commentId);
-
-	const user: any = await User.findById(comment.user._id);
-	user.comments = user.comments - 1;
-	user.save();
+	const comment = await Comment.findByIdAndRemove(req.params.commentId);
 
 	res.json({comment});
 });

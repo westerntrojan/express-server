@@ -19,9 +19,9 @@ const MessageSchema: Schema = new Schema({
 });
 
 export interface MessageInterface extends Document {
-	user: any;
+	user: string;
 	text: string;
 	created: string;
 }
 
-export default model('messages', MessageSchema);
+export default model<MessageInterface>('messages', MessageSchema);
