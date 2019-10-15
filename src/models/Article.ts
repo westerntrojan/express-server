@@ -1,6 +1,6 @@
 import {Schema, model, Document} from 'mongoose';
 
-import {IComment} from './Comment';
+import {CommentInterface} from './Comment';
 
 const ArticleSchema: Schema = new Schema({
 	user: {
@@ -44,7 +44,7 @@ export interface ArticleInterface extends Document {
 	text: string;
 	image?: string;
 	views?: number;
-	comments: [IComment];
+	comments: [CommentInterface];
 	created: string;
 }
 

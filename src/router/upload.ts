@@ -10,7 +10,6 @@ router.post('/', (req: Request, res: Response) => {
 	form.parse(req);
 
 	form.on('fileBegin', (name, file) => {
-		console.log(name);
 		file.path = path.resolve(__dirname, '../..', 'upload', file.name);
 	});
 

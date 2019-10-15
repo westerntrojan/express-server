@@ -30,3 +30,4 @@ src/data
 src/__tests__
 package-lock.json
 ecosystem.config.js
+upload
