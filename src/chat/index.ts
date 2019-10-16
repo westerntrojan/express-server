@@ -3,18 +3,18 @@ import socketIo from 'socket.io';
 import redis from 'redis';
 import {Document} from 'mongoose';
 
-import Message from '../Models/Message';
+import Message, {MessageInterface} from '../Models/Message';
 
 const redisSub = redis.createClient();
 const redisPub = redis.createClient();
 
-const getMessages = async (limit = 10) =>
+const getMessages = async (limit = 10): Promise<MessageInterface[]> =>
 	await Message.find()
 		.populate('user')
 		.limit(limit)
 		.sort({created: 1});
 
-export default (server: http.Server) => {
+export default (server: http.Server): void => {
 	const io = socketIo(server);
 
 	let users = 0;
@@ -22,7 +22,9 @@ export default (server: http.Server) => {
 	io.on('connection', client => {
 		console.log('connection');
 		io.sockets.emit('active_users', ++users);
-		(async () => client.emit('pre_messages', await getMessages(10)))();
+		(async (): Promise<void> => {
+			client.emit('pre_messages', await getMessages(10));
+		})();
 
 		client.on('disconnect', () => {
 			console.log('disconnect');

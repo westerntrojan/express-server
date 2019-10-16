@@ -42,8 +42,8 @@ export interface ArticleInterface extends Document {
 	user: string;
 	title: string;
 	text: string;
-	image?: string;
-	views?: number;
+	image: string;
+	views: number;
 	comments: [CommentInterface];
 	created: string;
 }

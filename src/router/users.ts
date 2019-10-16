@@ -9,7 +9,13 @@ import {editUserValidators} from '../utils/validators';
 
 const router = Router();
 
-const getStatistics = async (userId: string) => {
+interface StatisticsInterface {
+	articles: number;
+	comments: number;
+	messages: number;
+}
+
+const getStatistics = async (userId: string): Promise<StatisticsInterface> => {
 	const articles = await Article.find({user: userId}).countDocuments();
 	const comments = await Comment.find({user: userId}).countDocuments();
 	const messages = await Message.find({user: userId}).countDocuments();
@@ -18,11 +24,13 @@ const getStatistics = async (userId: string) => {
 };
 
 router.get('/:userId', async (req: Request, res: Response) => {
-	const user: any = await User.findById(req.params.userId);
+	const user = await User.findById(req.params.userId);
 
-	const statistics = await getStatistics(req.params.userId);
+	if (user) {
+		const statistics = await getStatistics(req.params.userId);
 
-	res.json({user: {...user._doc, ...statistics}});
+		res.json({user: {...user._doc, ...statistics}});
+	}
 });
 
 router.put('/:userId', editUserValidators, async (req: Request, res: Response) => {
@@ -31,15 +39,13 @@ router.put('/:userId', editUserValidators, async (req: Request, res: Response) =
 		return res.json({errors: errors.array()});
 	}
 
-	const user: any = await User.findOneAndUpdate(
-		{_id: req.params.userId},
-		{$set: req.body},
-		{new: true},
-	);
+	const user = await User.findOneAndUpdate({_id: req.params.userId}, {$set: req.body}, {new: true});
 
-	const statistics = await getStatistics(req.params.userId);
+	if (user) {
+		const statistics = await getStatistics(req.params.userId);
 
-	res.json({user: {...user._doc, ...statistics}});
+		res.json({user: {...user._doc, ...statistics}});
+	}
 });
 
 export default router;

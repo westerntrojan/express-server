@@ -44,7 +44,7 @@ router.post('/login', loginValidators, async (req: Request, res: Response) => {
 		return res.json({errors: errors.array()});
 	}
 
-	const user: any = await User.findOne({username: req.body.username, isRemoved: false});
+	const user = await User.findOne({username: req.body.username, isRemoved: false});
 
 	if (user) {
 		const password = await compare(req.body.password, user.password);
@@ -62,7 +62,7 @@ router.post('/login', loginValidators, async (req: Request, res: Response) => {
 
 router.get('/verify/:token', async (req: Request, res: Response) => {
 	try {
-		const session: any = await UserSession.findOne({_id: req.params.token, isRemoved: false});
+		const session = await UserSession.findOne({_id: req.params.token, isRemoved: false});
 
 		if (session) {
 			const user = await User.findById(session.userId);
@@ -90,24 +90,28 @@ router.get('/logout/:token', async (req: Request, res: Response) => {
 });
 
 router.delete('/:userId', async (req: Request, res: Response) => {
-	const user: any = await User.findOneAndUpdate(
+	const user = await User.findOneAndUpdate(
 		{_id: req.params.userId},
 		{$set: {isRemoved: true}},
 		{new: true},
 	);
 
-	await UserSession.update(
-		{userId: req.params.userId, isRemoved: false},
-		{$set: {isRemoved: true}},
-		{new: true},
-	);
+	if (user) {
+		await UserSession.update(
+			{userId: user._id, isRemoved: false},
+			{$set: {isRemoved: true}},
+			{new: true},
+		);
 
-	await UserSession.remove({userId: user._id});
-	await Article.remove({user: user._id});
-	await Comment.remove({user: user._id});
-	await Message.remove({user: user._id});
+		await UserSession.remove({userId: user._id});
+		await Article.remove({user: user._id});
+		await Comment.remove({user: user._id});
+		await Message.remove({user: user._id});
 
-	res.json({user});
+		res.json({user});
+	}
+
+	res.end();
 });
 
 export default router;

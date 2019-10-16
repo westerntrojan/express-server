@@ -31,12 +31,15 @@ const UserSchema: Schema = new Schema({
 });
 
 export interface UserInterface extends Document {
+	_doc?: UserInterface;
 	username: string;
 	email: string;
 	password: string;
-	role?: number;
-	isRemoved?: boolean;
+	role: number;
+	isRemoved: boolean;
 	created: string;
 }
 
 export default model<UserInterface>('users', UserSchema);
+//
+//

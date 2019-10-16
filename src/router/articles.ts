@@ -69,14 +69,14 @@ router.put('/:articleId', articleValidators, async (req: Request, res: Response)
 });
 
 router.delete('/:articleId', async (req: Request, res: Response) => {
-	const article: any = await Article.findByIdAndRemove(req.params.articleId);
+	const article = await Article.findByIdAndRemove(req.params.articleId);
 	await Comment.remove({articleId: req.params.articleId});
 
 	res.json({article});
 });
 
 router.get('/views/:articleId', async (req: Request, res: Response) => {
-	const article: any = await Article.findById(req.params.articleId)
+	const article = await Article.findById(req.params.articleId)
 		.populate('comments', null, null, {
 			sort: {created: -1},
 			populate: {
@@ -85,8 +85,10 @@ router.get('/views/:articleId', async (req: Request, res: Response) => {
 		})
 		.populate('user');
 
-	article.views = article.views + 1;
-	article.save();
+	if (article) {
+		article.views = article.views + 1;
+		article.save();
+	}
 
 	res.json({article});
 });
@@ -98,10 +100,12 @@ router.post('/comments', commentValidators, async (req: Request, res: Response) 
 	}
 
 	let comment = await Comment.create(req.body);
-	const article: any = await Article.findById(req.body.articleId);
+	const article = await Article.findById(req.body.articleId);
 
-	article.comments.push(comment._id);
-	await article.save();
+	if (article) {
+		article.comments.push(comment._id);
+		await article.save();
+	}
 
 	comment = await comment.populate('user').execPopulate();
 
