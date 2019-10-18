@@ -1,5 +1,6 @@
 import {Request, Response, Router} from 'express';
 import {validationResult} from 'express-validator';
+import randomColor from 'randomcolor';
 
 import User from '../models/User';
 import UserSession from '../models/UserSession';
@@ -31,6 +32,7 @@ router.post('/register', registerValidators, async (req: Request, res: Response)
 		username: req.body.username,
 		email: req.body.email,
 		password: await hash(req.body.password),
+		avatar: randomColor({luminosity: 'dark', format: 'rgba'}),
 	});
 
 	const session = await UserSession.create({userId: user._id});

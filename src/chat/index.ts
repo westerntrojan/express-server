@@ -21,13 +21,10 @@ export default (server: http.Server): void => {
 
 	io.on('connection', client => {
 		console.log('connection');
-		io.sockets.emit('active_users', ++users);
-		(async (): Promise<void> => {
-			client.emit('pre_messages', await getMessages(10));
-		})();
 
 		client.on('disconnect', () => {
 			console.log('disconnect');
+
 			io.sockets.emit('active_users', --users);
 		});
 
@@ -35,6 +32,12 @@ export default (server: http.Server): void => {
 			console.log('received error from client:', client.id);
 			console.log(err);
 		});
+
+		io.sockets.emit('active_users', ++users);
+
+		(async (): Promise<void> => {
+			client.emit('pre_messages', await getMessages(10));
+		})();
 
 		client.on('new_message', async message => {
 			let newMessage: Document | null = await Message.create(message);

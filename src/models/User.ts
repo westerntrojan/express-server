@@ -1,4 +1,5 @@
 import {Schema, model, Document} from 'mongoose';
+import randomColor from 'randomcolor';
 
 const UserSchema: Schema = new Schema({
 	username: {
@@ -15,6 +16,10 @@ const UserSchema: Schema = new Schema({
 		type: String,
 		trim: true,
 		required: true,
+	},
+	avatar: {
+		type: String,
+		trim: true,
 	},
 	role: {
 		type: Number,
@@ -35,6 +40,7 @@ export interface UserInterface extends Document {
 	username: string;
 	email: string;
 	password: string;
+	avatar: string;
 	role: number;
 	isRemoved: boolean;
 	created: string;
