@@ -9,7 +9,6 @@ const MessageSchema: Schema = new Schema({
 	},
 	text: {
 		type: String,
-		trim: true,
 		required: true,
 	},
 	created: {

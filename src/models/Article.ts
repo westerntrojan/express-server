@@ -11,10 +11,10 @@ const ArticleSchema: Schema = new Schema({
 		type: String,
 		trim: true,
 		required: true,
+		unique: true,
 	},
 	text: {
 		type: String,
-		trim: true,
 		required: true,
 	},
 	image: {
@@ -32,10 +32,24 @@ const ArticleSchema: Schema = new Schema({
 			ref: 'comments',
 		},
 	],
+	slug: {
+		type: String,
+		trim: true,
+		default: '',
+	},
 	created: {
 		type: Date,
 		default: Date.now,
 	},
+});
+
+ArticleSchema.pre('save', function(next) {
+	(this as any).slug = (this as any).title
+		.split(' ')
+		.join('-')
+		.toLowerCase();
+
+	next();
 });
 
 export interface ArticleInterface extends Document {

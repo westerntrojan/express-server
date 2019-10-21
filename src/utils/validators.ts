@@ -13,8 +13,8 @@ export const articleValidators = [
 
 export const commentValidators = [
 	check('text')
-		.isLength({max: 4000})
-		.withMessage('Invalid Text(Max: 400)')
+		.isLength({max: 2000})
+		.withMessage('Invalid Text(Max: 2000)')
 		.trim(),
 ];
 

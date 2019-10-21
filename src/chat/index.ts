@@ -1,18 +1,7 @@
 import http from 'http';
 import socketIo from 'socket.io';
-import redis from 'redis';
-import {Document} from 'mongoose';
 
-import Message, {MessageInterface} from '../Models/Message';
-
-const redisSub = redis.createClient();
-const redisPub = redis.createClient();
-
-const getMessages = async (limit = 10): Promise<MessageInterface[]> =>
-	await Message.find()
-		.populate('user')
-		.limit(limit)
-		.sort({created: 1});
+import Chat from '../utils/chat';
 
 export default (server: http.Server): void => {
 	const io = socketIo(server);
@@ -21,6 +10,7 @@ export default (server: http.Server): void => {
 
 	io.on('connection', client => {
 		console.log('connection');
+		const chat = new Chat(client);
 
 		client.on('disconnect', () => {
 			console.log('disconnect');
@@ -29,30 +19,37 @@ export default (server: http.Server): void => {
 		});
 
 		client.on('error', (err: Error) => {
-			console.log('received error from client:', client.id);
-			console.log(err);
+			chat.error(err);
 		});
 
 		io.sockets.emit('active_users', ++users);
 
 		(async (): Promise<void> => {
-			client.emit('pre_messages', await getMessages(10));
+			try {
+				client.emit('pre_messages', await chat.getMessages(10));
+			} catch (err) {
+				chat.error(err);
+			}
 		})();
 
 		client.on('new_message', async message => {
-			let newMessage: Document | null = await Message.create(message);
-			newMessage = await Message.findById(newMessage._id).populate('user');
+			try {
+				const newMessage = await chat.newMessage(message);
 
-			redisPub.publish('new_message', JSON.stringify(newMessage));
-		});
-		redisSub.subscribe('new_message');
-		redisSub.on('message', (channel, message) => {
-			io.sockets.emit('new_message', JSON.parse(message));
+				io.sockets.emit('new_message', newMessage);
+			} catch (err) {
+				chat.error(err);
+			}
 		});
 
 		client.on('remove_messages', async messages => {
-			messages.map(async (_id: string) => await Message.findByIdAndRemove(_id));
-			io.sockets.emit('remove_messages', messages);
+			try {
+				messages.map(async (_id: string) => await chat.removeMessage(_id));
+
+				client.emit('remove_messages', messages);
+			} catch (err) {
+				chat.error(err);
+			}
 		});
 	});
 };

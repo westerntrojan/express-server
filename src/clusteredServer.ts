@@ -1,18 +1,22 @@
 import cluster from 'cluster';
 import os from 'os';
 
+import getLogger from './utils/logger';
+
+const logger = getLogger(module);
+
 if (cluster.isMaster) {
 	const cpus = os.cpus().length;
 
-	console.log(`Clustering to ${cpus} CPUs`);
+	logger.info(`Clustering to ${cpus} CPUs`);
 
 	cluster.on('exit', worker => {
-		console.log(`Worker ${worker.process.pid} stopped working`);
+		logger.warn(`Worker ${worker.process.pid} stopped working`);
 		cluster.fork();
 	});
 
 	cluster.on('fork', worker => {
-		console.log(`Worker ${worker.process.pid} started`);
+		logger.info(`Worker ${worker.process.pid} started`);
 	});
 
 	for (let i = 0; i < cpus; i++) {

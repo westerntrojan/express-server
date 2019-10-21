@@ -1,4 +1,4 @@
-import express, {Application, Request, Response} from 'express';
+import express, {Application, Request, Response, NextFunction} from 'express';
 import morgan from 'morgan';
 import errorHandler from 'errorhandler';
 import helmet from 'helmet';
@@ -53,13 +53,13 @@ app.use('/api', router);
 
 // 404
 app.use((req, res) => {
-	res.status(404).send('Sorry cant find that !');
+	res.status(404).json({error: 'Sorry cant find that !'});
 });
 
 // 500
-app.use((err: Error, req: Request, res: Response) => {
-	console.error(err.stack);
-	res.status(500).send('Something broke !');
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+	logger.error(err);
+	res.status(500).json({error: {msg: 'Error. Try again'}});
 });
 
 export default app;

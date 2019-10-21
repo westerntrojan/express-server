@@ -1,5 +1,4 @@
 import {Schema, model, Document} from 'mongoose';
-import randomColor from 'randomcolor';
 
 const UserSchema: Schema = new Schema({
 	username: {
@@ -29,10 +28,24 @@ const UserSchema: Schema = new Schema({
 		type: Boolean,
 		default: false,
 	},
+	slug: {
+		type: String,
+		trim: true,
+		default: '',
+	},
 	created: {
 		type: Date,
 		default: Date.now,
 	},
+});
+
+UserSchema.pre('save', function(next) {
+	(this as any).slug = (this as any).username
+		.split(' ')
+		.join('-')
+		.toLowerCase();
+
+	next();
 });
 
 export interface UserInterface extends Document {
@@ -43,9 +56,8 @@ export interface UserInterface extends Document {
 	avatar: string;
 	role: number;
 	isRemoved: boolean;
+	slug: string;
 	created: string;
 }
 
 export default model<UserInterface>('users', UserSchema);
-//
-//

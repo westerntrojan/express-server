@@ -1,51 +1,53 @@
-import {Request, Response, Router} from 'express';
+import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 
 import User from '../models/User';
-import Article from '../models/Article';
-import Comment from '../models/Comment';
-import Message from '../models/Message';
+import getStatistics from '../utils/userStatistics';
 import {editUserValidators} from '../utils/validators';
 
 const router = Router();
 
-interface StatisticsInterface {
-	articles: number;
-	comments: number;
-	messages: number;
-}
+router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const user = await User.findOne({slug: req.params.slug, isRemoved: false});
 
-const getStatistics = async (userId: string): Promise<StatisticsInterface> => {
-	const articles = await Article.find({user: userId}).countDocuments();
-	const comments = await Comment.find({user: userId}).countDocuments();
-	const messages = await Message.find({user: userId}).countDocuments();
+		if (user) {
+			const statistics = await getStatistics(user._id);
 
-	return {articles, comments, messages};
-};
-
-router.get('/:userId', async (req: Request, res: Response) => {
-	const user = await User.findById(req.params.userId);
-
-	if (user) {
-		const statistics = await getStatistics(req.params.userId);
-
-		res.json({user: {...user._doc, ...statistics}});
+			res.json({user: {...user._doc, ...statistics}});
+		}
+	} catch (err) {
+		next(err);
 	}
 });
 
-router.put('/:userId', editUserValidators, async (req: Request, res: Response) => {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.json({errors: errors.array()});
-	}
+router.put(
+	'/:userId',
+	editUserValidators,
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.json({errors: errors.array()});
+			}
 
-	const user = await User.findOneAndUpdate({_id: req.params.userId}, {$set: req.body}, {new: true});
+			const slug = req.body.username.toLowerCase();
 
-	if (user) {
-		const statistics = await getStatistics(req.params.userId);
+			const user = await User.findOneAndUpdate(
+				{_id: req.params.userId},
+				{$set: {...req.body, slug}},
+				{new: true},
+			);
 
-		res.json({user: {...user._doc, ...statistics}});
-	}
-});
+			if (user) {
+				const statistics = await getStatistics(req.params.userId);
+
+				res.json({user: {...user._doc, ...statistics}});
+			}
+		} catch (err) {
+			next(err);
+		}
+	},
+);
 
 export default router;
