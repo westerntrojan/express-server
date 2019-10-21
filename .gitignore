@@ -24,10 +24,11 @@ yarn-error.log*
 
 .vscode
 .env
-info.txt
 logs
-src/data
 src/__tests__
 package-lock.json
+
 ecosystem.config.js
-upload
+.eslintignore
+.eslintrc.json
+.prettierrc.json

@@ -4,7 +4,7 @@ import getLogger from './logger';
 
 const logger = getLogger(module);
 
-export default class Chat {
+export default class {
 	constructor(private client: any) {}
 
 	error = (err: Error): void => {
