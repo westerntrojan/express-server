@@ -4,7 +4,6 @@
 
 - Node.js / Express.js
 - MongoDB / Mongoose
-- Redis
 
 ### Other
 
