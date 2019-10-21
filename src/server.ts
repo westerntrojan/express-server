@@ -1,5 +1,4 @@
 import http from 'http';
-import optimist from 'optimist';
 
 import getLogger from './utils/logger';
 import app from './app';
@@ -13,7 +12,7 @@ server.timeout = 5000;
 
 io(server);
 
-const port = optimist.argv.port || process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 server.listen(port, () =>
 	logger.info(`Server listening on http://127.0.0.1:${port}. Started worker ${pid}`),
 );
