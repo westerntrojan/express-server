@@ -38,6 +38,8 @@ mongoose
 
 // middleware
 if (isProd) {
+	console.log('PRODUCTION');
+
 	app.use(morgan('combined'));
 } else {
 	app.use(morgan('dev'));

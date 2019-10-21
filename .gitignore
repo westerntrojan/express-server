@@ -23,12 +23,14 @@ yarn-debug.log*
 yarn-error.log*
 
 .vscode
-.env
+build
 logs
-src/__tests__
+info.txt
 package-lock.json
 
 ecosystem.config.js
 .eslintignore
 .eslintrc.json
 .prettierrc.json
+
+src/__tests__
