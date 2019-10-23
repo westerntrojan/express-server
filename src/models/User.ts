@@ -1,4 +1,5 @@
 import {Schema, model, Document} from 'mongoose';
+import slugify from 'slugify';
 
 const UserSchema: Schema = new Schema({
 	username: {
@@ -40,10 +41,10 @@ const UserSchema: Schema = new Schema({
 });
 
 UserSchema.pre('save', function(next) {
-	(this as any).slug = (this as any).username
-		.split(' ')
-		.join('-')
-		.toLowerCase();
+	(this as any).slug = slugify((this as any).username, {
+		lower: true,
+		replacement: '-',
+	});
 
 	next();
 });

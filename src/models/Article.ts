@@ -1,4 +1,5 @@
 import {Schema, model, Document} from 'mongoose';
+import slugify from 'slugify';
 
 import {CommentInterface} from './Comment';
 
@@ -44,10 +45,10 @@ const ArticleSchema: Schema = new Schema({
 });
 
 ArticleSchema.pre('save', function(next) {
-	(this as any).slug = (this as any).title
-		.split(' ')
-		.join('-')
-		.toLowerCase();
+	(this as any).slug = slugify((this as any).title, {
+		lower: true,
+		replacement: '-',
+	});
 
 	next();
 });
