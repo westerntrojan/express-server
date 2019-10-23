@@ -2,8 +2,8 @@ import {check} from 'express-validator';
 
 export const articleValidators = [
 	check('title')
-		.isLength({max: 40})
-		.withMessage('Invalid Title(Max: 40)')
+		.isLength({max: 100})
+		.withMessage('Invalid Title(Max: 100)')
 		.trim(),
 	check('text')
 		.isLength({max: 4000})
