@@ -33,7 +33,6 @@
 		"@types/morgan": "^1.7.37",
 		"@types/multipipe": "^3.0.0",
 		"@types/node": "^12.7.3",
-		"@types/optimist": "^0.0.29",
 		"@types/randomcolor": "^0.5.3",
 		"@types/response-time": "^2.3.4",
 		"@types/socket.io": "^2.1.3",
