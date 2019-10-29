@@ -26,7 +26,11 @@ yarn-error.log*
 build
 logs
 package-lock.json
+public
 
 ecosystem.config.js
 
 src/__tests__
+
+now.json
+.nowignore

@@ -3,6 +3,10 @@ import mongoose, {Schema, model, Document} from 'mongoose';
 delete mongoose.connection.models['messages'];
 
 const MessageSchema: Schema = new Schema({
+	chatId: {
+		type: 'string',
+		default: 'main',
+	},
 	user: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
@@ -18,7 +22,8 @@ const MessageSchema: Schema = new Schema({
 });
 
 export interface MessageInterface extends Document {
-	user: string;
+	chatId: string;
+	user: any;
 	text: string;
 	created: string;
 }

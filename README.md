@@ -4,8 +4,8 @@
 
 - Node.js / Express.js
 - MongoDB / Mongoose
+- socket.io
 
 ### Other
 
-- socket.io
 - moment.js

@@ -36,7 +36,7 @@ router.post(
 				username: req.body.username,
 				email: req.body.email,
 				password: await hash(req.body.password),
-				avatar: randomColor({luminosity: 'dark', format: 'rgba'}),
+				avatar: randomColor({luminosity: 'dark', format: 'rgb'}),
 			});
 
 			const session = await UserSession.create({userId: user._id});
@@ -112,12 +112,6 @@ router.delete('/:userId', async (req: Request, res: Response, next: NextFunction
 		);
 
 		if (user) {
-			await UserSession.update(
-				{userId: user._id, isRemoved: false},
-				{$set: {isRemoved: true}},
-				{new: true},
-			);
-
 			await UserSession.remove({userId: user._id});
 			await Article.remove({user: user._id});
 			await Comment.remove({user: user._id});

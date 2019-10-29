@@ -17,18 +17,14 @@ import router from './router';
 dotenv.config();
 const logger = getLogger(module);
 
-const isProd = process.env.NODE_ENV === 'production';
-
 const app: Application = express();
 const apiLimiter = new rateLimit({
 	windowMs: 15 * 60 * 1000,
 	max: 100,
 });
 
-const MONGO_URI = isProd ? process.env.MONGO_URI_PROD : process.env.MONGO_URI_DEV;
-
 mongoose
-	.connect(`${MONGO_URI}`, {
+	.connect(String(process.env.MONGO_URI), {
 		useNewUrlParser: true,
 		useCreateIndex: true,
 		useFindAndModify: false,
@@ -37,7 +33,7 @@ mongoose
 	.catch((err: Error) => logger.error(err.message));
 
 // middleware
-if (isProd) {
+if (process.env.NODE_ENV === 'production') {
 	app.use(morgan('combined'));
 } else {
 	app.use(morgan('dev'));

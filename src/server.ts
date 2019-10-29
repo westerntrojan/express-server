@@ -2,7 +2,7 @@ import http from 'http';
 
 import getLogger from './utils/logger';
 import app from './app';
-import io from './chat';
+import io from './sockets';
 
 const logger = getLogger(module);
 

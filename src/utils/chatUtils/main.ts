@@ -1,24 +1,25 @@
-import Message, {MessageInterface} from '../models/Message';
+import {Socket} from 'socket.io';
 
-import getLogger from './logger';
+import Message, {MessageInterface} from '../../models/Message';
+
+import getLogger from '../logger';
 
 const logger = getLogger(module);
 
 export default class {
-	constructor(private client: any) {}
+	constructor(private socket: Socket) {}
 
 	error = (err: Error): void => {
-		logger.error(`client.id: ${this.client.id}`);
+		logger.error(`socket.id: ${this.socket.id}`);
 		logger.error(err);
 
-		this.client.emit('user_error', {error: {msg: 'Error. Try reload page'}});
+		this.socket.emit('user_error', {error: {msg: 'Error. Try reload page'}});
 	};
 
 	getMessages = async (limit = 10): Promise<MessageInterface[]> => {
-		return await Message.find()
+		return await Message.find({chatId: 'main'})
 			.populate('user')
-			.limit(limit)
-			.sort({created: -1});
+			.limit(limit);
 	};
 
 	newMessage = async (message: MessageInterface): Promise<MessageInterface | null> => {
