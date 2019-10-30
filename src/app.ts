@@ -6,10 +6,10 @@ import hpp from 'hpp';
 import responseTime from 'response-time';
 import rateLimit from 'express-rate-limit';
 import compression from 'compression';
-import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 import getLogger from './utils/logger';
 import router from './router';
@@ -28,6 +28,7 @@ mongoose
 		useNewUrlParser: true,
 		useCreateIndex: true,
 		useFindAndModify: false,
+		useUnifiedTopology: true,
 	})
 	.then(() => logger.info('MongoDB'))
 	.catch((err: Error) => logger.error(err.message));
@@ -38,12 +39,12 @@ if (process.env.NODE_ENV === 'production') {
 } else {
 	app.use(morgan('dev'));
 }
+app.use(cors());
 app.use(errorHandler());
 app.use(helmet());
 app.use(hpp());
 app.use(responseTime());
 app.use('/api/', apiLimiter);
-app.use('/api/', cors());
 app.use(compression());
 app.use(bodyParser.urlencoded({extended: true, limit: '1mb'}));
 app.use(bodyParser.json());

@@ -10,7 +10,8 @@
 		"lint": "eslint --fix src/**/*.ts",
 		"prettify": "prettier ./src/**/*.ts --write",
 		"test": "jest --watch",
-		"coverage": "jest --coverage"
+		"coverage": "jest --coverage",
+		"deploy": "yarn build & now --prod"
 	},
 	"keywords": [],
 	"author": "",

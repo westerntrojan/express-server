@@ -31,6 +31,3 @@ public
 ecosystem.config.js
 
 src/__tests__
-
-now.json
-.nowignore
