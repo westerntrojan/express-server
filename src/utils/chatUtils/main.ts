@@ -19,6 +19,7 @@ export default class {
 	getMessages = async (limit = 10): Promise<MessageInterface[]> => {
 		return await Message.find({chatId: 'main'})
 			.populate('user')
+			.sort({created: -1})
 			.limit(limit);
 	};
 

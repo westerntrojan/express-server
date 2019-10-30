@@ -49,7 +49,7 @@ export default (io: Server): void => {
 					chatId = chat._id;
 					socket.join(chatId);
 
-					const newMessage = await chatUtils.newMessage({...message, chatId});
+					const newMessage = await chatUtils.newMessage({chatId, user: message.from, ...message});
 
 					users.to(chatId).emit('new_message', newMessage);
 				}
