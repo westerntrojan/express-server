@@ -2,7 +2,6 @@ import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 
 import {articleValidators, commentValidators} from '../utils/validators';
-
 import Article from '../models/Article';
 import Comment from '../models/Comment';
 
@@ -12,6 +11,8 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const articles = await Article.find()
 			.sort({created: -1})
+			.skip(Number(req.query.skip))
+			.limit(10)
 			.populate('comments', null, null, {
 				sort: {created: -1},
 				populate: {
@@ -33,12 +34,13 @@ router.post('/', articleValidators, async (req: Request, res: Response, next: Ne
 			return res.json({errors: errors.array()});
 		}
 
-		const vaidationArticle = await Article.findOne({title: req.body.title});
-		if (vaidationArticle) {
+		const validationArticle = await Article.findOne({title: req.body.title});
+		if (validationArticle) {
 			return res.json({errors: [{msg: 'Article with the same title already exists'}]});
 		}
 
-		const article = await Article.create(req.body);
+		const newArticle = await Article.create(req.body);
+		const article = await Article.findById(newArticle._id).populate('user');
 
 		res.json({article});
 	} catch (err) {
@@ -46,9 +48,9 @@ router.post('/', articleValidators, async (req: Request, res: Response, next: Ne
 	}
 });
 
-router.get('/:articleId', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const article = await Article.findById(req.params.articleId)
+		const article = await Article.findOne({slug: req.params.slug})
 			.populate('comments', null, null, {
 				sort: {created: -1},
 				populate: {
@@ -73,8 +75,8 @@ router.put(
 				return res.json({errors: errors.array()});
 			}
 
-			const vaidationArticle = await Article.findOne({title: req.body.title});
-			if (vaidationArticle) {
+			const validationArticle = await Article.findOne({title: req.body.title});
+			if (validationArticle && String(validationArticle._id) !== req.params.articleId) {
 				return res.json({errors: [{msg: 'Article with the same title already exists'}]});
 			}
 
@@ -106,9 +108,12 @@ router.put(
 router.delete('/:articleId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const article = await Article.findByIdAndRemove(req.params.articleId);
-		await Comment.remove({articleId: req.params.articleId});
 
-		res.json({article});
+		if (article) {
+			await Comment.deleteMany({articleId: article._id});
+
+			res.json({article});
+		}
 	} catch (err) {
 		next(err);
 	}
@@ -116,7 +121,11 @@ router.delete('/:articleId', async (req: Request, res: Response, next: NextFunct
 
 router.get('/views/:slug', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const article = await Article.findOne({slug: req.params.slug})
+		const article = await Article.findOneAndUpdate(
+			{slug: req.params.slug},
+			{$inc: {views: 1}},
+			{new: true},
+		)
 			.populate('comments', null, null, {
 				sort: {created: -1},
 				populate: {
@@ -124,11 +133,6 @@ router.get('/views/:slug', async (req: Request, res: Response, next: NextFunctio
 				},
 			})
 			.populate('user');
-
-		if (article) {
-			article.views = article.views + 1;
-			article.save();
-		}
 
 		res.json({article});
 	} catch (err) {
@@ -147,12 +151,8 @@ router.post(
 			}
 
 			let comment = await Comment.create(req.body);
-			const article = await Article.findById(req.body.articleId);
 
-			if (article) {
-				article.comments.push(comment._id);
-				await article.save();
-			}
+			await Article.updateOne({_id: req.body.articleId}, {$push: {comments: comment._id}});
 
 			comment = await comment.populate('user').execPopulate();
 

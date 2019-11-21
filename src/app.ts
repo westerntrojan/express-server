@@ -29,6 +29,7 @@ mongoose
 		useCreateIndex: true,
 		useFindAndModify: false,
 		useUnifiedTopology: true,
+		autoIndex: process.env.NODE_ENV !== 'production',
 	})
 	.then(() => logger.info('MongoDB'))
 	.catch((err: Error) => logger.error(err.message));
@@ -59,7 +60,7 @@ app.use((req, res) => {
 
 // 500
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-	logger.error(err);
+	logger.error(err.message);
 	res.status(500).json({error: {msg: 'Error. Try again'}});
 });
 

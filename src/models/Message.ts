@@ -1,6 +1,4 @@
-import mongoose, {Schema, model, Document} from 'mongoose';
-
-delete mongoose.connection.models['messages'];
+import {Schema, model, Document} from 'mongoose';
 
 const MessageSchema: Schema = new Schema({
 	chatId: {

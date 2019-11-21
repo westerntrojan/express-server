@@ -41,6 +41,14 @@ export default (io: Server): void => {
 			}
 		});
 
+		socket.on('typing', () => {
+			socket.to(chatId).emit('typing');
+		});
+
+		socket.on('typing_end', () => {
+			socket.to(chatId).emit('typing_end');
+		});
+
 		socket.on('first_message', async message => {
 			try {
 				const chat = await chatUtils.newChat({from: message.from, to: message.to});
@@ -51,7 +59,7 @@ export default (io: Server): void => {
 
 					const newMessage = await chatUtils.newMessage({chatId, user: message.from, ...message});
 
-					users.to(chatId).emit('new_message', newMessage);
+					users.in(chatId).emit('new_message', newMessage);
 				}
 			} catch (err) {
 				chatUtils.error(err);
@@ -62,7 +70,7 @@ export default (io: Server): void => {
 			try {
 				const newMessage = await chatUtils.newMessage({...message, chatId});
 
-				users.to(chatId).emit('new_message', newMessage);
+				users.in(chatId).emit('new_message', newMessage);
 			} catch (err) {
 				chatUtils.error(err);
 			}
@@ -72,7 +80,7 @@ export default (io: Server): void => {
 			try {
 				await messages.map(async (_id: string) => await chatUtils.removeMessage(_id));
 
-				users.to(chatId).emit('remove_messages', messages);
+				users.in(chatId).emit('remove_messages', messages);
 			} catch (err) {
 				chatUtils.error(err);
 			}

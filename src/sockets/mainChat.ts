@@ -15,24 +15,22 @@ export default (io: Server): void => {
 		socket.on('disconnect', () => {
 			console.log('[main] disconnect');
 
-			main.emit('active_users', --users);
+			main.emit('active_users', !users ? users : --users);
 		});
 
 		socket.on('error', (err: Error) => {
 			chatUtils.error(err);
 		});
 
-		socket.on('user_connect', () => {
-			main.emit('active_users', ++users);
-		});
-
-		(async (): Promise<void> => {
+		socket.on('user_connect', async () => {
 			try {
+				main.emit('active_users', ++users);
+
 				socket.emit('pre_messages', await chatUtils.getMessages(10));
 			} catch (err) {
 				chatUtils.error(err);
 			}
-		})();
+		});
 
 		socket.on('new_message', async message => {
 			try {
@@ -48,7 +46,7 @@ export default (io: Server): void => {
 			try {
 				await messages.map(async (_id: string) => await chatUtils.removeMessage(_id));
 
-				socket.emit('remove_messages', messages);
+				main.emit('remove_messages', messages);
 			} catch (err) {
 				chatUtils.error(err);
 			}

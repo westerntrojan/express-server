@@ -34,17 +34,6 @@ export const registerValidators = [
 		.trim(),
 ];
 
-export const loginValidators = [
-	check('username')
-		.isLength({max: 40})
-		.withMessage('Invalid Username(Max: 40)')
-		.trim(),
-	check('password')
-		.isLength({min: 4, max: 240})
-		.withMessage('Invalid Password(Min: 4, Max: 240)')
-		.trim(),
-];
-
 export const editUserValidators = [
 	check('username')
 		.isLength({max: 40})

@@ -7,7 +7,7 @@ import UserSession from '../models/UserSession';
 import Article from '../models/Article';
 import Comment from '../models/Comment';
 import Message from '../models/Message';
-import {registerValidators, loginValidators} from '../utils/validators';
+import {registerValidators} from '../utils/validators';
 import {hash, compare} from '../utils/auth';
 
 const router = Router();
@@ -48,13 +48,8 @@ router.post(
 	},
 );
 
-router.post('/login', loginValidators, async (req: Request, res: Response, next: NextFunction) => {
+router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.json({errors: errors.array()});
-		}
-
 		const user = await User.findOne({username: req.body.username, isRemoved: false});
 
 		if (user) {
@@ -91,10 +86,9 @@ router.get('/verify/:token', async (req: Request, res: Response, next: NextFunct
 
 router.get('/logout/:token', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		await UserSession.update(
+		await UserSession.updateMany(
 			{_id: req.params.token, isRemoved: false},
 			{$set: {isRemoved: true}},
-			{new: true},
 		);
 
 		res.json({success: true});
@@ -112,10 +106,10 @@ router.delete('/:userId', async (req: Request, res: Response, next: NextFunction
 		);
 
 		if (user) {
-			await UserSession.remove({userId: user._id});
-			await Article.remove({user: user._id});
-			await Comment.remove({user: user._id});
-			await Message.remove({user: user._id});
+			await UserSession.deleteMany({userId: user._id});
+			await Article.deleteMany({user: user._id});
+			await Comment.deleteMany({user: user._id});
+			await Message.deleteMany({user: user._id});
 
 			res.json({user});
 		}

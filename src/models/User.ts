@@ -32,13 +32,14 @@ const UserSchema: Schema = new Schema({
 	slug: {
 		type: String,
 		trim: true,
-		default: '',
 	},
 	created: {
 		type: Date,
 		default: Date.now,
 	},
 });
+
+UserSchema.index({slug: 1}, {name: 'slug_index'});
 
 UserSchema.pre('save', function(next) {
 	(this as any).slug = slugify((this as any).username, {
@@ -50,7 +51,6 @@ UserSchema.pre('save', function(next) {
 });
 
 export interface UserInterface extends Document {
-	_doc?: UserInterface;
 	username: string;
 	email: string;
 	password: string;

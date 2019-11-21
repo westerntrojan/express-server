@@ -14,8 +14,10 @@ router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => 
 		if (user) {
 			const statistics = await getStatistics(user._id);
 
-			res.json({user: {...user._doc, ...statistics}});
+			return res.json({success: true, user: {...user.toObject(), ...statistics}});
 		}
+
+		res.json({success: false});
 	} catch (err) {
 		next(err);
 	}
@@ -42,7 +44,7 @@ router.put(
 			if (user) {
 				const statistics = await getStatistics(req.params.userId);
 
-				res.json({user: {...user._doc, ...statistics}});
+				res.json({user: {...user.toObject(), ...statistics}});
 			}
 		} catch (err) {
 			next(err);

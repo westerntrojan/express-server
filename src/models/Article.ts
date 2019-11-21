@@ -36,13 +36,15 @@ const ArticleSchema: Schema = new Schema({
 	slug: {
 		type: String,
 		trim: true,
-		default: '',
+		required: true,
 	},
 	created: {
 		type: Date,
 		default: Date.now,
 	},
 });
+
+ArticleSchema.index({slug: 1}, {name: 'slug_index', unique: true});
 
 ArticleSchema.pre('save', function(next) {
 	(this as any).slug = slugify((this as any).title, {
