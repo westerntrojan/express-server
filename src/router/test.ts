@@ -1,4 +1,5 @@
 import {Router, Request, Response} from 'express';
+import {Op} from 'sequelize';
 import slugify from 'slugify';
 
 import {Article, Comment, Tag} from '../sequelize';
@@ -11,15 +12,15 @@ router.get('/', async (req: Request, res: Response) => {
 
 	const articles = await Article.findAll({
 		where: {
-			$or: [
+			[Op.or]: [
 				{
 					title: {
-						$like: `%${s}%`,
+						[Op.like]: `%${s}%`,
 					},
 				},
 				{
 					text: {
-						$like: `%${s}%`,
+						[Op.like]: `%${s}%`,
 					},
 				},
 			],
@@ -48,13 +49,15 @@ router.get('/articles/add', async (req: Request, res: Response) => {
 
 	const article = await Article.create({title, text});
 
-	tags.split(',').map(async (name: string) => {
-		const tag = await Tag.findOne({where: {name}});
+	if (tags) {
+		tags.split(',').map(async (name: string) => {
+			const tag = await Tag.findOne({where: {name}});
 
-		if (tag) {
-			article.setTags([tag]);
-		}
-	});
+			if (tag) {
+				article.setTags([tag]);
+			}
+		});
+	}
 
 	res.json({article});
 });
@@ -76,19 +79,21 @@ router.get('/articles/:slug', async (req: Request, res: Response) => {
 router.get('/articles/update/:articleId', async (req: Request, res: Response) => {
 	const {title, text, tags} = req.query;
 
-	const slug = slugify(title, {
-		lower: true,
-		replacement: '-',
-	});
+	if (title && text) {
+		const slug = slugify(title, {
+			lower: true,
+			replacement: '-',
+		});
 
-	await Article.update(
-		{title, text, slug},
-		{
-			where: {
-				id: req.params.articleId,
+		await Article.update(
+			{title, text, slug},
+			{
+				where: {
+					id: req.params.articleId,
+				},
 			},
-		},
-	);
+		);
+	}
 
 	const article = await Article.findByPk(req.params.articleId);
 
@@ -128,9 +133,9 @@ router.get('/comments', async (req: Request, res: Response) => {
 	res.json({comments});
 });
 router.get('/comments/add', async (req: Request, res: Response) => {
-	const {text, article_id} = req.query;
+	const {text, articleId} = req.query;
 
-	const comment = await Comment.create({text, article_id});
+	const comment = await Comment.create({text, articleId});
 
 	res.json({comment});
 });

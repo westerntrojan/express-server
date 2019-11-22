@@ -3,27 +3,38 @@ import {Model, DataTypes} from 'sequelize';
 import db from '../db';
 
 class ArticlesTags extends Model {
-	public article_id!: number;
-	public tag_id!: number;
+	public articleId!: number;
+	public tagId!: number;
 
-	public readonly created_at!: Date;
-	public readonly updated_at!: Date;
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
 }
 
 ArticlesTags.init(
 	{
-		article_id: {
+		articleId: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
+			field: 'article_id',
 		},
-		tag_id: {
+		tagId: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
+			field: 'tag_id',
+		},
+		createdAt: {
+			type: DataTypes.DATE,
+			field: 'created_at',
+		},
+		updatedAt: {
+			type: DataTypes.DATE,
+			field: 'updated_at',
 		},
 	},
 	{
 		sequelize: db,
 		tableName: 'article_tag',
+		underscored: true,
 	},
 );
 

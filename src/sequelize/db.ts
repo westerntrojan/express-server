@@ -11,6 +11,8 @@ const sequelize = new Sequelize('delo', 'root', '', {
 	logging: (msg: string): Logger => logger.debug(msg),
 });
 
+sequelize.sync();
+
 sequelize
 	.authenticate()
 	.then(() => logger.info('MySQL'))

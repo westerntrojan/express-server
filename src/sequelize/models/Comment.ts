@@ -3,34 +3,45 @@ import {Model, DataTypes} from 'sequelize';
 import db from '../db';
 
 class Comment extends Model {
-	public comment_id!: number;
+	public commentId!: number;
 	public text!: string;
-	public article_id!: number;
+	public articleId!: number;
 
-	public readonly created_at!: Date;
-	public readonly updated_at!: Date;
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
 }
 
 Comment.init(
 	{
-		comment_id: {
+		commentId: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			autoIncrement: true,
 			primaryKey: true,
 			allowNull: false,
+			field: 'comment_id',
 		},
 		text: {
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
-		article_id: {
+		articleId: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
+			field: 'article_id',
+		},
+		createdAt: {
+			type: DataTypes.DATE,
+			field: 'created_at',
+		},
+		updatedAt: {
+			type: DataTypes.DATE,
+			field: 'updated_at',
 		},
 	},
 	{
 		sequelize: db,
 		tableName: 'comment',
+		underscored: true,
 	},
 );
 

@@ -1,4 +1,4 @@
-import {Model, DataTypes, HasManyAddAssociationMixin, literal} from 'sequelize';
+import {Model, DataTypes, HasManyAddAssociationMixin} from 'sequelize';
 import slugify from 'slugify';
 
 import db from '../db';
@@ -6,13 +6,13 @@ import Comment from './Comment';
 import Tag from './Tag';
 
 class Article extends Model {
-	public article_id!: number;
+	public articleId!: number;
 	public title!: string;
 	public text!: string;
 	public slug!: string;
 
-	public readonly created_at!: Date;
-	public readonly updated_at!: Date;
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
 
 	public setTags!: HasManyAddAssociationMixin<Article, Tag[]>;
 	public addTag!: HasManyAddAssociationMixin<Article, Tag>;
@@ -22,11 +22,12 @@ class Article extends Model {
 
 Article.init(
 	{
-		article_id: {
+		articleId: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			autoIncrement: true,
 			primaryKey: true,
 			allowNull: false,
+			field: 'article_id',
 		},
 		title: {
 			type: new DataTypes.STRING(255),
@@ -40,10 +41,19 @@ Article.init(
 			type: new DataTypes.STRING(255),
 			allowNull: false,
 		},
+		createdAt: {
+			type: DataTypes.DATE,
+			field: 'created_at',
+		},
+		updatedAt: {
+			type: DataTypes.DATE,
+			field: 'updated_at',
+		},
 	},
 	{
 		sequelize: db,
 		tableName: 'article',
+		underscored: true,
 		indexes: [
 			{
 				fields: ['title', 'slug'],
@@ -62,8 +72,8 @@ Article.beforeValidate((article: Article) => {
 
 // one to many
 Article.hasMany(Comment, {
-	sourceKey: 'article_id',
-	foreignKey: 'article_id',
+	sourceKey: 'articleId',
+	foreignKey: 'articleId',
 	as: 'comments',
 	onDelete: 'cascade',
 });
@@ -72,15 +82,15 @@ Article.hasMany(Comment, {
 Article.belongsToMany(Tag, {
 	through: 'article_tag',
 	as: 'tags',
-	foreignKey: 'article_id',
-	otherKey: 'tag_id',
+	foreignKey: 'articleId',
+	otherKey: 'tagId',
 	onDelete: 'cascade',
 });
 Tag.belongsToMany(Article, {
 	through: 'article_tag',
 	as: 'articles',
-	foreignKey: 'tag_id',
-	otherKey: 'article_id',
+	foreignKey: 'tagId',
+	otherKey: 'articleId',
 	onDelete: 'cascade',
 });
 

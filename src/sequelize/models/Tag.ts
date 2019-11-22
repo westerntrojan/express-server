@@ -4,21 +4,22 @@ import slugify from 'slugify';
 import db from '../db';
 
 class Tag extends Model {
-	public tag_id!: number;
+	public tagId!: number;
 	public name!: string;
 	public slug!: string;
 
-	public readonly created_at!: Date;
-	public readonly updated_at!: Date;
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
 }
 
 Tag.init(
 	{
-		tag_id: {
+		tagId: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			autoIncrement: true,
 			primaryKey: true,
 			allowNull: false,
+			field: 'tag_id',
 		},
 		name: {
 			type: new DataTypes.STRING(255),
@@ -28,10 +29,19 @@ Tag.init(
 			type: new DataTypes.STRING(255),
 			allowNull: false,
 		},
+		createdAt: {
+			type: DataTypes.DATE,
+			field: 'created_at',
+		},
+		updatedAt: {
+			type: DataTypes.DATE,
+			field: 'updated_at',
+		},
 	},
 	{
 		sequelize: db,
 		tableName: 'tag',
+		underscored: true,
 		indexes: [
 			{
 				fields: ['name', 'slug'],
