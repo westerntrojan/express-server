@@ -173,4 +173,25 @@ router.delete('/comments/:commentId', async (req: Request, res: Response, next: 
 	}
 });
 
+router.get('/get/statistics', async (req: Request, res: Response, next: NextFunction) => {
+	const articles = await Article.find()
+		.sort({views: -1})
+		.limit(10)
+		.populate('comments');
+
+	const data = {
+		labels: articles.map(article => {
+			if (article.title.length > 10) {
+				return `${article.title.slice(0, 10)}...`;
+			}
+
+			return article.title;
+		}),
+		views: articles.map(article => article.views),
+		comments: articles.map(article => article.comments.length),
+	};
+
+	res.json({data});
+});
+
 export default router;
