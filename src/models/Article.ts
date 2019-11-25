@@ -36,7 +36,6 @@ const ArticleSchema: Schema = new Schema({
 	slug: {
 		type: String,
 		trim: true,
-		required: true,
 	},
 	created: {
 		type: Date,
@@ -61,6 +60,7 @@ export interface ArticleInterface extends Document {
 	text: string;
 	image: string;
 	views: number;
+	slug: string;
 	comments: [CommentInterface];
 	created: string;
 }

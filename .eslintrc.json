@@ -39,6 +39,7 @@
 		"node/no-unsupported-features/es-syntax": "off",
 		"node/no-missing-require": "off",
 		"@typescript-eslint/camelcase": "off",
-		"@typescript-eslint/no-explicit-any": "off"
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/no-var-requires": "off"
 	}
 }

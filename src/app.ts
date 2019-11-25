@@ -16,11 +16,12 @@ import router from './router';
 
 dotenv.config();
 const logger = getLogger(module);
+const isProd = process.env.NODE_ENV === 'production';
 
 const app: Application = express();
 const apiLimiter = new rateLimit({
 	windowMs: 15 * 60 * 1000,
-	max: 100,
+	max: isProd ? 100 : 1000,
 });
 
 mongoose
@@ -29,13 +30,13 @@ mongoose
 		useCreateIndex: true,
 		useFindAndModify: false,
 		useUnifiedTopology: true,
-		autoIndex: process.env.NODE_ENV !== 'production',
+		autoIndex: !isProd,
 	})
 	.then(() => logger.info('MongoDB'))
 	.catch((err: Error) => logger.error(err.message));
 
 // middleware
-if (process.env.NODE_ENV === 'production') {
+if (isProd) {
 	app.use(morgan('combined'));
 } else {
 	app.use(morgan('dev'));
