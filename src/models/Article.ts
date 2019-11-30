@@ -3,47 +3,57 @@ import slugify from 'slugify';
 
 import {CommentInterface} from './Comment';
 
-const ArticleSchema: Schema = new Schema({
-	user: {
-		type: Schema.Types.ObjectId,
-		ref: 'users',
-	},
-	title: {
-		type: String,
-		trim: true,
-		required: true,
-		unique: true,
-	},
-	text: {
-		type: String,
-		required: true,
-	},
-	image: {
-		type: String,
-		trim: true,
-		default: '',
-	},
-	views: {
-		type: Number,
-		default: 0,
-	},
-	comments: [
-		{
+const ArticleSchema: Schema = new Schema(
+	{
+		user: {
 			type: Schema.Types.ObjectId,
-			ref: 'comments',
+			ref: 'users',
 		},
-	],
-	slug: {
-		type: String,
-		trim: true,
+		title: {
+			type: String,
+			trim: true,
+			required: true,
+			unique: true,
+		},
+		text: {
+			type: String,
+			required: true,
+		},
+		image: {
+			type: String,
+			trim: true,
+			default: '',
+		},
+		views: {
+			type: Number,
+			default: 0,
+		},
+		comments: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'comments',
+			},
+		],
+		slug: {
+			type: String,
+			trim: true,
+		},
+		created: {
+			type: Date,
+			default: Date.now,
+		},
 	},
-	created: {
-		type: Date,
-		default: Date.now,
+	{
+		collation: {
+			locale: 'en_US',
+			strength: 1,
+			caseLevel: true,
+		},
 	},
-});
+);
 
-ArticleSchema.index({slug: 1}, {name: 'slug_index', unique: true});
+ArticleSchema.index({title: 1});
+ArticleSchema.index({slug: 1}, {unique: true});
 
 ArticleSchema.pre('save', function(next) {
 	(this as any).slug = slugify((this as any).title, {

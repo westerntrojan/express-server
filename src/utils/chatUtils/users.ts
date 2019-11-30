@@ -17,6 +17,10 @@ export default class {
 		this.socket.emit('user_error', {error: {msg: 'Error. Try reload page'}});
 	};
 
+	getChat = async (condition: any): Promise<UserChatInterface | null> => {
+		return await UserChat.findOne(condition);
+	};
+
 	findChat = async ({from, to}: {from: string; to: string}): Promise<UserChatInterface | null> => {
 		return await UserChat.findOne({$or: [{from, to}, {to: from, from: to}]});
 	};
@@ -35,6 +39,7 @@ export default class {
 			user: message.user,
 			text: message.text,
 		});
+
 		return await Message.findById(newMessage._id).populate('user');
 	};
 

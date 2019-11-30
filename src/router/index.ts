@@ -3,14 +3,14 @@ import {Router} from 'express';
 import articlesRouter from './articles';
 import authRouter from './auth';
 import usersRouter from './users';
-import chatRouter from './chat';
+import chatsRouter from './chats';
 
 const router = Router();
 
 router.use('/articles', articlesRouter);
 router.use('/auth', authRouter);
 router.use('/users', usersRouter);
-router.use('/chat', chatRouter);
+router.use('/chats', chatsRouter);
 
 if (process.env.NODE_ENV !== 'production') {
 	const testRouter = require('./test');

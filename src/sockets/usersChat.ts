@@ -30,9 +30,9 @@ export default (io: Server): void => {
 					chatId = chat._id;
 					socket.join(chatId);
 
-					const messages = await chatUtils.getMessages(chatId);
+					const preMessages = await chatUtils.getMessages(chatId);
 
-					socket.emit('pre_messages', messages);
+					socket.emit('pre_messages', {preMessages, chatId});
 				} else {
 					socket.emit('chat_not_found');
 				}
@@ -51,7 +51,8 @@ export default (io: Server): void => {
 
 		socket.on('first_message', async message => {
 			try {
-				const chat = await chatUtils.newChat({from: message.from, to: message.to});
+				await chatUtils.newChat({from: message.from, to: message.to});
+				const chat = await chatUtils.getChat({from: message.from, to: message.to});
 
 				if (chat) {
 					chatId = chat._id;

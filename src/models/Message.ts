@@ -12,6 +12,11 @@ const MessageSchema: Schema = new Schema({
 	text: {
 		type: String,
 		required: true,
+		trim: true,
+	},
+	removeFor: {
+		type: Schema.Types.ObjectId,
+		ref: 'users',
 	},
 	created: {
 		type: Date,
@@ -23,6 +28,7 @@ export interface MessageInterface extends Document {
 	chatId: string;
 	user: any;
 	text: string;
+	removeFor: string;
 	created: string;
 }
 

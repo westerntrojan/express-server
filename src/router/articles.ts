@@ -1,5 +1,6 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
+import slugify from 'slugify';
 
 import {articleValidators, commentValidators} from '../utils/validators';
 import Article from '../models/Article';
@@ -34,11 +35,6 @@ router.post('/', articleValidators, async (req: Request, res: Response, next: Ne
 			return res.json({errors: errors.array()});
 		}
 
-		const validationArticle = await Article.findOne({title: req.body.title});
-		if (validationArticle) {
-			return res.json({errors: [{msg: 'Article with the same title already exists'}]});
-		}
-
 		const newArticle = await Article.create(req.body);
 		const article = await Article.findById(newArticle._id).populate('user');
 
@@ -51,6 +47,7 @@ router.post('/', articleValidators, async (req: Request, res: Response, next: Ne
 router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const article = await Article.findOne({slug: req.params.slug})
+			.sort({created: -1})
 			.populate('comments', null, null, {
 				sort: {created: -1},
 				populate: {
@@ -75,15 +72,10 @@ router.put(
 				return res.json({errors: errors.array()});
 			}
 
-			const validationArticle = await Article.findOne({title: req.body.title});
-			if (validationArticle && String(validationArticle._id) !== req.params.articleId) {
-				return res.json({errors: [{msg: 'Article with the same title already exists'}]});
-			}
-
-			const slug = req.body.title
-				.split(' ')
-				.join('-')
-				.toLowerCase();
+			const slug = slugify(req.body.title, {
+				lower: true,
+				replacement: '-',
+			});
 
 			const article = await Article.findByIdAndUpdate(
 				req.params.articleId,

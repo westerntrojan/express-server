@@ -1,11 +1,20 @@
 import {Schema, model, Document} from 'mongoose';
-import slugify from 'slugify';
 
 const UserSchema: Schema = new Schema({
-	username: {
+	firstName: {
 		type: String,
 		trim: true,
 		required: true,
+	},
+	lastName: {
+		type: String,
+		trim: true,
+		default: '',
+	},
+	username: {
+		type: String,
+		trim: true,
+		default: '',
 	},
 	email: {
 		type: String,
@@ -20,6 +29,11 @@ const UserSchema: Schema = new Schema({
 	avatar: {
 		type: String,
 		trim: true,
+		required: true,
+	},
+	bio: {
+		type: String,
+		default: '',
 	},
 	role: {
 		type: Number,
@@ -29,35 +43,25 @@ const UserSchema: Schema = new Schema({
 		type: Boolean,
 		default: false,
 	},
-	slug: {
-		type: String,
-		trim: true,
-	},
 	created: {
 		type: Date,
 		default: Date.now,
 	},
 });
 
-UserSchema.index({slug: 1}, {name: 'slug_index'});
-
-UserSchema.pre('save', function(next) {
-	(this as any).slug = slugify((this as any).username, {
-		lower: true,
-		replacement: '-',
-	});
-
-	next();
-});
+UserSchema.index({username: 1, firstName: 1, lastName: 1, email: 1});
 
 export interface UserInterface extends Document {
-	username: string;
+	_id: string;
+	firstName: string;
+	lastName?: string;
+	username?: string;
 	email: string;
 	password: string;
 	avatar: string;
+	bio?: string;
 	role: number;
 	isRemoved: boolean;
-	slug: string;
 	created: string;
 }
 

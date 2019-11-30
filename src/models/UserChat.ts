@@ -9,6 +9,10 @@ const UserChatSchema: Schema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'users',
 	},
+	removeFor: {
+		type: Schema.Types.ObjectId,
+		ref: 'users',
+	},
 	created: {
 		type: Date,
 		default: Date.now,
@@ -16,8 +20,9 @@ const UserChatSchema: Schema = new Schema({
 });
 
 export interface UserChatInterface extends Document {
-	from: any;
-	to: any;
+	from: string;
+	to: string;
+	removeFor: string;
 	created: string;
 }
 

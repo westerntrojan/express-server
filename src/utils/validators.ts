@@ -19,15 +19,17 @@ export const commentValidators = [
 ];
 
 export const registerValidators = [
-	check('username')
-		.isLength({max: 40})
-		.withMessage('Invalid Username(Max: 40)')
+	check('firstName')
+		.isLength({max: 20})
+		.withMessage('Invalid First Name(Max: 20)')
+		.trim(),
+	check('lastName')
+		.isLength({max: 20})
+		.withMessage('Invalid Last name(Max: 20)')
 		.trim(),
 	check('email')
-		.isLength({max: 40})
 		.isEmail()
-		.withMessage('Invalid Email')
-		.trim(),
+		.withMessage('Invalid Email'),
 	check('password')
 		.isLength({min: 4, max: 240})
 		.withMessage('Invalid Password(Min: 4, Max: 240)')
@@ -35,13 +37,24 @@ export const registerValidators = [
 ];
 
 export const editUserValidators = [
+	check('firstName')
+		.isLength({max: 20})
+		.withMessage('Invalid First Name(Max: 20)')
+		.trim(),
+	check('lastName')
+		.isLength({max: 20})
+		.withMessage('Invalid Last name(Max: 20)')
+		.trim(),
 	check('username')
 		.isLength({max: 40})
-		.withMessage('Invalid Username(Max: 40)')
+		.withMessage('Invalid (Max: 40)')
 		.trim(),
 	check('email')
-		.isLength({max: 40})
 		.isEmail()
 		.withMessage('Invalid Email')
+		.trim(),
+	check('bio')
+		.isLength({max: 400})
+		.withMessage('Invalid Bio(Max: 400)')
 		.trim(),
 ];
