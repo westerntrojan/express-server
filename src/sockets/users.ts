@@ -51,14 +51,18 @@ export default (io: Server): void => {
 
 		socket.on('first_message', async message => {
 			try {
-				await chatUtils.newChat({from: message.from, to: message.to});
-				const chat = await chatUtils.getChat({from: message.from, to: message.to});
+				await chatUtils.newChat(message);
+				const chat = await chatUtils.findChat(message);
 
 				if (chat) {
 					chatId = chat._id;
 					socket.join(chatId);
 
-					const newMessage = await chatUtils.newMessage({chatId, user: message.from, ...message});
+					const newMessage = await chatUtils.newMessage({
+						chatId,
+						user: message.from,
+						...message,
+					});
 
 					users.in(chatId).emit('new_message', newMessage);
 				}

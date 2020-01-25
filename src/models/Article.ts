@@ -1,19 +1,19 @@
 import {Schema, model, Document} from 'mongoose';
 import slugify from 'slugify';
 
-import {CommentInterface} from './Comment';
+import {IComment} from './Comment';
 
 const ArticleSchema: Schema = new Schema(
 	{
 		user: {
 			type: Schema.Types.ObjectId,
 			ref: 'users',
+			required: true,
 		},
 		title: {
 			type: String,
 			trim: true,
 			required: true,
-			unique: true,
 		},
 		text: {
 			type: String,
@@ -32,6 +32,16 @@ const ArticleSchema: Schema = new Schema(
 			{
 				type: Schema.Types.ObjectId,
 				ref: 'comments',
+			},
+		],
+		category: {
+			type: String,
+			required: true,
+		},
+		tags: [
+			{
+				type: String,
+				trim: true,
 			},
 		],
 		slug: {
@@ -53,10 +63,11 @@ const ArticleSchema: Schema = new Schema(
 );
 
 ArticleSchema.index({title: 1});
+ArticleSchema.index({category: 1});
 ArticleSchema.index({slug: 1}, {unique: true});
 
 ArticleSchema.pre('save', function(next) {
-	(this as any).slug = slugify((this as any).title, {
+	(this as IArticle).slug = slugify((this as IArticle).title, {
 		lower: true,
 		replacement: '-',
 	});
@@ -64,15 +75,16 @@ ArticleSchema.pre('save', function(next) {
 	next();
 });
 
-export interface ArticleInterface extends Document {
+export interface IArticle extends Document {
 	user: string;
 	title: string;
 	text: string;
-	image: string;
+	image?: string;
 	views: number;
-	slug: string;
-	comments: [CommentInterface];
-	created: string;
+	tags?: string[];
+	slug?: string;
+	comments: IComment[];
+	created?: Date;
 }
 
-export default model<ArticleInterface>('articles', ArticleSchema);
+export default model<IArticle>('articles', ArticleSchema);

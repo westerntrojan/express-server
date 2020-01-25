@@ -15,7 +15,7 @@ export default (io: Server): void => {
 		socket.on('disconnect', () => {
 			console.log('[main] disconnect');
 
-			main.emit('active_users', !users ? users : --users);
+			main.emit('active_users', users ? --users : users);
 		});
 
 		socket.on('error', (err: Error) => {

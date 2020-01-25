@@ -31,9 +31,12 @@ const UserSchema: Schema = new Schema({
 		trim: true,
 		required: true,
 	},
-	bio: {
-		type: String,
-		default: '',
+	info: {
+		bio: {
+			type: String,
+			trim: true,
+			default: '',
+		},
 	},
 	role: {
 		type: Number,
@@ -43,26 +46,29 @@ const UserSchema: Schema = new Schema({
 		type: Boolean,
 		default: false,
 	},
+	favorite: [],
 	created: {
 		type: Date,
 		default: Date.now,
 	},
 });
 
-UserSchema.index({username: 1, firstName: 1, lastName: 1, email: 1});
+UserSchema.index({username: 1});
+UserSchema.index({email: 1});
 
-export interface UserInterface extends Document {
-	_id: string;
+export interface IUser extends Document {
 	firstName: string;
 	lastName?: string;
 	username?: string;
 	email: string;
 	password: string;
 	avatar: string;
-	bio?: string;
-	role: number;
-	isRemoved: boolean;
-	created: string;
+	info: {
+		bio?: string;
+	};
+	role?: number;
+	isRemoved?: boolean;
+	created?: Date;
 }
 
-export default model<UserInterface>('users', UserSchema);
+export default model<IUser>('users', UserSchema);

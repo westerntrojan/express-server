@@ -7,6 +7,5 @@
 	"useTabs": true,
 	"tabWidth": 2,
 	"trailingComma": "all",
-	"bracketSpacing": false,
-	"rcVerbose": true
+	"bracketSpacing": false
 }

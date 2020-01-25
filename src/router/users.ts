@@ -52,7 +52,7 @@ router.put(
 
 			const user = await User.findOneAndUpdate(
 				{_id: req.params.userId},
-				{$set: {...req.body, username: req.body.username ? req.body.username : ''}},
+				{$set: {...req.body}},
 				{new: true},
 			);
 

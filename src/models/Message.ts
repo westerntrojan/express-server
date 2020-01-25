@@ -2,21 +2,19 @@ import {Schema, model, Document} from 'mongoose';
 
 const MessageSchema: Schema = new Schema({
 	chatId: {
-		type: 'string',
-		default: 'main',
+		type: Schema.Types.ObjectId,
+		ref: 'user-chats',
+		default: null,
 	},
 	user: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
+		required: true,
 	},
 	text: {
 		type: String,
 		required: true,
 		trim: true,
-	},
-	removeFor: {
-		type: Schema.Types.ObjectId,
-		ref: 'users',
 	},
 	created: {
 		type: Date,
@@ -24,12 +22,11 @@ const MessageSchema: Schema = new Schema({
 	},
 });
 
-export interface MessageInterface extends Document {
-	chatId: string;
-	user: any;
+export interface IMessage extends Document {
+	chatId?: string;
+	user: string;
 	text: string;
-	removeFor: string;
-	created: string;
+	created?: string;
 }
 
-export default model<MessageInterface>('messages', MessageSchema);
+export default model<IMessage>('messages', MessageSchema);

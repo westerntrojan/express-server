@@ -4,14 +4,12 @@ const UserChatSchema: Schema = new Schema({
 	from: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
+		required: true,
 	},
 	to: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
-	},
-	removeFor: {
-		type: Schema.Types.ObjectId,
-		ref: 'users',
+		required: true,
 	},
 	created: {
 		type: Date,
@@ -19,11 +17,10 @@ const UserChatSchema: Schema = new Schema({
 	},
 });
 
-export interface UserChatInterface extends Document {
+export interface IUserChat extends Document {
 	from: string;
 	to: string;
-	removeFor: string;
-	created: string;
+	created?: Date;
 }
 
-export default model<UserChatInterface>('users-chats', UserChatSchema);
+export default model<IUserChat>('user-chats', UserChatSchema);

@@ -4,10 +4,12 @@ const CommentSchema: Schema = new Schema({
 	articleId: {
 		type: Schema.Types.ObjectId,
 		ref: 'articles',
+		required: true,
 	},
 	user: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
+		required: true,
 	},
 	text: {
 		type: String,
@@ -19,11 +21,11 @@ const CommentSchema: Schema = new Schema({
 	},
 });
 
-export interface CommentInterface extends Document {
+export interface IComment extends Document {
 	articleId: string;
 	user: string;
 	text: string;
-	created: string;
+	created?: Date;
 }
 
-export default model<CommentInterface>('comments', CommentSchema);
+export default model<IComment>('comments', CommentSchema);

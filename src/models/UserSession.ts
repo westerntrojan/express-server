@@ -2,8 +2,9 @@ import {Schema, model, Document} from 'mongoose';
 
 const UserSessionSchema: Schema = new Schema({
 	userId: {
-		type: String,
-		default: 0,
+		type: Schema.Types.ObjectId,
+		ref: 'users',
+		required: true,
 	},
 	isRemoved: {
 		type: Boolean,
@@ -15,10 +16,10 @@ const UserSessionSchema: Schema = new Schema({
 	},
 });
 
-export interface UserSessionInterface extends Document {
+export interface IUserSession extends Document {
 	userId: string;
-	isRemoved: boolean;
-	crated: string;
+	isRemoved?: boolean;
+	crated?: Date;
 }
 
-export default model<UserSessionInterface>('sessions', UserSessionSchema);
+export default model<IUserSession>('sessions', UserSessionSchema);

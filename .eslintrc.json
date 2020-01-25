@@ -15,7 +15,7 @@
 		"Atomics": "readonly",
 		"SharedArrayBuffer": "readonly"
 	},
-	"plugins": ["security", "fp", "prettier"],
+	"plugins": ["security", "fp", "prettier", "@typescript-eslint"],
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"ecmaVersion": 2018,
@@ -38,8 +38,8 @@
 		"max-depth": ["warn", 3],
 		"node/no-unsupported-features/es-syntax": "off",
 		"node/no-missing-require": "off",
+		"@typescript-eslint/no-var-requires": "off",
 		"@typescript-eslint/camelcase": "off",
-		"@typescript-eslint/no-explicit-any": "off",
-		"@typescript-eslint/no-var-requires": "off"
+		"@typescript-eslint/interface-name-prefix": "off"
 	}
 }

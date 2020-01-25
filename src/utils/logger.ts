@@ -1,10 +1,6 @@
 import {createLogger, format, transports, Logger} from 'winston';
 
-interface Module {
-	filename: string;
-}
-
-export default (module: Module): Logger => {
+export default (module: NodeModule): Logger => {
 	const filename = module.filename
 		.split(process.platform === 'win32' ? '\\' : '/')
 		.slice(-2)

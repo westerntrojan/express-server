@@ -1,34 +1,43 @@
 import {Socket} from 'socket.io';
 
-import Message, {MessageInterface} from '../../models/Message';
+import Message, {IMessage} from '../../models/Message';
 
 import getLogger from '../logger';
 
 const logger = getLogger(module);
 
-export default class {
-	constructor(private socket: Socket) {}
+interface IMain {
+	error: (err: Error) => void;
+	getMessages: (limit: number) => Promise<IMessage[]>;
+	newMessage: (message: IMessage) => Promise<IMessage | null>;
+	removeMessage: (messageId: string) => Promise<void>;
+}
 
-	error = (err: Error): void => {
-		logger.error(`socket.id: ${this.socket.id}`);
+class Main implements IMain {
+	constructor(private readonly _socket: Socket) {}
+
+	error(err: Error): void {
+		logger.error(`socket.id: ${this._socket.id}`);
 		logger.error(err);
 
-		this.socket.emit('user_error', {error: {msg: 'Error. Try reload page'}});
-	};
+		this._socket.emit('user_error', {error: {msg: 'Error. Try reload page'}});
+	}
 
-	getMessages = async (limit = 10): Promise<MessageInterface[]> => {
-		return await Message.find({chatId: 'main'})
+	async getMessages(limit = 10): Promise<IMessage[]> {
+		return Message.find({chatId: null})
 			.populate('user')
 			.sort({created: -1})
 			.limit(limit);
-	};
+	}
 
-	newMessage = async (message: MessageInterface): Promise<MessageInterface | null> => {
+	async newMessage(message: IMessage): Promise<IMessage | null> {
 		const newMessage = await Message.create(message);
-		return await Message.findById(newMessage._id).populate('user');
-	};
+		return Message.findById(newMessage._id).populate('user');
+	}
 
-	removeMessage = async (messageId: string): Promise<void> => {
-		await Message.findByIdAndRemove(messageId);
-	};
+	async removeMessage(messageId: string): Promise<void> {
+		await Message.deleteOne({_id: messageId});
+	}
 }
+
+export default Main;

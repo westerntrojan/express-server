@@ -6,8 +6,8 @@ export const articleValidators = [
 		.withMessage('Invalid Title(Max: 100)')
 		.trim(),
 	check('text')
-		.isLength({max: 4000})
-		.withMessage('Invalid Text(Max: 4000)')
+		.isLength({max: 5000})
+		.withMessage('Invalid Text(Max: 5000)')
 		.trim(),
 ];
 
@@ -53,7 +53,7 @@ export const editUserValidators = [
 		.isEmail()
 		.withMessage('Invalid Email')
 		.trim(),
-	check('bio')
+	check('info.bio')
 		.isLength({max: 400})
 		.withMessage('Invalid Bio(Max: 400)')
 		.trim(),

@@ -10,6 +10,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import cloudinary from 'cloudinary';
 
 import getLogger from './utils/logger';
 import router from './router';
@@ -34,6 +35,12 @@ mongoose
 	})
 	.then(() => logger.info('MongoDB'))
 	.catch((err: Error) => logger.error(err.message));
+
+cloudinary.v2.config({
+	cloud_name: 'di1kptduj',
+	api_key: '372185752442274',
+	api_secret: '2bb3vGm7e8ilkhrWpC41ekqhGZ8',
+});
 
 // middleware
 if (isProd) {

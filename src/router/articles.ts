@@ -1,6 +1,9 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 import slugify from 'slugify';
+import moment from 'moment';
+import formidable from 'formidable';
+import cloudinary from 'cloudinary';
 
 import {articleValidators, commentValidators} from '../utils/validators';
 import Article from '../models/Article';
@@ -23,6 +26,33 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 			.populate('user');
 
 		res.json({articles});
+	} catch (err) {
+		next(err);
+	}
+});
+
+router.post('/image', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const form = new formidable.IncomingForm();
+
+		form.parse(req, async (err, fields, files) => {
+			if (fields.oldImage) {
+				await cloudinary.v2.uploader.destroy(String(fields.oldImage));
+			}
+
+			const options = {
+				public_id: `delo/${fields.userId}/articles/${moment().format()}`,
+				tags: ['article', fields.userId],
+			};
+
+			const {public_id} = await cloudinary.v2.uploader.upload(String(files.image.path), options);
+
+			// upload_stream
+			// const upload_stream = await cloudinary.v2.uploader.upload_stream(options);
+			// fs.createReadStream(String(files.image.path)).pipe(upload_stream);
+
+			res.json({image: public_id});
+		});
 	} catch (err) {
 		next(err);
 	}
@@ -111,22 +141,11 @@ router.delete('/:articleId', async (req: Request, res: Response, next: NextFunct
 	}
 });
 
-router.get('/views/:slug', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/views/:articleId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const article = await Article.findOneAndUpdate(
-			{slug: req.params.slug},
-			{$inc: {views: 1}},
-			{new: true},
-		)
-			.populate('comments', null, null, {
-				sort: {created: -1},
-				populate: {
-					path: 'user',
-				},
-			})
-			.populate('user');
+		await Article.updateOne({_id: req.params.articleId}, {$inc: {views: 1}});
 
-		res.json({article});
+		res.json({success: true});
 	} catch (err) {
 		next(err);
 	}
@@ -166,24 +185,28 @@ router.delete('/comments/:commentId', async (req: Request, res: Response, next: 
 });
 
 router.get('/get/statistics', async (req: Request, res: Response, next: NextFunction) => {
-	const articles = await Article.find()
-		.sort({views: -1})
-		.limit(10)
-		.populate('comments');
+	try {
+		const articles = await Article.find()
+			.sort({views: -1})
+			.limit(10)
+			.populate('comments');
 
-	const data = {
-		labels: articles.map(article => {
-			if (article.title.length > 10) {
-				return `${article.title.slice(0, 10)}...`;
-			}
+		const data = {
+			labels: articles.map(article => {
+				if (article.title.length > 10) {
+					return `${article.title.slice(0, 10)}...`;
+				}
 
-			return article.title;
-		}),
-		views: articles.map(article => article.views),
-		comments: articles.map(article => article.comments.length),
-	};
+				return article.title;
+			}),
+			views: articles.map(article => article.views),
+			comments: articles.map(article => article.comments.length),
+		};
 
-	res.json({data});
+		res.json({data});
+	} catch (err) {
+		next(err);
+	}
 });
 
 export default router;
