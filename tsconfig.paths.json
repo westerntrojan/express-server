@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"~/*": ["./*"],
+			"&/*": ["./src/*"],
+			"@models/*": ["./src/models/*"],
+			"@router/*": ["./src/router/*"],
+			"@sockets/*": ["./src/sockets/*"],
+			"@sequelize/*": ["./src/sequelize/*"],
+			"@utils/*": ["./src/utils/*"]
+		}
+	}
+}

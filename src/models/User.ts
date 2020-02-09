@@ -1,60 +1,74 @@
 import {Schema, model, Document} from 'mongoose';
+import randomColor from 'randomcolor';
+import {hash} from '@utils/auth';
 
 const UserSchema: Schema = new Schema({
 	firstName: {
 		type: String,
 		trim: true,
-		required: true,
+		required: true
 	},
 	lastName: {
 		type: String,
 		trim: true,
-		default: '',
+		default: ''
 	},
 	username: {
 		type: String,
 		trim: true,
-		default: '',
+		default: ''
 	},
 	email: {
 		type: String,
 		trim: true,
-		required: true,
+		required: true
 	},
 	password: {
 		type: String,
 		trim: true,
-		required: true,
+		required: true
 	},
 	avatar: {
 		type: String,
-		trim: true,
-		required: true,
+		trim: true
 	},
 	info: {
 		bio: {
 			type: String,
 			trim: true,
-			default: '',
-		},
+			default: ''
+		}
 	},
 	role: {
 		type: Number,
-		default: 2,
+		default: 2
 	},
+	likedArticles: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'articles'
+		}
+	],
 	isRemoved: {
 		type: Boolean,
-		default: false,
+		default: false
 	},
-	favorite: [],
 	created: {
 		type: Date,
-		default: Date.now,
-	},
+		default: Date.now
+	}
 });
 
 UserSchema.index({username: 1});
 UserSchema.index({email: 1});
+
+UserSchema.pre('save', async function(next) {
+	(this as IUser).avatar = randomColor({luminosity: 'dark', format: 'rgb'});
+
+	(this as IUser).password = await hash((this as IUser).password);
+
+	next();
+});
 
 export interface IUser extends Document {
 	firstName: string;
@@ -67,6 +81,7 @@ export interface IUser extends Document {
 		bio?: string;
 	};
 	role?: number;
+	likedArticles: string[];
 	isRemoved?: boolean;
 	created?: Date;
 }

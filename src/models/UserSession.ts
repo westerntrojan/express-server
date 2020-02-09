@@ -4,22 +4,17 @@ const UserSessionSchema: Schema = new Schema({
 	userId: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
-		required: true,
-	},
-	isRemoved: {
-		type: Boolean,
-		default: false,
+		required: true
 	},
 	created: {
 		type: Date,
-		default: Date.now,
-	},
+		default: Date.now
+	}
 });
 
 export interface IUserSession extends Document {
 	userId: string;
-	isRemoved?: boolean;
-	crated?: Date;
+	created: Date;
 }
 
 export default model<IUserSession>('sessions', UserSessionSchema);

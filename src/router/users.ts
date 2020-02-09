@@ -1,10 +1,10 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 
-import User from '../models/User';
-import UserSession from '../models/UserSession';
-import getStatistics from '../utils/userStatistics';
-import {editUserValidators} from '../utils/validators';
+import User from '@models/User';
+import UserSession from '@models/UserSession';
+import getStatistics from '@utils/userStatistics';
+import {editUserValidators} from '@utils/validators';
 
 const router = Router();
 
@@ -53,7 +53,7 @@ router.put(
 			const user = await User.findOneAndUpdate(
 				{_id: req.params.userId},
 				{$set: {...req.body}},
-				{new: true},
+				{new: true}
 			);
 
 			if (user) {
@@ -64,7 +64,7 @@ router.put(
 		} catch (err) {
 			next(err);
 		}
-	},
+	}
 );
 
 router.delete('/:userId', async (req: Request, res: Response, next: NextFunction) => {
@@ -72,7 +72,7 @@ router.delete('/:userId', async (req: Request, res: Response, next: NextFunction
 		const user = await User.findOneAndUpdate(
 			{_id: req.params.userId},
 			{$set: {isRemoved: true}},
-			{new: true},
+			{new: true}
 		);
 
 		if (user) {

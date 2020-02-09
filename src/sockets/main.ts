@@ -1,6 +1,6 @@
 import {Socket, Server} from 'socket.io';
 
-import Chat from '../utils/chatUtils/main';
+import Chat from '@utils/chatUtils/main';
 
 export default (io: Server): void => {
 	let users = 0;

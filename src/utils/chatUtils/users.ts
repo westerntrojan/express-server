@@ -1,9 +1,9 @@
 import {Socket} from 'socket.io';
 
-import UserChat, {IUserChat} from '../../models/UserChat';
-import Message, {IMessage} from '../../models/Message';
+import UserChat, {IUserChat} from '@models/UserChat';
+import Message, {IMessage} from '@models/Message';
 
-import getLogger from '../logger';
+import {getLogger} from '@utils/logger';
 
 const logger = getLogger(module);
 
@@ -29,7 +29,12 @@ class Users implements IUsers {
 	async findChat(condition: IUserChat): Promise<IUserChat | null> {
 		const {from, to} = condition;
 
-		return UserChat.findOne({$or: [{from, to}, {to: from, from: to}]});
+		return UserChat.findOne({
+			$or: [
+				{from, to},
+				{to: from, from: to}
+			]
+		});
 	}
 
 	async getMessages(chatId: string): Promise<IMessage[]> {

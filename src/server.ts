@@ -1,6 +1,7 @@
 import http from 'http';
+import 'module-alias/register';
 
-import getLogger from './utils/logger';
+import {getLogger} from './utils/logger';
 import app from './app';
 import io from './sockets';
 
@@ -14,5 +15,5 @@ io(server);
 
 const port = process.env.PORT || 8080;
 server.listen(port, () =>
-	logger.info(`Server listening on http://127.0.0.1:${port}. Started worker ${pid}`),
+	logger.info(`Server listening on http://127.0.0.1:${port}. Started worker ${pid}`)
 );

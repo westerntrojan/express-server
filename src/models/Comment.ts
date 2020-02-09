@@ -4,21 +4,21 @@ const CommentSchema: Schema = new Schema({
 	articleId: {
 		type: Schema.Types.ObjectId,
 		ref: 'articles',
-		required: true,
+		required: true
 	},
 	user: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
-		required: true,
+		required: true
 	},
 	text: {
 		type: String,
-		required: true,
+		required: true
 	},
 	created: {
 		type: Date,
-		default: Date.now,
-	},
+		default: Date.now
+	}
 });
 
 export interface IComment extends Document {

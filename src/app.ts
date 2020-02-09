@@ -12,8 +12,9 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import cloudinary from 'cloudinary';
 
-import getLogger from './utils/logger';
+import {getLogger} from './utils/logger';
 import router from './router';
+import {makeSeeding} from './seeding';
 
 dotenv.config();
 const logger = getLogger(module);
@@ -22,7 +23,7 @@ const isProd = process.env.NODE_ENV === 'production';
 const app: Application = express();
 const apiLimiter = new rateLimit({
 	windowMs: 15 * 60 * 1000,
-	max: isProd ? 100 : 1000,
+	max: isProd ? 100 : 1000
 });
 
 mongoose
@@ -31,15 +32,21 @@ mongoose
 		useCreateIndex: true,
 		useFindAndModify: false,
 		useUnifiedTopology: true,
-		autoIndex: !isProd,
+		autoIndex: !isProd
 	})
-	.then(() => logger.info('MongoDB'))
+	.then(async () => {
+		logger.info('MongoDB');
+
+		if (isProd) {
+			await makeSeeding();
+		}
+	})
 	.catch((err: Error) => logger.error(err.message));
 
 cloudinary.v2.config({
 	cloud_name: 'di1kptduj',
 	api_key: '372185752442274',
-	api_secret: '2bb3vGm7e8ilkhrWpC41ekqhGZ8',
+	api_secret: '2bb3vGm7e8ilkhrWpC41ekqhGZ8'
 });
 
 // middleware

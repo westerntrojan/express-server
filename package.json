@@ -6,6 +6,7 @@
 	"scripts": {
 		"start": "node public/server.js",
 		"dev": "nodemon src/server.ts",
+		"prod": "set NODE_ENV=production && node public/server.js",
 		"build": "tsc -p .",
 		"lint": "eslint --fix ./src/**/*.{js,ts}",
 		"prettify": "prettier ./src/**/*.{js,ts} --write",
@@ -28,6 +29,7 @@
 		"@types/helmet": "^0.0.44",
 		"@types/hpp": "^0.2.1",
 		"@types/jest": "^24.0.18",
+		"@types/module-alias": "^2.0.0",
 		"@types/mongoose": "^5.5.16",
 		"@types/morgan": "^1.7.37",
 		"@types/node": "^12.7.3",
@@ -53,7 +55,8 @@
 		"supertest": "^4.0.2",
 		"ts-jest": "^24.1.0",
 		"ts-node": "^8.3.0",
-		"typescript": "^3.6.2"
+		"typescript": "^3.6.2",
+		"module-alias": "^2.2.2"
 	},
 	"dependencies": {
 		"bcryptjs": "^2.4.3",
@@ -92,5 +95,14 @@
 		"hooks": {
 			"pre-commit": "lint-staged"
 		}
+	},
+	"_moduleAliases": {
+		"~": ".",
+		"&": "./src",
+		"@models": "./src/models",
+		"@router": "./src/router",
+		"@sockets": "./src/sockets",
+		"@sequelize": "./src/sequelize",
+		"@utils": "./src/utils"
 	}
 }

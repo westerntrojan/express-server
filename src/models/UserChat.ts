@@ -4,17 +4,17 @@ const UserChatSchema: Schema = new Schema({
 	from: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
-		required: true,
+		required: true
 	},
 	to: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
-		required: true,
+		required: true
 	},
 	created: {
 		type: Date,
-		default: Date.now,
-	},
+		default: Date.now
+	}
 });
 
 export interface IUserChat extends Document {

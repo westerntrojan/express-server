@@ -4,6 +4,7 @@ import articlesRouter from './articles';
 import authRouter from './auth';
 import usersRouter from './users';
 import chatsRouter from './chats';
+import categoryRouter from './category';
 
 const router = Router();
 
@@ -11,6 +12,7 @@ router.use('/articles', articlesRouter);
 router.use('/auth', authRouter);
 router.use('/users', usersRouter);
 router.use('/chats', chatsRouter);
+router.use('/category', categoryRouter);
 
 if (process.env.NODE_ENV !== 'production') {
 	const testRouter = require('./test');

@@ -1,11 +1,10 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
-import randomColor from 'randomcolor';
 
-import User from '../models/User';
-import UserSession from '../models/UserSession';
-import {registerValidators} from '../utils/validators';
-import {hash, compare} from '../utils/auth';
+import User from '@models/User';
+import UserSession from '@models/UserSession';
+import {registerValidators} from '@utils/validators';
+import {compare} from '@utils/auth';
 
 const router = Router();
 
@@ -24,11 +23,7 @@ router.post(
 				return res.json({errors: [{msg: 'This email is already registered'}]});
 			}
 
-			const user = await User.create({
-				...req.body,
-				password: await hash(req.body.password),
-				avatar: randomColor({luminosity: 'dark', format: 'rgb'}),
-			});
+			const user = await User.create(req.body);
 
 			const session = await UserSession.create({userId: user._id});
 
@@ -36,7 +31,7 @@ router.post(
 		} catch (err) {
 			next(err);
 		}
-	},
+	}
 );
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
@@ -64,29 +59,28 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 	}
 });
 
-router.get('/verify/:token', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/logout/:token', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const session = await UserSession.findOne({_id: req.params.token, isRemoved: false});
+		await UserSession.deleteOne({_id: req.params.token});
 
-		if (session) {
-			const user = await User.findById(session.userId);
-			return res.json({user, success: true});
-		}
-
-		res.json({success: false});
+		res.json({success: true});
 	} catch (err) {
 		next(err);
 	}
 });
 
-router.get('/logout/:token', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/verify/:token', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		await UserSession.updateMany(
-			{_id: req.params.token, isRemoved: false},
-			{$set: {isRemoved: true}},
-		);
+		const session = await UserSession.findOne({_id: req.params.token});
 
-		res.json({success: true});
+		if (session) {
+			const user = await User.findById(session.userId);
+			if (user) {
+				return res.json({user, success: true});
+			}
+		}
+
+		res.json({success: false});
 	} catch (err) {
 		next(err);
 	}

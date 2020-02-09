@@ -1,6 +1,6 @@
 import {Socket, Server} from 'socket.io';
 
-import Chat from '../utils/chatUtils/users';
+import Chat from '@utils/chatUtils/users';
 
 // room
 let chatId: string;
@@ -61,7 +61,7 @@ export default (io: Server): void => {
 					const newMessage = await chatUtils.newMessage({
 						chatId,
 						user: message.from,
-						...message,
+						...message
 					});
 
 					users.in(chatId).emit('new_message', newMessage);

@@ -8,68 +8,71 @@ const ArticleSchema: Schema = new Schema(
 		user: {
 			type: Schema.Types.ObjectId,
 			ref: 'users',
-			required: true,
+			required: true
 		},
 		title: {
 			type: String,
 			trim: true,
-			required: true,
+			required: true
 		},
 		text: {
 			type: String,
-			required: true,
+			required: true
 		},
 		image: {
 			type: String,
 			trim: true,
-			default: '',
+			default: ''
 		},
 		views: {
 			type: Number,
-			default: 0,
+			default: 0
+		},
+		likes: {
+			type: Number,
+			default: 0
 		},
 		comments: [
 			{
 				type: Schema.Types.ObjectId,
-				ref: 'comments',
-			},
+				ref: 'comments'
+			}
 		],
 		category: {
-			type: String,
-			required: true,
+			type: Schema.Types.ObjectId,
+			ref: 'categories'
 		},
 		tags: [
 			{
 				type: String,
-				trim: true,
-			},
+				trim: true
+			}
 		],
 		slug: {
 			type: String,
-			trim: true,
+			trim: true
 		},
 		created: {
 			type: Date,
-			default: Date.now,
-		},
+			default: Date.now
+		}
 	},
 	{
 		collation: {
 			locale: 'en_US',
 			strength: 1,
-			caseLevel: true,
-		},
-	},
+			caseLevel: true
+		}
+	}
 );
 
 ArticleSchema.index({title: 1});
 ArticleSchema.index({category: 1});
-ArticleSchema.index({slug: 1}, {unique: true});
 
 ArticleSchema.pre('save', function(next) {
 	(this as IArticle).slug = slugify((this as IArticle).title, {
 		lower: true,
-		replacement: '-',
+		replacement: '-'
 	});
 
 	next();
@@ -81,6 +84,8 @@ export interface IArticle extends Document {
 	text: string;
 	image?: string;
 	views: number;
+	likes: number;
+	category: string;
 	tags?: string[];
 	slug?: string;
 	comments: IComment[];

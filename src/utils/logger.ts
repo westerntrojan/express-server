@@ -1,6 +1,6 @@
 import {createLogger, format, transports, Logger} from 'winston';
 
-export default (module: NodeModule): Logger => {
+export const getLogger = (module: NodeModule): Logger => {
 	const filename = module.filename
 		.split(process.platform === 'win32' ? '\\' : '/')
 		.slice(-2)
@@ -10,14 +10,14 @@ export default (module: NodeModule): Logger => {
 		level: 'info',
 		format: format.combine(
 			format.label({
-				label: filename,
+				label: filename
 			}),
 			format.timestamp({
-				format: 'YYYY-MM-DD HH:mm:ss',
+				format: 'YYYY-MM-DD HH:mm:ss'
 			}),
 			format.errors({stack: true}),
 			format.splat(),
-			format.json(),
+			format.json()
 		),
 		transports: [
 			//
@@ -25,8 +25,8 @@ export default (module: NodeModule): Logger => {
 			// - Write all logs error (and below) to `error.log`.
 			//
 			new transports.File({filename: 'logs/error.log', level: 'error'}),
-			new transports.File({filename: 'logs/combined.log'}),
-		],
+			new transports.File({filename: 'logs/combined.log'})
+		]
 	});
 
 	//
@@ -36,8 +36,8 @@ export default (module: NodeModule): Logger => {
 	if (process.env.NODE_ENV !== 'production') {
 		logger.add(
 			new transports.Console({
-				format: format.combine(format.colorize(), format.simple()),
-			}),
+				format: format.combine(format.colorize(), format.simple())
+			})
 		);
 	}
 
