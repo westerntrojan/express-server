@@ -6,7 +6,6 @@
 	"scripts": {
 		"start": "node public/server.js",
 		"dev": "nodemon src/server.ts",
-		"prod": "set NODE_ENV=production && node public/server.js",
 		"build": "tsc -p .",
 		"lint": "eslint --fix ./src/**/*.{js,ts}",
 		"prettify": "prettier ./src/**/*.{js,ts} --write",
