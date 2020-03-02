@@ -91,11 +91,11 @@
 		}
 	},
 	"_moduleAliases": {
-		"&": "src",
-		"@models": "src/models",
-		"@router": "src/router",
-		"@sockets": "src/sockets",
-		"@sequelize": "src/sequelize",
+		"&": "public",
+		"@models": "public/models",
+		"@router": "public/router",
+		"@sockets": "public/sockets",
+		"@sequelize": "public/sequelize",
 		"@utils": "public/utils"
 	}
 }
