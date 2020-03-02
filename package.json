@@ -1,21 +1,16 @@
 {
 	"name": "express-server",
 	"version": "1.0.0",
-	"description": "",
-	"main": "server.js",
+	"license": "ISC",
 	"scripts": {
 		"start": "node public/server.js",
 		"dev": "nodemon src/server.ts",
 		"build": "tsc -p .",
-		"lint": "eslint --fix ./src/**/*.{js,ts}",
+		"lint": "eslint ./src/**/*.{js,ts} ",
 		"prettify": "prettier ./src/**/*.{js,ts} --write",
 		"test": "jest --watch",
-		"coverage": "jest --coverage",
-		"deploy": "yarn build & now --prod"
+		"coverage": "jest --coverage"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
 	"devDependencies": {
 		"@types/bcryptjs": "^2.4.2",
 		"@types/compression": "^1.0.1",
@@ -49,13 +44,13 @@
 		"jest": "^24.9.0",
 		"lint-staged": "^9.2.5",
 		"mockery": "^2.1.0",
+		"module-alias": "^2.2.2",
 		"nodemon": "^1.19.0",
 		"prettier": "^1.18.2",
 		"supertest": "^4.0.2",
 		"ts-jest": "^24.1.0",
 		"ts-node": "^8.3.0",
-		"typescript": "^3.6.2",
-		"module-alias": "^2.2.2"
+		"typescript": "^3.6.2"
 	},
 	"dependencies": {
 		"bcryptjs": "^2.4.3",
@@ -96,12 +91,11 @@
 		}
 	},
 	"_moduleAliases": {
-		"~": ".",
-		"&": "./src",
-		"@models": "./src/models",
-		"@router": "./src/router",
-		"@sockets": "./src/sockets",
-		"@sequelize": "./src/sequelize",
-		"@utils": "./src/utils"
+		"&": "src",
+		"@models": "src/models",
+		"@router": "src/router",
+		"@sockets": "src/sockets",
+		"@sequelize": "src/sequelize",
+		"@utils": "public/utils"
 	}
 }

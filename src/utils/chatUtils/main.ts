@@ -1,7 +1,6 @@
 import {Socket} from 'socket.io';
 
 import Message, {IMessage} from '@models/Message';
-
 import {getLogger} from '@utils/logger';
 
 const logger = getLogger(module);

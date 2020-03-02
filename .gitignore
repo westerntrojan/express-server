@@ -8,9 +8,6 @@
 # testing
 /coverage
 
-# production
-/build
-
 # misc
 .DS_Store
 .env.local
@@ -23,15 +20,11 @@ yarn-debug.log*
 yarn-error.log*
 
 .vscode
-build
 logs
-package-lock.json
 public
-
 ecosystem.config.js
 
 src/__tests__
-
 src/sequelize
 src/router/test.ts
 src/clusteredServer.ts

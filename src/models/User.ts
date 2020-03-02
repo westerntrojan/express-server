@@ -2,6 +2,12 @@ import {Schema, model, Document} from 'mongoose';
 import randomColor from 'randomcolor';
 import {hash} from '@utils/auth';
 
+enum Role {
+	ADMIN,
+	MODERATOR,
+	USER
+}
+
 const UserSchema: Schema = new Schema({
 	firstName: {
 		type: String,
@@ -41,7 +47,7 @@ const UserSchema: Schema = new Schema({
 	},
 	role: {
 		type: Number,
-		default: 2
+		default: Role.USER
 	},
 	likedArticles: [
 		{
@@ -80,7 +86,7 @@ export interface IUser extends Document {
 	info: {
 		bio?: string;
 	};
-	role?: number;
+	role?: Role.ADMIN | Role.MODERATOR | Role.USER;
 	likedArticles: string[];
 	isRemoved?: boolean;
 	created?: Date;
