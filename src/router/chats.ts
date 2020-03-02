@@ -1,8 +1,8 @@
 import {Router, Request, Response, NextFunction} from 'express';
 
-import User from '@models/User';
-import UserChat from '@models/UserChat';
-import Message from '@models/Message';
+import User from '../models/User';
+import UserChat from '../models/UserChat';
+import Message from '../models/Message';
 
 const router = Router();
 

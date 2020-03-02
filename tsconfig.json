@@ -1,5 +1,4 @@
 {
-	"extends": "./tsconfig.paths.json",
 	"compilerOptions": {
 		/* Basic Options */
 		// "incremental": true,                   /* Enable incremental compilation */
@@ -17,6 +16,8 @@
 		// "composite": true,                     /* Enable project compilation */
 		// "tsBuildInfoFile": "./",               /* Specify file to store incremental compilation information */
 		"removeComments": true /* Do not emit comments to output. */,
+		"baseUrl": ".",
+		"outDir": "./public",
 		// "noEmit": true,                        /* Do not emit outputs. */
 		// "importHelpers": true,                 /* Import emit helpers from 'tslib'. */
 		// "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */

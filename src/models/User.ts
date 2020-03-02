@@ -1,6 +1,6 @@
 import {Schema, model, Document} from 'mongoose';
 import randomColor from 'randomcolor';
-import {hash} from '@utils/auth';
+import {hash} from '../utils/auth';
 
 enum Role {
 	ADMIN,

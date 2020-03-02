@@ -1,10 +1,10 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 
-import User from '@models/User';
-import UserSession from '@models/UserSession';
-import getStatistics from '@utils/userStatistics';
-import {editUserValidators} from '@utils/validators';
+import User from '../models/User';
+import UserSession from '../models/UserSession';
+import getStatistics from '../utils/userStatistics';
+import {editUserValidators} from '../utils/validators';
 
 const router = Router();
 

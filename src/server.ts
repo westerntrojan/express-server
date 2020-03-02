@@ -1,5 +1,4 @@
 import http from 'http';
-import 'module-alias/register';
 
 import {getLogger} from './utils/logger';
 import app from './app';

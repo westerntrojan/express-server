@@ -23,7 +23,6 @@
 		"@types/helmet": "^0.0.44",
 		"@types/hpp": "^0.2.1",
 		"@types/jest": "^24.0.18",
-		"@types/module-alias": "^2.0.0",
 		"@types/mongoose": "^5.5.16",
 		"@types/morgan": "^1.7.37",
 		"@types/node": "^12.7.3",
@@ -44,7 +43,6 @@
 		"jest": "^24.9.0",
 		"lint-staged": "^9.2.5",
 		"mockery": "^2.1.0",
-		"module-alias": "^2.2.2",
 		"nodemon": "^1.19.0",
 		"prettier": "^1.18.2",
 		"supertest": "^4.0.2",
@@ -89,13 +87,5 @@
 		"hooks": {
 			"pre-commit": "lint-staged"
 		}
-	},
-	"_moduleAliases": {
-		"&": "public",
-		"@models": "public/models",
-		"@router": "public/router",
-		"@sockets": "public/sockets",
-		"@sequelize": "public/sequelize",
-		"@utils": "public/utils"
 	}
 }

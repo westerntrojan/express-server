@@ -1,8 +1,8 @@
 import {Socket} from 'socket.io';
 
-import UserChat, {IUserChat} from '@models/UserChat';
-import Message, {IMessage} from '@models/Message';
-import {getLogger} from '@utils/logger';
+import UserChat, {IUserChat} from '../../models/UserChat';
+import Message, {IMessage} from '../../models/Message';
+import {getLogger} from '../logger';
 
 const logger = getLogger(module);
 

@@ -1,8 +1,7 @@
-import Article from '@models/Article';
-import Comment from '@models/Comment';
-import Message from '@models/Message';
-
-import {getLogger} from '@utils/logger';
+import Article from '../models/Article';
+import Comment from '../models/Comment';
+import Message from '../models/Message';
+import {getLogger} from '../utils/logger';
 
 const logger = getLogger(module);
 

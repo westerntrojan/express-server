@@ -2,10 +2,10 @@ import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 import slugify from 'slugify';
 
-import {articleValidators, commentValidators} from '@utils/validators';
-import Article from '@models/Article';
-import Comment from '@models/Comment';
-import User from '@models/User';
+import {articleValidators, commentValidators} from '../utils/validators';
+import Article from '../models/Article';
+import Comment from '../models/Comment';
+import User from '../models/User';
 
 const router = Router();
 

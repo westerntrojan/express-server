@@ -1,10 +1,10 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import slugify from 'slugify';
 
-import Article from '@models/Article';
-import Category from '@models/Category';
-import Comment from '@models/Comment';
-import User from '@models/User';
+import Article from '../models/Article';
+import Category from '../models/Category';
+import Comment from '../models/Comment';
+import User from '../models/User';
 
 const router = Router();
 
