@@ -1,5 +1,6 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
+import {upload, removeImage} from '../utils/images';
 
 import User from '../models/User';
 import UserSession from '../models/UserSession';
@@ -80,6 +81,55 @@ router.delete('/:userId', async (req: Request, res: Response, next: NextFunction
 
 			res.json({user});
 		}
+	} catch (err) {
+		next(err);
+	}
+});
+
+const avatarUpload = upload.single('avatar');
+
+const updateAvatar = async (userId: string, imageUrl = ''): Promise<void> => {
+	const user = await User.findById(userId);
+
+	if (user) {
+		await User.updateOne(
+			{_id: userId},
+			{$set: {avatar: {image: imageUrl, color: user.avatar.color}}},
+			{new: true}
+		);
+
+		if (!imageUrl) {
+			removeImage(user.avatar.image);
+		}
+	}
+};
+
+router.post('/avatar', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		avatarUpload(req, res, err => {
+			if (err) {
+				return res.json({errors: [{msg: err.message}]});
+			}
+
+			const currentUrl = req.protocol + '://' + req.get('host');
+			const imageUrl = `${currentUrl}/static/${req.body.userId}/${req.file.filename}`;
+
+			(async (): Promise<void> => {
+				await updateAvatar(req.body.userId, imageUrl);
+			})();
+
+			res.json({image: imageUrl});
+		});
+	} catch (err) {
+		next(err);
+	}
+});
+
+router.delete('/avatar/:userId', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		await updateAvatar(req.params.userId);
+
+		res.json({success: true});
 	} catch (err) {
 		next(err);
 	}

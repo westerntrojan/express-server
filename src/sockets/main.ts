@@ -7,6 +7,16 @@ export default (io: Server): void => {
 
 	const main = io.of('/main');
 
+	// const getOnlineUsers = (): any[] => {
+	// 	const clients = main.sockets.clients().connected;
+	// 	const sockets = Object.values(clients);
+
+	// 	const users = sockets.map(s => s.user);
+
+	// 	return users.filter(u => u !== undefined);
+	// };
+
+	// socket === client
 	main.on('connection', (socket: Socket) => {
 		console.log('[main] connection');
 
@@ -24,6 +34,8 @@ export default (io: Server): void => {
 
 		socket.on('user_connect', async () => {
 			try {
+				// main.user = user;
+
 				main.emit('active_users', ++users);
 
 				socket.emit('pre_messages', await chatUtils.getMessages(10));

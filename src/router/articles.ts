@@ -3,6 +3,7 @@ import {validationResult} from 'express-validator';
 import slugify from 'slugify';
 
 import {articleValidators, commentValidators} from '../utils/validators';
+import {upload, removeImage} from '../utils/images';
 import Article from '../models/Article';
 import Comment from '../models/Comment';
 import User from '../models/User';
@@ -114,12 +115,13 @@ router.delete('/:articleId', async (req: Request, res: Response, next: NextFunct
 			{likedArticles: req.params.articleId},
 			{$pullAll: {likedArticles: [req.params.articleId]}}
 		);
+		await Comment.deleteMany({articleId: req.params.articleId});
 
 		if (article) {
-			await Comment.deleteMany({articleId: article._id});
-
-			res.json({article});
+			removeImage(article.image);
 		}
+
+		res.json({article});
 	} catch (err) {
 		next(err);
 	}
@@ -240,31 +242,23 @@ router.get('/tag/:tag', async (req: Request, res: Response, next: NextFunction) 
 	}
 });
 
+const imageUpload = upload.single('image');
+
+router.post('/image', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		imageUpload(req, res, err => {
+			if (err) {
+				return res.json({errors: [{msg: err.message}]});
+			}
+
+			const currentUrl = req.protocol + '://' + req.get('host');
+			const imageUrl = `${currentUrl}/static/${req.body.userId}/${req.file.filename}`;
+
+			res.json({image: imageUrl});
+		});
+	} catch (err) {
+		next(err);
+	}
+});
+
 export default router;
-
-// router.post('/image', async (req: Request, res: Response, next: NextFunction) => {
-// 	try {
-// 		const form = new formidable.IncomingForm();
-
-// 		form.parse(req, async (err, fields, files) => {
-// 			if (fields.oldImage) {
-// 				await cloudinary.v2.uploader.destroy(String(fields.oldImage));
-// 			}
-
-// 			const options = {
-// 				public_id: `delo/${fields.userId}/articles/${moment().format()}`,
-// 				tags: ['article', fields.userId],
-// 			};
-
-// 			const {public_id} = await cloudinary.v2.uploader.upload(String(files.image.path), options);
-
-// 			// upload_stream
-// 			// const upload_stream = await cloudinary.v2.uploader.upload_stream(options);
-// 			// fs.createReadStream(String(files.image.path)).pipe(upload_stream);
-
-// 			res.json({image: public_id});
-// 		});
-// 	} catch (err) {
-// 		next(err);
-// 	}
-// });

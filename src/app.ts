@@ -10,8 +10,6 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import cloudinary from 'cloudinary';
-
 import {getLogger} from './utils/logger';
 import router from './router';
 import {makeSeeding} from './seeding';
@@ -43,12 +41,6 @@ mongoose
 	})
 	.catch((err: Error) => logger.error(err.message));
 
-cloudinary.v2.config({
-	cloud_name: 'di1kptduj',
-	api_key: '372185752442274',
-	api_secret: '2bb3vGm7e8ilkhrWpC41ekqhGZ8'
-});
-
 // middleware
 if (isProd) {
 	app.use(morgan('combined'));
@@ -64,6 +56,7 @@ app.use('/api/', apiLimiter);
 app.use(compression());
 app.use(bodyParser.urlencoded({extended: true, limit: '1mb'}));
 app.use(bodyParser.json());
+app.use('/static', express.static(__dirname + '/../uploads'));
 
 // router;
 app.use('/api', router);

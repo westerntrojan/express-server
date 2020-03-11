@@ -82,7 +82,7 @@ export interface IArticle extends Document {
 	user: string;
 	title: string;
 	text: string;
-	image?: string;
+	image: string;
 	views: number;
 	likes: number;
 	category: string;

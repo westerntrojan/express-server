@@ -22,6 +22,7 @@ yarn-error.log*
 .vscode
 logs
 public
+uploads
 ecosystem.config.js
 
 src/__tests__

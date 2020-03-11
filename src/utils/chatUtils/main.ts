@@ -23,10 +23,12 @@ class Main implements IMain {
 	}
 
 	async getMessages(limit = 10): Promise<IMessage[]> {
-		return Message.find({chatId: null})
+		const messages = await Message.find({chatId: null})
 			.populate('user')
 			.sort({created: -1})
 			.limit(limit);
+
+		return messages.reverse();
 	}
 
 	async newMessage(message: IMessage): Promise<IMessage | null> {
