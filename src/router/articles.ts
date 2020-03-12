@@ -3,12 +3,14 @@ import {validationResult} from 'express-validator';
 import slugify from 'slugify';
 
 import {articleValidators, commentValidators} from '../utils/validators';
-import {upload, removeImage} from '../utils/images';
+import {upload, removeImage, getImageUrl} from '../utils/images';
 import Article from '../models/Article';
 import Comment from '../models/Comment';
 import User from '../models/User';
 
 const router = Router();
+
+const imageUpload = upload.single('image');
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -31,23 +33,35 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 	}
 });
 
-router.post('/', articleValidators, async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.json({errors: errors.array()});
+router.post(
+	'/',
+	imageUpload,
+	articleValidators,
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.json({errors: errors.array()});
+			}
+
+			const imageUrl = getImageUrl(req);
+
+			const newArticle = await Article.create({
+				...req.body,
+				tags: JSON.parse(req.body.tags),
+				image: imageUrl,
+				user: req.body.userId
+			});
+			const article = await Article.findById(newArticle._id)
+				.populate('user')
+				.populate('category');
+
+			res.json({article});
+		} catch (err) {
+			next(err);
 		}
-
-		const newArticle = await Article.create(req.body);
-		const article = await Article.findById(newArticle._id)
-			.populate('user')
-			.populate('category');
-
-		res.json({article});
-	} catch (err) {
-		next(err);
 	}
-});
+);
 
 router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -74,6 +88,7 @@ router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => 
 
 router.put(
 	'/:articleId',
+	imageUpload,
 	articleValidators,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -87,9 +102,28 @@ router.put(
 				replacement: '-'
 			});
 
+			const imageUrl = getImageUrl(req);
+
+			// remove old image
+			if (!imageUrl) {
+				const article = await Article.findById(req.params.articleId);
+
+				if (article) {
+					removeImage(article.image);
+				}
+			}
+
 			const article = await Article.findByIdAndUpdate(
 				req.params.articleId,
-				{$set: {...req.body, slug}},
+				{
+					$set: {
+						...req.body,
+						slug,
+						tags: JSON.parse(req.body.tags),
+						image: imageUrl,
+						user: req.body.userId
+					}
+				},
 				{new: true}
 			)
 				.populate('comments', null, null, {
@@ -237,25 +271,6 @@ router.get('/tag/:tag', async (req: Request, res: Response, next: NextFunction) 
 			.populate('user');
 
 		res.json({articles});
-	} catch (err) {
-		next(err);
-	}
-});
-
-const imageUpload = upload.single('image');
-
-router.post('/image', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		imageUpload(req, res, err => {
-			if (err) {
-				return res.json({errors: [{msg: err.message}]});
-			}
-
-			const currentUrl = req.protocol + '://' + req.get('host');
-			const imageUrl = `${currentUrl}/static/${req.body.userId}/${req.file.filename}`;
-
-			res.json({image: imageUrl});
-		});
 	} catch (err) {
 		next(err);
 	}

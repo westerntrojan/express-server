@@ -94,8 +94,7 @@ const updateAvatar = async (userId: string, imageUrl = ''): Promise<void> => {
 	if (user) {
 		await User.updateOne(
 			{_id: userId},
-			{$set: {avatar: {image: imageUrl, color: user.avatar.color}}},
-			{new: true}
+			{$set: {avatar: {image: imageUrl, color: user.avatar.color}}}
 		);
 
 		if (!imageUrl) {

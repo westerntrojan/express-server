@@ -1,3 +1,4 @@
+import {Request} from 'express';
 import multer from 'multer';
 import slugify from 'slugify';
 import {v4 as uuidv4} from 'uuid';
@@ -5,13 +6,13 @@ import shelljs from 'shelljs';
 import path from 'path';
 import Url from 'url-parse';
 
-export const getPathToImage = (url: string): string => {
+const getPathToImage = (url: string): string => {
 	const pathnameArray = new Url(url).pathname.split('/');
 
 	const userId = pathnameArray[pathnameArray.length - 2];
 	const imageName = pathnameArray[pathnameArray.length - 1];
 
-	const pathToImage = path.resolve(__dirname, '../../uploads', userId, imageName);
+	const pathToImage = path.resolve(__dirname, '../uploads', userId, imageName);
 
 	return pathToImage;
 };
@@ -24,13 +25,22 @@ export const removeImage = (url: string): void => {
 	}
 };
 
+export const getImageUrl = (req: Request): string => {
+	if (req.file) {
+		const currentUrl = req.protocol + '://' + req.get('host');
+		const imageUrl = `${currentUrl}/static/${req.body.userId}/${req.file.filename}`;
+
+		return imageUrl;
+	} else if (req.body.imagePreview) {
+		return req.body.imagePreview;
+	}
+
+	return '';
+};
+
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
-		if (req.body.oldImage) {
-			removeImage(req.body.oldImage);
-		}
-
-		const pathToImageFolder = path.resolve(__dirname, '../../uploads', req.body.userId);
+		const pathToImageFolder = path.resolve(__dirname, '../uploads', req.body.userId);
 
 		shelljs.mkdir('-p', pathToImageFolder);
 

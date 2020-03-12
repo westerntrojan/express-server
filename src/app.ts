@@ -56,7 +56,7 @@ app.use('/api/', apiLimiter);
 app.use(compression());
 app.use(bodyParser.urlencoded({extended: true, limit: '1mb'}));
 app.use(bodyParser.json());
-app.use('/static', express.static(__dirname + '/../uploads'));
+app.use('/static', express.static(__dirname + '/uploads'));
 
 // router;
 app.use('/api', router);
