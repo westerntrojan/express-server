@@ -70,7 +70,9 @@ ArticleSchema.index({title: 1});
 ArticleSchema.index({category: 1});
 
 ArticleSchema.pre('save', function(next) {
-	(this as IArticle).slug = slugify((this as IArticle).title, {
+	const self = this as IArticle;
+
+	self.slug = slugify(self.title, {
 		lower: true,
 		replacement: '-'
 	});

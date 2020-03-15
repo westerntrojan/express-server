@@ -6,7 +6,7 @@ import {articleValidators, commentValidators} from '../utils/validators';
 import {upload, removeImage, getImageUrl} from '../utils/images';
 import Article from '../models/Article';
 import Comment from '../models/Comment';
-import User from '../models/User';
+import {removeArticle, addLike} from '../utils/articles';
 
 const router = Router();
 
@@ -144,12 +144,7 @@ router.put(
 
 router.delete('/:articleId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const article = await Article.findByIdAndRemove(req.params.articleId);
-		await User.updateMany(
-			{likedArticles: req.params.articleId},
-			{$pullAll: {likedArticles: [req.params.articleId]}}
-		);
-		await Comment.deleteMany({articleId: req.params.articleId});
+		const article = await removeArticle(req.params.articleId);
 
 		if (article) {
 			removeImage(article.image);
@@ -173,31 +168,9 @@ router.get('/views/:articleId', async (req: Request, res: Response, next: NextFu
 
 router.get('/like/:articleId/:userId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const user = await User.findById(req.params.userId);
+		const success = await addLike(req.params.articleId, req.params.userId);
 
-		if (user) {
-			if (user.likedArticles.includes(req.params.articleId)) {
-				await Promise.all([
-					await Article.updateOne({_id: req.params.articleId}, {$inc: {likes: -1}}),
-					await User.updateOne(
-						{_id: req.params.userId},
-						{$pullAll: {likedArticles: [req.params.articleId]}}
-					)
-				]);
-
-				return res.json({success: false});
-			} else {
-				await Promise.all([
-					await Article.updateOne({_id: req.params.articleId}, {$inc: {likes: 1}}),
-					await User.updateOne(
-						{_id: req.params.userId},
-						{$push: {likedArticles: req.params.articleId}}
-					)
-				]);
-			}
-		}
-
-		res.json({success: true});
+		res.json({success});
 	} catch (err) {
 		next(err);
 	}

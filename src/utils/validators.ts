@@ -13,8 +13,8 @@ export const articleValidators = [
 
 export const commentValidators = [
 	check('text')
-		.isLength({max: 2000})
-		.withMessage('Invalid Text(Max: 2000)')
+		.isLength({max: 3000})
+		.withMessage('Invalid Text(Max: 3000)')
 		.trim()
 ];
 
@@ -31,8 +31,8 @@ export const registerValidators = [
 		.isEmail()
 		.withMessage('Invalid Email'),
 	check('password')
-		.isLength({min: 4, max: 240})
-		.withMessage('Invalid Password(Min: 4, Max: 240)')
+		.isLength({min: 4})
+		.withMessage('Invalid Password(Min: 4)')
 		.trim()
 ];
 
@@ -54,7 +54,18 @@ export const editUserValidators = [
 		.withMessage('Invalid Email')
 		.trim(),
 	check('info.bio')
-		.isLength({max: 400})
-		.withMessage('Invalid Bio(Max: 400)')
+		.isLength({max: 1000})
+		.withMessage('Invalid Bio(Max: 1000)')
+		.trim()
+];
+
+export const categoryValidators = [
+	check('title')
+		.isLength({max: 50})
+		.withMessage('Invalid Title(Max: 50)')
+		.trim(),
+	check('desc')
+		.isLength({max: 3000})
+		.withMessage('Invalid Description(Max: 3000)')
 		.trim()
 ];

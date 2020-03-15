@@ -13,15 +13,15 @@ const logger = getLogger(module);
 
 export const makeSeeding = async (): Promise<void> => {
 	await Promise.all([
-		await Article.deleteMany({}),
-		await Comment.deleteMany({}),
-		await Category.deleteMany({}),
-		await User.deleteMany({}),
-		await Message.deleteMany({}),
-		await UserChat.deleteMany({}),
-		await UserSession.deleteMany({})
+		Article.deleteMany({}),
+		Comment.deleteMany({}),
+		Category.deleteMany({}),
+		User.deleteMany({}),
+		Message.deleteMany({}),
+		UserChat.deleteMany({}),
+		UserSession.deleteMany({})
 	]);
-	await Promise.all([await User.create(data.users), await Category.create(data.categories)]);
+	await Promise.all([User.create(data.users), Category.create(data.categories)]);
 
 	logger.info('Seeding complete');
 };

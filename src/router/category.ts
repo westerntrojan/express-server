@@ -3,8 +3,8 @@ import slugify from 'slugify';
 
 import Article from '../models/Article';
 import Category from '../models/Category';
-import Comment from '../models/Comment';
-import User from '../models/User';
+import {categoryValidators} from '../utils/validators';
+import {removeArticle} from '../utils/articles';
 
 const router = Router();
 
@@ -18,7 +18,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 	}
 });
 
-router.post('/', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/', categoryValidators, async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const slug = slugify(req.body.title, {
 			lower: true,
@@ -39,7 +39,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 	}
 });
 
-router.get('/:categoryId', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/:categoryId/articles', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const articles = await Article.find({category: req.params.categoryId})
 			.sort({created: -1})
@@ -53,30 +53,34 @@ router.get('/:categoryId', async (req: Request, res: Response, next: NextFunctio
 	}
 });
 
-router.put('/:categoryId', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const slug = slugify(req.body.title, {
-			lower: true,
-			replacement: '-'
-		});
+router.put(
+	'/:categoryId',
+	categoryValidators,
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const slug = slugify(req.body.title, {
+				lower: true,
+				replacement: '-'
+			});
 
-		const slugValidate = await Category.findOne({slug});
+			const slugValidate = await Category.findOne({slug});
 
-		if (slugValidate) {
-			return res.json({errors: [{msg: 'This category exists.'}]});
+			if (slugValidate) {
+				return res.json({errors: [{msg: 'This category exists.'}]});
+			}
+
+			const category = await Category.findByIdAndUpdate(
+				req.params.categoryId,
+				{$set: {...req.body, slug}},
+				{new: true}
+			);
+
+			res.json({category});
+		} catch (err) {
+			next(err);
 		}
-
-		const category = await Category.findByIdAndUpdate(
-			req.params.categoryId,
-			{$set: {...req.body, slug}},
-			{new: true}
-		);
-
-		res.json({category});
-	} catch (err) {
-		next(err);
 	}
-});
+);
 
 router.delete('/:categoryId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -86,14 +90,7 @@ router.delete('/:categoryId', async (req: Request, res: Response, next: NextFunc
 
 		await Promise.all(
 			articles.map(async article => {
-				await Promise.all([
-					await Article.deleteOne({_id: article._id}),
-					await Comment.deleteMany({articleId: article._id}),
-					await User.updateMany(
-						{likedArticles: article._id},
-						{$pullAll: {likedArticles: [article._id]}}
-					)
-				]);
+				await removeArticle(article._id);
 			})
 		);
 

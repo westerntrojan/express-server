@@ -35,11 +35,13 @@ const UserSchema: Schema = new Schema({
 		required: true
 	},
 	avatar: {
-		image: {
-			type: String,
-			trim: true,
-			default: ''
-		},
+		images: [
+			{
+				type: String,
+				trim: true,
+				default: ''
+			}
+		],
 		color: {
 			type: String,
 			trim: true
@@ -76,9 +78,10 @@ UserSchema.index({username: 1});
 UserSchema.index({email: 1});
 
 UserSchema.pre('save', async function(next) {
-	(this as IUser).avatar.color = randomColor({luminosity: 'dark', format: 'rgb'});
+	const self = this as IUser;
 
-	(this as IUser).password = await hash((this as IUser).password);
+	self.avatar.color = randomColor({luminosity: 'dark', format: 'rgb'});
+	self.password = await hash(self.password);
 
 	next();
 });
@@ -90,7 +93,7 @@ export interface IUser extends Document {
 	email: string;
 	password: string;
 	avatar: {
-		image: string;
+		images: string[];
 		color: string;
 	};
 	info: {

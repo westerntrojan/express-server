@@ -5,6 +5,7 @@ import User from '../models/User';
 import UserSession from '../models/UserSession';
 import {registerValidators} from '../utils/validators';
 import {compare} from '../utils/auth';
+import {getUserByLink, getAvatar} from '../utils/users';
 
 const router = Router();
 
@@ -36,18 +37,17 @@ router.post(
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		let user = await User.findOne({email: req.body.link, isRemoved: false});
-
-		if (!user) {
-			user = await User.findOne({username: req.body.link, isRemoved: false});
-		}
+		const user = await getUserByLink(req.body.userLink);
 
 		if (user) {
 			const password = await compare(req.body.password, user.password);
+
 			if (password) {
 				const session = await UserSession.create({userId: user._id});
 
-				return res.json({user, token: session._id});
+				const avatar = await getAvatar(user._id);
+
+				return res.json({user: {...user.toObject(), avatar}, token: session._id});
 			}
 
 			return res.json({errors: [{msg: 'User not found'}]});
@@ -76,7 +76,9 @@ router.get('/verify/:token', async (req: Request, res: Response, next: NextFunct
 		if (session) {
 			const user = await User.findById(session.userId);
 			if (user) {
-				return res.json({user, success: true});
+				const avatar = await getAvatar(user._id);
+
+				return res.json({user: {...user.toObject(), avatar}, success: true});
 			}
 		}
 

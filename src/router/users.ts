@@ -4,27 +4,21 @@ import {upload, removeImage} from '../utils/images';
 
 import User from '../models/User';
 import UserSession from '../models/UserSession';
-import getStatistics from '../utils/userStatistics';
+import {getUserByLink, getUserStatistics, getAvatar} from '../utils/users';
 import {editUserValidators} from '../utils/validators';
+import {getImageUrl} from '../utils/images';
 
 const router = Router();
 
-router.get('/:link', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/:userLink', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		let user = await User.findOne({username: req.params.link});
-
-		if (!user) {
-			try {
-				user = await User.findOne({_id: req.params.link});
-			} catch (err) {
-				res.json({success: false});
-			}
-		}
+		const user = await getUserByLink(req.params.userLink);
 
 		if (user) {
-			const statistics = await getStatistics(user._id);
+			const statistics = await getUserStatistics(user._id);
+			const avatar = await getAvatar(user._id);
 
-			return res.json({success: true, user: {...user.toObject(), ...statistics}});
+			return res.json({success: true, user: {...user.toObject(), statistics, avatar}});
 		}
 
 		res.json({success: false});
@@ -57,11 +51,7 @@ router.put(
 				{new: true}
 			);
 
-			if (user) {
-				const statistics = await getStatistics(req.params.userId);
-
-				res.json({user: {...user.toObject(), ...statistics}});
-			}
+			res.json({user});
 		} catch (err) {
 			next(err);
 		}
@@ -88,21 +78,6 @@ router.delete('/:userId', async (req: Request, res: Response, next: NextFunction
 
 const avatarUpload = upload.single('avatar');
 
-const updateAvatar = async (userId: string, imageUrl = ''): Promise<void> => {
-	const user = await User.findById(userId);
-
-	if (user) {
-		await User.updateOne(
-			{_id: userId},
-			{$set: {avatar: {image: imageUrl, color: user.avatar.color}}}
-		);
-
-		if (!imageUrl) {
-			removeImage(user.avatar.image);
-		}
-	}
-};
-
 router.post('/avatar', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		avatarUpload(req, res, err => {
@@ -110,11 +85,10 @@ router.post('/avatar', async (req: Request, res: Response, next: NextFunction) =
 				return res.json({errors: [{msg: err.message}]});
 			}
 
-			const currentUrl = req.protocol + '://' + req.get('host');
-			const imageUrl = `${currentUrl}/static/${req.body.userId}/${req.file.filename}`;
+			const imageUrl = getImageUrl(req);
 
 			(async (): Promise<void> => {
-				await updateAvatar(req.body.userId, imageUrl);
+				await User.updateOne({_id: req.body.userId}, {$push: {'avatar.images': imageUrl}});
 			})();
 
 			res.json({image: imageUrl});
@@ -124,11 +98,20 @@ router.post('/avatar', async (req: Request, res: Response, next: NextFunction) =
 	}
 });
 
-router.delete('/avatar/:userId', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/avatar/remove', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		await updateAvatar(req.params.userId);
+		const user = await User.findById(req.body.userId);
 
-		res.json({success: true});
+		if (user) {
+			await User.updateOne(
+				{_id: req.body.userId},
+				{$pullAll: {'avatar.images': [req.body.imageUrl]}}
+			);
+
+			removeImage(req.body.imageUrl);
+
+			res.json({success: true, image: req.body.imageUrl});
+		}
 	} catch (err) {
 		next(err);
 	}

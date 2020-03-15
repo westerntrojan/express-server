@@ -12,7 +12,7 @@ const CategorySchema: Schema = new Schema({
 		trim: true,
 		required: true
 	},
-	sub: {
+	subs: {
 		type: Number,
 		default: 0
 	},
@@ -25,7 +25,9 @@ const CategorySchema: Schema = new Schema({
 CategorySchema.index({name: 1});
 
 CategorySchema.pre('save', function(next) {
-	(this as ICategory).slug = slugify((this as ICategory).title, {
+	const self = this as ICategory;
+
+	self.slug = slugify(self.title, {
 		lower: true,
 		replacement: '-'
 	});
@@ -36,7 +38,7 @@ CategorySchema.pre('save', function(next) {
 export interface ICategory extends Document {
 	title: string;
 	desc: string;
-	sub: number;
+	subs: number;
 	slug: string;
 }
 
