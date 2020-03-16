@@ -1,7 +1,8 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
-import {upload, removeImage} from '../utils/images';
+import tinify from 'tinify';
 
+import {upload, removeImage} from '../utils/images';
 import User from '../models/User';
 import UserSession from '../models/UserSession';
 import {getUserByLink, getUserStatistics, getAvatar} from '../utils/users';
@@ -84,6 +85,9 @@ router.post('/avatar', async (req: Request, res: Response, next: NextFunction) =
 			if (err) {
 				return res.json({errors: [{msg: err.message}]});
 			}
+
+			const source = tinify.fromFile(req.file.path);
+			source.toFile(req.file.path);
 
 			const imageUrl = getImageUrl(req);
 

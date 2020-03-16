@@ -13,6 +13,7 @@ import cors from 'cors';
 import {getLogger} from './utils/logger';
 import router from './router';
 import {makeSeeding} from './seeding';
+import tinify from 'tinify';
 
 dotenv.config();
 const logger = getLogger(module);
@@ -40,6 +41,8 @@ mongoose
 		}
 	})
 	.catch((err: Error) => logger.error(err.message));
+
+tinify.key = String(process.env.TINIFY_API_KEY);
 
 // middleware
 if (isProd) {
