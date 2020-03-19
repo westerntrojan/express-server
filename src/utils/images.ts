@@ -5,6 +5,7 @@ import {v4 as uuidv4} from 'uuid';
 import shelljs from 'shelljs';
 import path from 'path';
 import Url from 'url-parse';
+import tinify from 'tinify';
 
 const getPathToImage = (url: string): string => {
 	const pathnameArray = new Url(url).pathname.split('/');
@@ -27,6 +28,9 @@ export const removeImage = (url: string): void => {
 
 export const getImageUrl = (req: Request): string => {
 	if (req.file) {
+		const source = tinify.fromFile(req.file.path);
+		source.toFile(req.file.path);
+
 		const currentUrl = req.protocol + '://' + req.get('host');
 		const imageUrl = `${currentUrl}/static/${req.body.userId}/${req.file.filename}`;
 
@@ -68,7 +72,7 @@ export const upload = multer({
 			return cb(null, true);
 		}
 
-		cb({message: 'Invalid file type'} as any);
+		cb(new Error('Invalid file type'));
 	},
 	limits: {fileSize: 5 * 1024 * 1024}
 });

@@ -10,14 +10,19 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import tinify from 'tinify';
+import * as Sentry from '@sentry/node';
+
 import {getLogger} from './utils/logger';
 import router from './router';
 import {makeSeeding} from './seeding';
-import tinify from 'tinify';
 
 dotenv.config();
 const logger = getLogger(module);
 const isProd = process.env.NODE_ENV === 'production';
+
+// Sentry
+Sentry.init({dsn: 'https://42a70964b139445a9f9f2e4e59993747@sentry.io/5167390'});
 
 const app: Application = express();
 const apiLimiter = new rateLimit({
@@ -45,6 +50,12 @@ mongoose
 tinify.key = String(process.env.TINIFY_API_KEY);
 
 // middleware
+app.use(
+	Sentry.Handlers.requestHandler({
+		serverName: false,
+		user: ['email']
+	})
+);
 if (isProd) {
 	app.use(morgan('combined'));
 } else {
@@ -63,6 +74,8 @@ app.use('/static', express.static(__dirname + '/uploads'));
 
 // router;
 app.use('/api', router);
+
+app.use(Sentry.Handlers.errorHandler());
 
 // 404
 app.use((req, res) => {
