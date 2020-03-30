@@ -1,6 +1,6 @@
-# Express Server
+# SN Server
 
-### Server
+### Main
 
 - Node.js / Express.js
 - MongoDB / Mongoose
@@ -9,3 +9,6 @@
 ### Other
 
 - moment.js
+- winston
+- Tinify
+- ESLint / Prettier
