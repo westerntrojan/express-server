@@ -1,7 +1,7 @@
 import {Schema, model, Document} from 'mongoose';
-import slugify from 'slugify';
 
 import {IComment} from './Comment';
+import {getSlug} from '../utils/app';
 
 const ArticleSchema: Schema = new Schema(
 	{
@@ -72,10 +72,7 @@ ArticleSchema.index({category: 1});
 ArticleSchema.pre('save', function(next) {
 	const self = this as IArticle;
 
-	self.slug = slugify(self.title, {
-		lower: true,
-		replacement: '-'
-	});
+	self.slug = getSlug(self.title);
 
 	next();
 });

@@ -1,5 +1,6 @@
 import {Schema, model, Document} from 'mongoose';
-import slugify from 'slugify';
+
+import {getSlug} from '../utils/app';
 
 const CategorySchema: Schema = new Schema({
 	title: {
@@ -27,10 +28,7 @@ CategorySchema.index({name: 1});
 CategorySchema.pre('save', function(next) {
 	const self = this as ICategory;
 
-	self.slug = slugify(self.title, {
-		lower: true,
-		replacement: '-'
-	});
+	self.slug = getSlug(self.title);
 
 	next();
 });

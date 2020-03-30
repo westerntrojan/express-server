@@ -1,12 +1,12 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
-import slugify from 'slugify';
 
 import {articleValidators, commentValidators} from '../utils/validators';
 import {upload, removeImage, getImageUrl} from '../utils/images';
 import Article from '../models/Article';
 import Comment from '../models/Comment';
 import {removeArticle, addLike} from '../utils/articles';
+import {getSlug} from '../utils/app';
 
 const router = Router();
 
@@ -97,10 +97,7 @@ router.put(
 				return res.json({errors: errors.array()});
 			}
 
-			const slug = slugify(req.body.title, {
-				lower: true,
-				replacement: '-'
-			});
+			const slug = getSlug(req.body.title);
 
 			const imageUrl = getImageUrl(req);
 
@@ -204,32 +201,6 @@ router.delete('/comments/:commentId', async (req: Request, res: Response, next: 
 		const comment = await Comment.findByIdAndRemove(req.params.commentId);
 
 		res.json({comment});
-	} catch (err) {
-		next(err);
-	}
-});
-
-router.get('/get/statistics', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const articles = await Article.find()
-			.sort({views: -1})
-			.limit(10)
-			.populate('comments')
-			.populate('category');
-
-		const data = {
-			labels: articles.map(article => {
-				if (article.title.length > 10) {
-					return `${article.title.slice(0, 10)}...`;
-				}
-
-				return article.title;
-			}),
-			views: articles.map(article => article.views),
-			comments: articles.map(article => article.comments.length)
-		};
-
-		res.json({data});
 	} catch (err) {
 		next(err);
 	}

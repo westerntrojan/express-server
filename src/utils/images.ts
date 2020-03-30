@@ -1,11 +1,12 @@
 import {Request} from 'express';
 import multer from 'multer';
-import slugify from 'slugify';
 import {v4 as uuidv4} from 'uuid';
 import shelljs from 'shelljs';
 import path from 'path';
 import Url from 'url-parse';
 import tinify from 'tinify';
+
+import {getSlug} from './app';
 
 const getPathToImage = (url: string): string => {
 	const pathnameArray = new Url(url).pathname.split('/');
@@ -51,10 +52,7 @@ const storage = multer.diskStorage({
 		cb(null, pathToImageFolder);
 	},
 	filename: (req, file, cb) => {
-		const filename = slugify(file.originalname, {
-			lower: true,
-			replacement: '-'
-		});
+		const filename = getSlug(file.originalname);
 
 		cb(null, uuidv4() + '-' + filename);
 	}

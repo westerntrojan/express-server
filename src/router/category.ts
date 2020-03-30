@@ -1,10 +1,11 @@
 import {Request, Response, Router, NextFunction} from 'express';
-import slugify from 'slugify';
+import {validationResult} from 'express-validator';
 
 import Article from '../models/Article';
 import Category from '../models/Category';
 import {categoryValidators} from '../utils/validators';
 import {removeArticle} from '../utils/articles';
+import {getSlug} from '../utils/app';
 
 const router = Router();
 
@@ -20,10 +21,12 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 router.post('/', categoryValidators, async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const slug = slugify(req.body.title, {
-			lower: true,
-			replacement: '-'
-		});
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.json({errors: errors.array()});
+		}
+
+		const slug = getSlug(req.body.title);
 
 		const slugValidate = await Category.findOne({slug});
 
@@ -58,10 +61,12 @@ router.put(
 	categoryValidators,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const slug = slugify(req.body.title, {
-				lower: true,
-				replacement: '-'
-			});
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.json({errors: errors.array()});
+			}
+
+			const slug = getSlug(req.body.title);
 
 			const slugValidate = await Category.findOne({slug});
 
