@@ -16,10 +16,4 @@ router.use('/chats', chatsRouter);
 router.use('/category', categoryRouter);
 router.use('/data', dataRouter);
 
-if (process.env.NODE_ENV !== 'production') {
-	const testRouter = require('./test');
-
-	router.use('/test', testRouter);
-}
-
 export default router;

@@ -72,7 +72,7 @@ app.use(bodyParser.urlencoded({extended: true, limit: '1mb'}));
 app.use(bodyParser.json());
 app.use('/static', express.static(__dirname + '/uploads'));
 
-// router;
+// router
 app.use('/api', router);
 
 app.use(Sentry.Handlers.errorHandler());

@@ -14,6 +14,7 @@ export default (io: Server): void => {
 	// 	const users = sockets.map(s => s.user);
 
 	// 	return users.filter(u => u !== undefined);
+	// 	return users.filter(u => !_.isUndefined(u));
 	// };
 
 	// socket === client

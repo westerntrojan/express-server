@@ -29,3 +29,4 @@ src/sequelize
 src/router/test.ts
 src/clusteredServer.ts
 src/uploads
+src/test.ts

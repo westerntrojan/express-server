@@ -87,7 +87,7 @@ router.post('/avatar', async (req: Request, res: Response, next: NextFunction) =
 
 			const imageUrl = getImageUrl(req);
 
-			(async (): Promise<void> => {
+			(async function addAvatar(): Promise<void> {
 				await User.updateOne({_id: req.body.userId}, {$push: {'avatar.images': imageUrl}});
 			})();
 

@@ -2,9 +2,6 @@ import Article from '../models/Article';
 import Comment from '../models/Comment';
 import Message from '../models/Message';
 import User, {IUser} from '../models/User';
-import {getLogger} from '../utils/logger';
-
-const logger = getLogger(module);
 
 type UserStatistics = {
 	articles: number;
@@ -13,19 +10,13 @@ type UserStatistics = {
 };
 
 export const getUserStatistics = async (userId: string): Promise<UserStatistics> => {
-	try {
-		const [articles, comments, messages] = await Promise.all([
-			Article.find({user: userId}).countDocuments(),
-			Comment.find({user: userId}).countDocuments(),
-			Message.find({user: userId}).countDocuments()
-		]);
+	const [articles, comments, messages] = await Promise.all([
+		Article.find({user: userId}).countDocuments(),
+		Comment.find({user: userId}).countDocuments(),
+		Message.find({user: userId}).countDocuments()
+	]);
 
-		return {articles, comments, messages};
-	} catch (err) {
-		logger.error(err);
-
-		throw new Error(err);
-	}
+	return {articles, comments, messages};
 };
 
 export const getUserByLink = async (userLink: string): Promise<IUser | null> => {
@@ -51,6 +42,8 @@ export const getAvatar = async (userId: string): Promise<Avatar | undefined> => 
 	const user = await User.findById(userId);
 
 	if (user) {
-		return {...user.avatar, images: user.avatar.images.reverse()};
+		const images = user.avatar.images.reverse();
+
+		return {...user.avatar, images};
 	}
 };

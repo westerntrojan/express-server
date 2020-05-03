@@ -87,15 +87,17 @@ router.put(
 	}
 );
 
-router.delete('/:categoryId', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/remove', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		await Category.deleteOne({_id: req.params.categoryId});
-
-		const articles = await Article.find({category: req.params.categoryId});
+		const categories = req.body.categories;
 
 		await Promise.all(
-			articles.map(async article => {
-				await removeArticle(article._id);
+			categories.map(async (categoryId: string) => {
+				await Category.deleteOne({_id: categoryId});
+
+				const articles = await Article.find({category: categoryId});
+
+				await Promise.all(articles.map(async article => removeArticle(article._id)));
 			})
 		);
 

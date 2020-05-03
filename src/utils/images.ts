@@ -19,12 +19,12 @@ const getPathToImage = (url: string): string => {
 	return pathToImage;
 };
 
-export const removeImage = (url: string): void => {
-	if (url) {
-		const pathToImage = getPathToImage(url);
+export const removeImage = (url: string): string => {
+	const pathToImage = getPathToImage(url);
 
-		shelljs.rm('-rf', pathToImage);
-	}
+	shelljs.rm('-rf', pathToImage);
+
+	return pathToImage;
 };
 
 export const getImageUrl = (req: Request): string => {
