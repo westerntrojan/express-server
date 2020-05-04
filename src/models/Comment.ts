@@ -15,6 +15,14 @@ const CommentSchema: Schema = new Schema({
 		type: String,
 		required: true
 	},
+	likes: {
+		type: Number,
+		default: 0
+	},
+	dislikes: {
+		type: Number,
+		default: 0
+	},
 	created: {
 		type: Date,
 		default: Date.now
@@ -25,6 +33,8 @@ export interface IComment extends Document {
 	articleId: string;
 	user: string;
 	text: string;
+	likes: number;
+	dislikes: number;
 	created?: Date;
 }
 

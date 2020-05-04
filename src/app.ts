@@ -38,12 +38,16 @@ mongoose
 		useUnifiedTopology: true,
 		autoIndex: !isProd
 	})
-	.then(async () => {
+	.then(() => {
 		logger.info('MongoDB');
 
 		if (isProd) {
-			await makeSeeding();
+			return makeSeeding();
 		}
+
+		// if (isProd) {
+		// 	await makeSeeding();
+		// }
 	})
 	.catch((err: Error) => logger.error(err.message));
 

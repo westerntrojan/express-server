@@ -220,4 +220,27 @@ router.get('/tag/:tag', async (req: Request, res: Response, next: NextFunction) 
 	}
 });
 
+router.get('/comments/like/:commentId', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const success = await Comment.updateOne({_id: req.params.commentId}, {$inc: {likes: 1}});
+
+		res.json({success});
+	} catch (err) {
+		next(err);
+	}
+});
+
+router.get(
+	'/comments/dislike/:commentId',
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const success = await Comment.updateOne({_id: req.params.commentId}, {$inc: {dislikes: 1}});
+
+			res.json({success});
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
 export default router;
