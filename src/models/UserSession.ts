@@ -4,12 +4,12 @@ const UserSessionSchema: Schema = new Schema({
 	userId: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
-		required: true
+		required: true,
 	},
 	created: {
 		type: Date,
-		default: Date.now
-	}
+		default: Date.now,
+	},
 });
 
 export interface IUserSession extends Document {

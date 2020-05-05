@@ -18,7 +18,7 @@ router.get('/top-tags', async (req: Request, res: Response, next: NextFunction) 
 			'assassins creed',
 			'the witcher',
 			'gerland',
-			'pravns'
+			'pravns',
 		];
 
 		res.json({tags});
@@ -54,7 +54,7 @@ router.get('/statistics/articles', async (req: Request, res: Response, next: Nex
 				return article.title;
 			}),
 			views: articles.map(article => article.views),
-			comments: articles.map(article => article.comments.length)
+			comments: articles.map(article => article.comments.length),
 		};
 
 		res.json({data});

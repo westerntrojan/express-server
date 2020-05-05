@@ -21,8 +21,8 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 			.populate('comments', null, null, {
 				sort: {created: -1},
 				populate: {
-					path: 'user'
-				}
+					path: 'user',
+				},
 			})
 			.populate('user')
 			.populate('category');
@@ -50,7 +50,7 @@ router.post(
 				...req.body,
 				tags: JSON.parse(req.body.tags),
 				image: imageUrl,
-				user: req.body.userId
+				user: req.body.userId,
 			});
 			const article = await Article.findById(newArticle._id)
 				.populate('user')
@@ -60,7 +60,7 @@ router.post(
 		} catch (err) {
 			next(err);
 		}
-	}
+	},
 );
 
 router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => {
@@ -70,8 +70,8 @@ router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => 
 			.populate('comments', null, null, {
 				sort: {created: -1},
 				populate: {
-					path: 'user'
-				}
+					path: 'user',
+				},
 			})
 			.populate('user')
 			.populate('category');
@@ -118,16 +118,16 @@ router.put(
 						slug,
 						tags: JSON.parse(req.body.tags),
 						image: imageUrl,
-						user: req.body.userId
-					}
+						user: req.body.userId,
+					},
 				},
-				{new: true}
+				{new: true},
 			)
 				.populate('comments', null, null, {
 					sort: {created: -1},
 					populate: {
-						path: 'user'
-					}
+						path: 'user',
+					},
 				})
 				.populate('user')
 				.populate('category');
@@ -136,7 +136,7 @@ router.put(
 		} catch (err) {
 			next(err);
 		}
-	}
+	},
 );
 
 router.delete('/:articleId', async (req: Request, res: Response, next: NextFunction) => {
@@ -193,7 +193,7 @@ router.post(
 		} catch (err) {
 			next(err);
 		}
-	}
+	},
 );
 
 router.delete('/comments/:commentId', async (req: Request, res: Response, next: NextFunction) => {
@@ -240,7 +240,7 @@ router.get(
 		} catch (err) {
 			next(err);
 		}
-	}
+	},
 );
 
 export default router;

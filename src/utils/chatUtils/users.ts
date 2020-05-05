@@ -31,8 +31,8 @@ class Users implements IUsers {
 		return UserChat.findOne({
 			$or: [
 				{from, to},
-				{to: from, from: to}
-			]
+				{to: from, from: to},
+			],
 		});
 	}
 

@@ -9,14 +9,14 @@ export const addLike = async (articleId: string, userId: string): Promise<boolea
 		if (user.likedArticles.includes(articleId)) {
 			await Promise.all([
 				Article.updateOne({_id: articleId}, {$inc: {likes: -1}}),
-				User.updateOne({_id: userId}, {$pullAll: {likedArticles: [articleId]}})
+				User.updateOne({_id: userId}, {$pullAll: {likedArticles: [articleId]}}),
 			]);
 
 			return false;
 		} else {
 			await Promise.all([
 				Article.updateOne({_id: articleId}, {$inc: {likes: 1}}),
-				User.updateOne({_id: userId}, {$push: {likedArticles: articleId}})
+				User.updateOne({_id: userId}, {$push: {likedArticles: articleId}}),
 			]);
 		}
 	}
@@ -30,7 +30,7 @@ export const removeArticle = async (articleId: string): Promise<IArticle | undef
 	if (article) {
 		await Promise.all([
 			Comment.deleteMany({articleId}),
-			User.updateMany({likedArticles: articleId}, {$pullAll: {likedArticles: [articleId]}})
+			User.updateMany({likedArticles: articleId}, {$pullAll: {likedArticles: [articleId]}}),
 		]);
 
 		return article;

@@ -5,73 +5,73 @@ import {hash} from '../utils/auth';
 enum Role {
 	ADMIN,
 	MODERATOR,
-	USER
+	USER,
 }
 
 const UserSchema: Schema = new Schema({
 	firstName: {
 		type: String,
 		trim: true,
-		required: true
+		required: true,
 	},
 	lastName: {
 		type: String,
 		trim: true,
-		default: ''
+		default: '',
 	},
 	username: {
 		type: String,
 		trim: true,
-		default: ''
+		default: '',
 	},
 	email: {
 		type: String,
 		trim: true,
-		required: true
+		required: true,
 	},
 	password: {
 		type: String,
 		trim: true,
-		required: true
+		required: true,
 	},
 	avatar: {
 		images: [
 			{
 				type: String,
 				trim: true,
-				default: ''
-			}
+				default: '',
+			},
 		],
 		color: {
 			type: String,
-			trim: true
-		}
+			trim: true,
+		},
 	},
 	info: {
 		bio: {
 			type: String,
 			trim: true,
-			default: ''
-		}
+			default: '',
+		},
 	},
 	role: {
 		type: Number,
-		default: Role.USER
+		default: Role.USER,
 	},
 	likedArticles: [
 		{
 			type: Schema.Types.ObjectId,
-			ref: 'articles'
-		}
+			ref: 'articles',
+		},
 	],
 	isRemoved: {
 		type: Boolean,
-		default: false
+		default: false,
 	},
 	created: {
 		type: Date,
-		default: Date.now
-	}
+		default: Date.now,
+	},
 });
 
 UserSchema.index({username: 1});

@@ -55,7 +55,7 @@ const storage = multer.diskStorage({
 		const filename = getSlug(file.originalname);
 
 		cb(null, uuidv4() + '-' + filename);
-	}
+	},
 });
 
 export const upload = multer({
@@ -72,5 +72,5 @@ export const upload = multer({
 
 		cb(new Error('Invalid file type'));
 	},
-	limits: {fileSize: 5 * 1024 * 1024}
+	limits: {fileSize: 5 * 1024 * 1024},
 });

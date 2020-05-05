@@ -13,7 +13,7 @@ export const getUserStatistics = async (userId: string): Promise<UserStatistics>
 	const [articles, comments, messages] = await Promise.all([
 		Article.find({user: userId}).countDocuments(),
 		Comment.find({user: userId}).countDocuments(),
-		Message.find({user: userId}).countDocuments()
+		Message.find({user: userId}).countDocuments(),
 	]);
 
 	return {articles, comments, messages};

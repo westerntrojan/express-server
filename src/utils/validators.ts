@@ -8,14 +8,14 @@ export const articleValidators = [
 	check('text')
 		.isLength({max: 5000})
 		.withMessage('Invalid Text(Max: 5000)')
-		.trim()
+		.trim(),
 ];
 
 export const commentValidators = [
 	check('text')
 		.isLength({max: 3000})
 		.withMessage('Invalid Text(Max: 3000)')
-		.trim()
+		.trim(),
 ];
 
 export const registerValidators = [
@@ -33,7 +33,7 @@ export const registerValidators = [
 	check('password')
 		.isLength({min: 4})
 		.withMessage('Invalid Password(Min: 4)')
-		.trim()
+		.trim(),
 ];
 
 export const editUserValidators = [
@@ -56,7 +56,7 @@ export const editUserValidators = [
 	check('info.bio')
 		.isLength({max: 1000})
 		.withMessage('Invalid Bio(Max: 1000)')
-		.trim()
+		.trim(),
 ];
 
 export const categoryValidators = [
@@ -67,5 +67,5 @@ export const categoryValidators = [
 	check('desc')
 		.isLength({max: 3000})
 		.withMessage('Invalid Description(Max: 3000)')
-		.trim()
+		.trim(),
 ];

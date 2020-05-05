@@ -6,21 +6,21 @@ const CategorySchema: Schema = new Schema({
 	title: {
 		type: String,
 		trim: true,
-		required: true
+		required: true,
 	},
 	desc: {
 		type: String,
 		trim: true,
-		required: true
+		required: true,
 	},
 	subs: {
 		type: Number,
-		default: 0
+		default: 0,
 	},
 	slug: {
 		type: String,
-		trim: true
-	}
+		trim: true,
+	},
 });
 
 CategorySchema.index({name: 1});

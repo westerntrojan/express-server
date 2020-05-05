@@ -19,7 +19,7 @@ export const makeSeeding = async (): Promise<void> => {
 		User.deleteMany({}),
 		Message.deleteMany({}),
 		UserChat.deleteMany({}),
-		UserSession.deleteMany({})
+		UserSession.deleteMany({}),
 	]);
 	await Promise.all([User.create(data.users), Category.create(data.categories)]);
 

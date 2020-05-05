@@ -48,14 +48,14 @@ router.put(
 			const user = await User.findOneAndUpdate(
 				{_id: req.params.userId},
 				{$set: {...req.body}},
-				{new: true}
+				{new: true},
 			);
 
 			res.json({user});
 		} catch (err) {
 			next(err);
 		}
-	}
+	},
 );
 
 router.delete('/:userId', async (req: Request, res: Response, next: NextFunction) => {
@@ -63,7 +63,7 @@ router.delete('/:userId', async (req: Request, res: Response, next: NextFunction
 		const user = await User.findOneAndUpdate(
 			{_id: req.params.userId},
 			{$set: {isRemoved: true}},
-			{new: true}
+			{new: true},
 		);
 
 		if (user) {
@@ -105,7 +105,7 @@ router.post('/avatar/remove', async (req: Request, res: Response, next: NextFunc
 		if (user) {
 			await User.updateOne(
 				{_id: req.body.userId},
-				{$pullAll: {'avatar.images': [req.body.imageUrl]}}
+				{$pullAll: {'avatar.images': [req.body.imageUrl]}},
 			);
 
 			removeImage(req.body.imageUrl);

@@ -32,7 +32,7 @@ router.post(
 		} catch (err) {
 			next(err);
 		}
-	}
+	},
 );
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {

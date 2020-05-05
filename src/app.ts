@@ -27,7 +27,7 @@ Sentry.init({dsn: 'https://42a70964b139445a9f9f2e4e59993747@sentry.io/5167390'})
 const app: Application = express();
 const apiLimiter = new rateLimit({
 	windowMs: 15 * 60 * 1000,
-	max: isProd ? 100 : 1000
+	max: isProd ? 100 : 1000,
 });
 
 mongoose
@@ -36,7 +36,7 @@ mongoose
 		useCreateIndex: true,
 		useFindAndModify: false,
 		useUnifiedTopology: true,
-		autoIndex: !isProd
+		autoIndex: !isProd,
 	})
 	.then(() => {
 		logger.info('MongoDB');
@@ -57,8 +57,8 @@ tinify.key = String(process.env.TINIFY_API_KEY);
 app.use(
 	Sentry.Handlers.requestHandler({
 		serverName: false,
-		user: ['email']
-	})
+		user: ['email'],
+	}),
 );
 if (isProd) {
 	app.use(morgan('combined'));

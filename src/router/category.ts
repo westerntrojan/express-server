@@ -77,14 +77,14 @@ router.put(
 			const category = await Category.findByIdAndUpdate(
 				req.params.categoryId,
 				{$set: {...req.body, slug}},
-				{new: true}
+				{new: true},
 			);
 
 			res.json({category});
 		} catch (err) {
 			next(err);
 		}
-	}
+	},
 );
 
 router.post('/remove', async (req: Request, res: Response, next: NextFunction) => {
@@ -98,7 +98,7 @@ router.post('/remove', async (req: Request, res: Response, next: NextFunction) =
 				const articles = await Article.find({category: categoryId});
 
 				await Promise.all(articles.map(async article => removeArticle(article._id)));
-			})
+			}),
 		);
 
 		res.json({success: true});

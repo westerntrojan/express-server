@@ -9,7 +9,7 @@ const router = Router();
 router.get('/:userId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const userChats = await UserChat.find({
-			$or: [{from: req.params.userId}, {to: req.params.userId}]
+			$or: [{from: req.params.userId}, {to: req.params.userId}],
 		});
 
 		const chats = await Promise.all(
@@ -25,7 +25,7 @@ router.get('/:userId', async (req: Request, res: Response, next: NextFunction) =
 				const user = await User.findById(chat.from);
 
 				return {...chat.toObject(), user, lastMessage};
-			})
+			}),
 		);
 
 		res.json({chats});
@@ -50,7 +50,7 @@ router.delete('/remove/:chatId', async (req: Request, res: Response, next: NextF
 	try {
 		await Promise.all([
 			UserChat.deleteOne({_id: req.params.chatId}),
-			Message.deleteMany({chatId: req.params.chatId})
+			Message.deleteMany({chatId: req.params.chatId}),
 		]);
 
 		res.json({success: true});
@@ -69,7 +69,7 @@ router.delete(
 		} catch (err) {
 			next(err);
 		}
-	}
+	},
 );
 
 export default router;
