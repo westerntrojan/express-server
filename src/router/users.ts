@@ -2,6 +2,7 @@ import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 
 import {upload, removeImage} from '../utils/images';
+import {getNotFoundError} from '../utils/errors';
 import User from '../models/User';
 import UserSession from '../models/UserSession';
 import {getUserByLink, getUserStatistics, getAvatar} from '../utils/users';
@@ -14,14 +15,16 @@ router.get('/:userLink', async (req: Request, res: Response, next: NextFunction)
 	try {
 		const user = await getUserByLink(req.params.userLink);
 
-		if (user) {
-			const statistics = await getUserStatistics(user._id);
-			const avatar = await getAvatar(user._id);
+		if (!user) {
+			const notFoundError = getNotFoundError();
 
-			return res.json({success: true, user: {...user.toObject(), statistics, avatar}});
+			return res.status(404).json(notFoundError);
 		}
 
-		res.json({success: false});
+		const statistics = await getUserStatistics(user._id);
+		const avatar = await getAvatar(user._id);
+
+		return res.json({success: true, user: {...user.toObject(), statistics, avatar}});
 	} catch (err) {
 		next(err);
 	}

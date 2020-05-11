@@ -3,6 +3,7 @@ import {validationResult} from 'express-validator';
 
 import {articleValidators, commentValidators} from '../utils/validators';
 import {upload, removeImage, getImageUrl} from '../utils/images';
+import {getNotFoundError} from '../utils/errors';
 import Article from '../models/Article';
 import Comment from '../models/Comment';
 import {removeArticle, addLike} from '../utils/articles';
@@ -77,7 +78,9 @@ router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => 
 			.populate('category');
 
 		if (!article) {
-			return res.json({success: false});
+			const notFoundError = getNotFoundError();
+
+			return res.status(404).json(notFoundError);
 		}
 
 		res.json({success: true, article});

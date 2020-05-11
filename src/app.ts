@@ -12,8 +12,11 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import tinify from 'tinify';
 import * as Sentry from '@sentry/node';
+import moment from 'moment';
+// import {stMonitor, stLogger, stHttpLoggerMiddleware} from 'sematext-agent-express';
 
 import {getLogger} from './utils/logger';
+import {getNotFoundError} from './utils/errors';
 import router from './router';
 import {makeSeeding} from './seeding';
 
@@ -44,14 +47,11 @@ mongoose
 		if (isProd) {
 			return makeSeeding();
 		}
-
-		// if (isProd) {
-		// 	await makeSeeding();
-		// }
 	})
 	.catch((err: Error) => logger.error(err.message));
 
 tinify.key = String(process.env.TINIFY_API_KEY);
+// stMonitor.start();
 
 // middleware
 app.use(
@@ -72,9 +72,10 @@ app.use(hpp());
 app.use(responseTime());
 app.use('/api/', apiLimiter);
 app.use(compression());
-app.use(bodyParser.urlencoded({extended: true, limit: '1mb'}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use('/static', express.static(__dirname + '/uploads'));
+// app.use(stHttpLoggerMiddleware);
 
 // router
 app.use('/api', router);
@@ -83,13 +84,30 @@ app.use(Sentry.Handlers.errorHandler());
 
 // 404
 app.use((req, res) => {
-	res.status(404).json({error: 'Sorry cant find that !'});
+	const notFoundError = getNotFoundError();
+
+	res.status(404).json(notFoundError);
 });
 
 // 500
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 	logger.error(err.message);
-	res.status(500).json({error: {msg: 'Error. Try again'}});
+
+	res.status(500).json({
+		timestamp: moment().format(),
+		status: 500,
+		error: 'Internal Server Error',
+	});
+});
+
+// error handlers
+process.on('uncaughtException', err => {
+	logger.error('Uncaught exception', err);
+	throw err;
+});
+
+process.on('unhandledRejection', err => {
+	logger.error('unhandled rejection', err);
 });
 
 export default app;

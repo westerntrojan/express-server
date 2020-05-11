@@ -46,7 +46,7 @@ router.get('/users/:userId', async (req: Request, res: Response, next: NextFunct
 	}
 });
 
-router.delete('/remove/:chatId', async (req: Request, res: Response, next: NextFunction) => {
+router.delete('/:chatId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		await Promise.all([
 			UserChat.deleteOne({_id: req.params.chatId}),
@@ -59,17 +59,14 @@ router.delete('/remove/:chatId', async (req: Request, res: Response, next: NextF
 	}
 });
 
-router.delete(
-	'/remove/messages/:chatId',
-	async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			await Message.deleteMany({chatId: req.params.chatId});
+router.delete('/messages/:chatId', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		await Message.deleteMany({chatId: req.params.chatId});
 
-			res.json({success: true});
-		} catch (err) {
-			next(err);
-		}
-	},
-);
+		res.json({success: true});
+	} catch (err) {
+		next(err);
+	}
+});
 
 export default router;
