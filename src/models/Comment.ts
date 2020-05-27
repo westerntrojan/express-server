@@ -23,6 +23,17 @@ const CommentSchema: Schema = new Schema({
 		type: Number,
 		default: 0,
 	},
+	parentId: {
+		type: Schema.Types.ObjectId,
+		ref: 'comments',
+		default: null,
+	},
+	replies: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'comments',
+		},
+	],
 	created: {
 		type: Date,
 		default: Date.now,
@@ -35,6 +46,8 @@ export interface IComment extends Document {
 	text: string;
 	likes: number;
 	dislikes: number;
+	parentId: string | null;
+	replies: IComment[];
 	created?: Date;
 }
 

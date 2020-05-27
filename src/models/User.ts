@@ -1,6 +1,7 @@
 import {Schema, model, Document} from 'mongoose';
-import randomColor from 'randomcolor';
-import {hash} from '../utils/auth';
+import argon2 from 'argon2';
+
+import {generateToken} from '../utils/auth';
 
 enum Role {
 	ADMIN,
@@ -68,6 +69,14 @@ const UserSchema: Schema = new Schema({
 		type: Boolean,
 		default: false,
 	},
+	emailVerified: {
+		type: Boolean,
+		default: false,
+	},
+	twoFactorAuth: {
+		type: Boolean,
+		default: false,
+	},
 	created: {
 		type: Date,
 		default: Date.now,
@@ -77,16 +86,59 @@ const UserSchema: Schema = new Schema({
 UserSchema.index({username: 1});
 UserSchema.index({email: 1});
 
-UserSchema.pre('save', async function(next) {
-	const self = this as IUser;
+UserSchema.methods.hashPassword = async function(password: string): Promise<string> {
+	return argon2.hash(password);
+};
 
-	self.avatar.color = randomColor({luminosity: 'dark', format: 'rgb'});
-	self.password = await hash(self.password);
+UserSchema.methods.validatePassword = async function(password: string): Promise<boolean> {
+	return argon2.verify(this.password, password);
+};
 
-	next();
-});
+UserSchema.methods.generateToken = function(): string {
+	return generateToken(this as IUser);
+};
+
+interface IValidUser {
+	_id: string;
+	firstName: string;
+	lastName: string;
+	username: string;
+	email: string;
+	avatar: {
+		images: string[];
+		color: string;
+	};
+	info: {
+		bio: string;
+	};
+	role: Role.ADMIN | Role.MODERATOR | Role.USER;
+	likedArticles: string[];
+	isRemoved: boolean;
+	emailVerified: boolean;
+	twoFactorAuth: boolean;
+	created: Date;
+}
+
+UserSchema.methods.getValidUser = function(): IValidUser {
+	return {
+		_id: this._id,
+		firstName: this.firstName,
+		lastName: this.lastName,
+		username: this.username,
+		email: this.email,
+		avatar: this.avatar,
+		info: this.info,
+		role: this.role,
+		likedArticles: this.likedArticles,
+		isRemoved: this.isRemoved,
+		emailVerified: this.emailVerified,
+		twoFactorAuth: this.twoFactorAuth,
+		created: this.created,
+	};
+};
 
 export interface IUser extends Document {
+	_id: string;
 	firstName: string;
 	lastName?: string;
 	username?: string;
@@ -102,7 +154,13 @@ export interface IUser extends Document {
 	role?: Role.ADMIN | Role.MODERATOR | Role.USER;
 	likedArticles: string[];
 	isRemoved?: boolean;
+	emailVerified: boolean;
+	twoFactorAuth: boolean;
 	created?: Date;
+	hashPassword: (password: string) => Promise<string>;
+	validatePassword: (password: string) => Promise<boolean>;
+	generateToken: () => string;
+	getValidUser: () => IValidUser;
 }
 
 export default model<IUser>('users', UserSchema);

@@ -3,19 +3,9 @@ import {Socket, Server} from 'socket.io';
 import Chat from '../utils/chatUtils/main';
 
 export default (io: Server): void => {
-	let users = 0;
+	const users = new Set();
 
 	const main = io.of('/main');
-
-	// const getOnlineUsers = (): any[] => {
-	// 	const clients = main.sockets.clients().connected;
-	// 	const sockets = Object.values(clients);
-
-	// 	const users = sockets.map(s => s.user);
-
-	// 	return users.filter(u => u !== undefined);
-	// 	return users.filter(u => !_.isUndefined(u));
-	// };
 
 	// socket === client
 	main.on('connection', (socket: Socket) => {
@@ -23,23 +13,25 @@ export default (io: Server): void => {
 
 		const chatUtils = new Chat(socket);
 
-		socket.on('disconnect', () => {
+		socket.on('disconnect', (userId: string) => {
 			console.log('[main] disconnect');
 
-			main.emit('active_users', users ? --users : users);
+			users.delete(userId);
+			main.emit('active_users', users.size);
 		});
 
 		socket.on('error', (err: Error) => {
 			chatUtils.error(err);
 		});
 
-		socket.on('user_connect', async () => {
+		socket.on('user_connect', async (userId: string) => {
 			try {
-				// main.user = user;
+				users.add(userId);
+				main.emit('active_users', users.size);
 
-				main.emit('active_users', ++users);
+				const messages = await chatUtils.getMessages(10);
 
-				socket.emit('pre_messages', await chatUtils.getMessages(10));
+				socket.emit('pre_messages', messages);
 			} catch (err) {
 				chatUtils.error(err);
 			}
@@ -57,7 +49,7 @@ export default (io: Server): void => {
 
 		socket.on('remove_messages', async messages => {
 			try {
-				await messages.map(async (_id: string) => await chatUtils.removeMessage(_id));
+				await Promise.all(messages.map(async (_id: string) => chatUtils.removeMessage(_id)));
 
 				main.emit('remove_messages', messages);
 			} catch (err) {

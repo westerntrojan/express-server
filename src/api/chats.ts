@@ -34,18 +34,6 @@ router.get('/:userId', async (req: Request, res: Response, next: NextFunction) =
 	}
 });
 
-router.get('/users/:userId', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const user = await User.findOne({_id: req.params.userId, isRemoved: false});
-
-		if (user) {
-			res.json({user});
-		}
-	} catch (err) {
-		next(err);
-	}
-});
-
 router.delete('/:chatId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		await Promise.all([

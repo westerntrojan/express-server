@@ -3,7 +3,7 @@ import {Schema, model, Document} from 'mongoose';
 enum Type {
 	TEXT = 'text',
 	IMAGE = 'image',
-	TEXT_IMAGE = 'text_image',
+	IMAGE_CAPTION = 'image_caption',
 }
 
 const MessageSchema: Schema = new Schema({
@@ -46,12 +46,12 @@ const MessageSchema: Schema = new Schema({
 export interface IMessage extends Document {
 	chatId?: string | null;
 	user: string;
-	text: string;
+	text?: string;
 	image: {
-		url: string;
-		caption: string;
+		url?: string;
+		caption?: string;
 	};
-	type: string;
+	type?: string;
 	created?: string;
 }
 

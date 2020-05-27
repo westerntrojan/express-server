@@ -4,7 +4,6 @@ import Category from './models/Category';
 import User from './models/User';
 import Message from './models/Message';
 import UserChat from './models/UserChat';
-import UserSession from './models/UserSession';
 import data from './seed.json';
 
 import {getLogger} from './utils/logger';
@@ -19,7 +18,6 @@ export const makeSeeding = async (): Promise<void> => {
 		User.deleteMany({}),
 		Message.deleteMany({}),
 		UserChat.deleteMany({}),
-		UserSession.deleteMany({}),
 	]);
 	await Promise.all([User.create(data.users), Category.create(data.categories)]);
 

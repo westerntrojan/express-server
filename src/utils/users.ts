@@ -19,31 +19,28 @@ export const getUserStatistics = async (userId: string): Promise<UserStatistics>
 	return {articles, comments, messages};
 };
 
-export const getUserByLink = async (userLink: string): Promise<IUser | null> => {
-	let user = await User.findOne({username: userLink});
+export const getUserByLink = async (
+	userLink: string,
+	condition?: object,
+): Promise<IUser | null> => {
+	try {
+		const [byEmail, byUsername] = await Promise.all([
+			User.findOne({email: userLink, ...condition}),
+			User.findOne({username: userLink, ...condition}),
+		]);
 
-	if (!user) {
-		try {
-			user = await User.findOne({_id: userLink});
-		} catch (err) {
-			return null;
+		if (byEmail) {
+			return byEmail;
 		}
-	}
 
-	return user;
-};
+		if (byUsername) {
+			return byUsername;
+		}
 
-type Avatar = {
-	images: string[];
-	color: string;
-};
+		const byId = await User.findById(userLink, condition);
 
-export const getAvatar = async (userId: string): Promise<Avatar | undefined> => {
-	const user = await User.findById(userId);
-
-	if (user) {
-		const images = user.avatar.images.reverse();
-
-		return {...user.avatar, images};
+		return byId;
+	} catch {
+		return null;
 	}
 };

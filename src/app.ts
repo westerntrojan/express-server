@@ -8,24 +8,24 @@ import rateLimit from 'express-rate-limit';
 import compression from 'compression';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import tinify from 'tinify';
-import * as Sentry from '@sentry/node';
 import moment from 'moment';
-// import {stMonitor, stLogger, stHttpLoggerMiddleware} from 'sematext-agent-express';
+import passport from 'passport';
+import config from 'config';
+// import * as Sentry from '@sentry/node';
 
 import {getLogger} from './utils/logger';
 import {getNotFoundError} from './utils/errors';
-import router from './router';
+import apiRouter from './api';
+import {login, isAuth, registerVerify, passwordResetVerify} from './utils/passport-strategies';
 import {makeSeeding} from './seeding';
 
-dotenv.config();
 const logger = getLogger(module);
 const isProd = process.env.NODE_ENV === 'production';
 
 // Sentry
-Sentry.init({dsn: 'https://42a70964b139445a9f9f2e4e59993747@sentry.io/5167390'});
+// Sentry.init({dsn: 'https://42a70964b139445a9f9f2e4e59993747@sentry.io/5167390'});
 
 const app: Application = express();
 const apiLimiter = new rateLimit({
@@ -34,7 +34,7 @@ const apiLimiter = new rateLimit({
 });
 
 mongoose
-	.connect(String(process.env.MONGO_URI), {
+	.connect(config.get('mongo_uri'), {
 		useNewUrlParser: true,
 		useCreateIndex: true,
 		useFindAndModify: false,
@@ -50,16 +50,15 @@ mongoose
 	})
 	.catch((err: Error) => logger.error(err.message));
 
-tinify.key = String(process.env.TINIFY_API_KEY);
-// stMonitor.start();
+tinify.key = config.get('tinify_api_key');
 
 // middleware
-app.use(
-	Sentry.Handlers.requestHandler({
-		serverName: false,
-		user: ['email'],
-	}),
-);
+// app.use(
+// 	Sentry.Handlers.requestHandler({
+// 		serverName: false,
+// 		user: ['email'],
+// 	}),
+// );
 if (isProd) {
 	app.use(morgan('combined'));
 } else {
@@ -75,12 +74,17 @@ app.use(compression());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use('/static', express.static(__dirname + '/uploads'));
-// app.use(stHttpLoggerMiddleware);
 
-// router
-app.use('/api', router);
+// passport strategies
+passport.use('login', login);
+passport.use('isAuth', isAuth);
+passport.use('registerVerify', registerVerify);
+passport.use('passwordResetVerify', passwordResetVerify);
 
-app.use(Sentry.Handlers.errorHandler());
+// api
+app.use('/api/v1', apiRouter);
+
+// app.use(Sentry.Handlers.errorHandler());
 
 // 404
 app.use((req, res) => {
@@ -103,6 +107,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 // error handlers
 process.on('uncaughtException', err => {
 	logger.error('Uncaught exception', err);
+
 	throw err;
 });
 

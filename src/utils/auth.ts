@@ -1,9 +1,17 @@
-import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import config from 'config';
 
-export const hash = async (value: string): Promise<string> => {
-	return bcrypt.hash(value, 10);
-};
+import {IUser} from '../models/User';
 
-export const compare = async (value: string, hashedValue: string): Promise<boolean> => {
-	return bcrypt.compare(value, hashedValue);
+const jwt_signature = config.get('jwt_signature');
+
+export const generateToken = (user: IUser): string => {
+	const data = {
+		userId: user._id,
+		email: user.email,
+	};
+	const signature = String(jwt_signature);
+	const expiration = '4h';
+
+	return jwt.sign({data}, signature, {expiresIn: expiration});
 };

@@ -83,7 +83,7 @@ export default (io: Server): void => {
 
 		socket.on('remove_messages', async messages => {
 			try {
-				await messages.map(async (_id: string) => await chatUtils.removeMessage(_id));
+				await messages.map(async (_id: string) => chatUtils.removeMessage(_id));
 
 				users.in(chatId).emit('remove_messages', messages);
 			} catch (err) {

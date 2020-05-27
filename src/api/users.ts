@@ -4,8 +4,7 @@ import {validationResult} from 'express-validator';
 import {upload, removeImage} from '../utils/images';
 import {getNotFoundError} from '../utils/errors';
 import User from '../models/User';
-import UserSession from '../models/UserSession';
-import {getUserByLink, getUserStatistics, getAvatar} from '../utils/users';
+import {getUserByLink, getUserStatistics} from '../utils/users';
 import {editUserValidators} from '../utils/validators';
 import {getImageUrl} from '../utils/images';
 
@@ -22,9 +21,8 @@ router.get('/:userLink', async (req: Request, res: Response, next: NextFunction)
 		}
 
 		const statistics = await getUserStatistics(user._id);
-		const avatar = await getAvatar(user._id);
 
-		return res.json({success: true, user: {...user.toObject(), statistics, avatar}});
+		return res.json({success: true, user: {...user.toObject(), statistics}});
 	} catch (err) {
 		next(err);
 	}
@@ -63,17 +61,26 @@ router.put(
 
 router.delete('/:userId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const user = await User.findOneAndUpdate(
-			{_id: req.params.userId},
-			{$set: {isRemoved: true}},
-			{new: true},
-		);
+		await User.updateOne({_id: req.params.userId}, {$set: {isRemoved: true}});
 
-		if (user) {
-			await UserSession.deleteMany({userId: user._id});
+		res.json({success: true});
+	} catch (err) {
+		next(err);
+	}
+});
 
-			res.json({user});
+router.get('/two_factor_auth/:userId', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const user = await User.findById(req.params.userId);
+
+		if (!user) {
+			return res.json({success: false, message: 'User not found'});
 		}
+
+		user.twoFactorAuth = !user.twoFactorAuth;
+		await user.save();
+
+		res.json({success: true});
 	} catch (err) {
 		next(err);
 	}
@@ -83,7 +90,7 @@ const avatarUpload = upload.single('avatar');
 
 router.post('/avatar', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		avatarUpload(req, res, err => {
+		avatarUpload(req, res, (err: any) => {
 			if (err) {
 				return res.json({errors: [{msg: err.message}]});
 			}
@@ -91,7 +98,13 @@ router.post('/avatar', async (req: Request, res: Response, next: NextFunction) =
 			const imageUrl = getImageUrl(req);
 
 			(async function addAvatar(): Promise<void> {
-				await User.updateOne({_id: req.body.userId}, {$push: {'avatar.images': imageUrl}});
+				const user = await User.findById(req.body.userId);
+
+				if (user) {
+					user.avatar.images.unshift(imageUrl);
+
+					await user.save();
+				}
 			})();
 
 			res.json({image: imageUrl});

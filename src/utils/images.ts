@@ -20,6 +20,10 @@ const getPathToImage = (url: string): string => {
 };
 
 export const removeImage = (url: string): string => {
+	if (!url) {
+		return '';
+	}
+
 	const pathToImage = getPathToImage(url);
 
 	shelljs.rm('-rf', pathToImage);

@@ -5,8 +5,7 @@ import main from './main';
 import users from './users';
 
 export default (server: http.Server): void => {
-	// reconnectionDelay: 10
-	const io = socketIo(server, {serveClient: false});
+	const io = socketIo(server);
 
 	main(io);
 	users(io);

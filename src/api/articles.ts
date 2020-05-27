@@ -183,16 +183,15 @@ router.post(
 		try {
 			const errors = validationResult(req);
 			if (!errors.isEmpty()) {
-				return res.json({errors: errors.array()});
+				return res.json({success: false, message: errors.array()[0].msg});
 			}
 
 			let comment = await Comment.create(req.body);
+			comment = await comment.populate('user').execPopulate();
 
 			await Article.updateOne({_id: req.body.articleId}, {$push: {comments: comment._id}});
 
-			comment = await comment.populate('user').execPopulate();
-
-			res.json({comment});
+			res.json({success: true, comment});
 		} catch (err) {
 			next(err);
 		}
@@ -245,5 +244,38 @@ router.get(
 		}
 	},
 );
+
+router.post('/comments/add', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const comment = await Comment.create(req.body);
+
+		await Article.updateOne({_id: req.body.articleId}, {$push: {comments: comment._id}});
+
+		res.json({comment});
+	} catch (err) {
+		next(err);
+	}
+});
+
+router.get('/comments/get', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const comments = await Comment.find({parentId: null}).sort({created: -1});
+		const replies = await Comment.find({parentId: {$ne: null}}).sort({created: -1});
+
+		const newComments = comments.map(comment => {
+			replies.forEach(reply => {
+				if (comment._id === reply.parentId) {
+					console.log(comment._id + ' = ' + reply._id);
+				}
+			});
+
+			return comment;
+		});
+
+		res.json({comments});
+	} catch (err) {
+		next(err);
+	}
+});
 
 export default router;

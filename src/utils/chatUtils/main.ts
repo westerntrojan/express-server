@@ -33,6 +33,7 @@ class Main implements IMain {
 
 	async newMessage(message: IMessage): Promise<IMessage | null> {
 		const newMessage = await Message.create(message);
+
 		return Message.findById(newMessage._id).populate('user');
 	}
 
