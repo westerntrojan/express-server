@@ -15,9 +15,11 @@ const imageUpload = upload.single('image');
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 	try {
+		const skip = Number(req.query.skip) || 0;
+
 		const articles = await Article.find()
 			.sort({created: -1})
-			.skip(Number(req.query.skip))
+			.skip(skip)
 			.limit(10)
 			.populate('comments', null, null, {
 				sort: {created: -1},
@@ -272,7 +274,7 @@ router.get('/comments/get', async (req: Request, res: Response, next: NextFuncti
 			return comment;
 		});
 
-		res.json({comments});
+		res.json({newComments});
 	} catch (err) {
 		next(err);
 	}

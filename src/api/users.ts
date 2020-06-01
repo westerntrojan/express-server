@@ -1,12 +1,11 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 
-import {upload, removeImage} from '../utils/images';
+import {upload, removeImage, getImageUrl} from '../utils/images';
 import {getNotFoundError} from '../utils/errors';
 import User from '../models/User';
 import {getUserByLink, getUserStatistics} from '../utils/users';
 import {editUserValidators} from '../utils/validators';
-import {getImageUrl} from '../utils/images';
 
 const router = Router();
 
@@ -35,14 +34,14 @@ router.put(
 		try {
 			const errors = validationResult(req);
 			if (!errors.isEmpty()) {
-				return res.json({errors: errors.array()});
+				return res.json({success: false, messages: errors.array()[0].msg});
 			}
 
 			if (req.body.username) {
 				const user = await User.findOne({username: req.body.username});
 
 				if (user && String(user._id) !== req.params.userId) {
-					return res.json({errors: [{msg: 'Username not available'}]});
+					return res.json({success: false, message: 'Username not available'});
 				}
 			}
 
@@ -52,7 +51,7 @@ router.put(
 				{new: true},
 			);
 
-			res.json({user});
+			res.json({success: true, user});
 		} catch (err) {
 			next(err);
 		}
@@ -92,7 +91,7 @@ router.post('/avatar', async (req: Request, res: Response, next: NextFunction) =
 	try {
 		avatarUpload(req, res, (err: any) => {
 			if (err) {
-				return res.json({errors: [{msg: err.message}]});
+				return res.json({success: false, message: err.message});
 			}
 
 			const imageUrl = getImageUrl(req);
@@ -107,7 +106,7 @@ router.post('/avatar', async (req: Request, res: Response, next: NextFunction) =
 				}
 			})();
 
-			res.json({image: imageUrl});
+			res.json({success: true, imageUrl});
 		});
 	} catch (err) {
 		next(err);
@@ -126,7 +125,7 @@ router.post('/avatar/remove', async (req: Request, res: Response, next: NextFunc
 
 			removeImage(req.body.imageUrl);
 
-			res.json({success: true, image: req.body.imageUrl});
+			res.json({success: true});
 		}
 	} catch (err) {
 		next(err);

@@ -2,6 +2,7 @@ import {Socket} from 'socket.io';
 
 import Message, {IMessage} from '../../models/Message';
 import {getLogger} from '../logger';
+import {removeImage} from '../../utils/images';
 
 const logger = getLogger(module);
 
@@ -19,16 +20,33 @@ class Main implements IMain {
 		logger.error(`socket.id: ${this._socket.id}`);
 		logger.error(err);
 
-		this._socket.emit('user_error', {error: {msg: 'Error. Try reload page'}});
+		this._socket.emit('user_error', {messages: 'Error. Try reload page'});
 	}
 
-	async getMessages(limit = 10): Promise<IMessage[]> {
+	async getMessages(): Promise<IMessage[]> {
 		const messages = await Message.find({chatId: null})
 			.populate('user')
-			.sort('created')
+			.sort('-created')
+			.limit(20);
+
+		return messages.reverse();
+	}
+
+	async loadMore(skip = 0): Promise<{messages: IMessage[]; end: boolean}> {
+		const limit = 20;
+
+		const messages = await Message.find({chatId: null})
+			.populate('user')
+			.sort('-created')
+			.skip(skip)
 			.limit(limit);
 
-		return messages;
+		const end = messages.length < limit;
+
+		return {
+			messages: messages.reverse(),
+			end,
+		};
 	}
 
 	async newMessage(message: IMessage): Promise<IMessage | null> {
@@ -38,7 +56,11 @@ class Main implements IMain {
 	}
 
 	async removeMessage(messageId: string): Promise<void> {
-		await Message.deleteOne({_id: messageId});
+		const message = await Message.findByIdAndRemove(messageId);
+
+		if (message && message.image.url) {
+			removeImage(message.image.url);
+		}
 	}
 }
 

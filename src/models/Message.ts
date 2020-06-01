@@ -46,12 +46,12 @@ const MessageSchema: Schema = new Schema({
 export interface IMessage extends Document {
 	chatId?: string | null;
 	user: string;
-	text?: string;
+	text: string;
 	image: {
 		url?: string;
 		caption?: string;
 	};
-	type?: string;
+	type: string;
 	created?: string;
 }
 

@@ -1,5 +1,6 @@
 import {Router, Request, Response, NextFunction} from 'express';
 
+import {upload, getImageUrl} from '../utils/images';
 import User from '../models/User';
 import UserChat from '../models/UserChat';
 import Message from '../models/Message';
@@ -52,6 +53,24 @@ router.delete('/messages/:chatId', async (req: Request, res: Response, next: Nex
 		await Message.deleteMany({chatId: req.params.chatId});
 
 		res.json({success: true});
+	} catch (err) {
+		next(err);
+	}
+});
+
+const imageUpload = upload.single('image');
+
+router.post('/image', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		imageUpload(req, res, (err: any) => {
+			if (err) {
+				return res.json({success: false, message: err.message});
+			}
+
+			const imageUrl = getImageUrl(req);
+
+			res.json({success: true, imageUrl});
+		});
 	} catch (err) {
 		next(err);
 	}

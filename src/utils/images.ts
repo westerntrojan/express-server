@@ -33,6 +33,7 @@ export const removeImage = (url: string): string => {
 
 export const getImageUrl = (req: Request): string => {
 	if (req.file) {
+		// optimize image
 		const source = tinify.fromFile(req.file.path);
 		source.toFile(req.file.path);
 

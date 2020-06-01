@@ -22,13 +22,7 @@ yarn-error.log*
 .vscode
 logs
 public
-ecosystem.config.js
-.env
 
 src/__tests__
-src/sequelize
-src/router/test.ts
-src/clusteredServer.ts
 src/uploads
-src/test.ts
 config

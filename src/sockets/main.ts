@@ -1,9 +1,10 @@
 import {Socket, Server} from 'socket.io';
 
 import Chat from '../utils/chatUtils/main';
+import {IMessage} from '../models/Message';
 
 export default (io: Server): void => {
-	const users = new Set();
+	let users = 0;
 
 	const main = io.of('/main');
 
@@ -11,49 +12,57 @@ export default (io: Server): void => {
 	main.on('connection', (socket: Socket) => {
 		console.log('[main] connection');
 
-		const chatUtils = new Chat(socket);
+		const chat = new Chat(socket);
 
-		socket.on('disconnect', (userId: string) => {
+		socket.on('disconnect', () => {
 			console.log('[main] disconnect');
 
-			users.delete(userId);
-			main.emit('active_users', users.size);
+			main.emit('active_users', {count: users ? --users : users});
 		});
 
 		socket.on('error', (err: Error) => {
-			chatUtils.error(err);
+			chat.error(err);
 		});
 
-		socket.on('user_connect', async (userId: string) => {
+		socket.on('user_connect', async () => {
 			try {
-				users.add(userId);
-				main.emit('active_users', users.size);
+				main.emit('active_users', {count: ++users});
 
-				const messages = await chatUtils.getMessages(10);
+				const preMessages = await chat.getMessages();
 
-				socket.emit('pre_messages', messages);
+				socket.emit('pre_messages', {preMessages});
 			} catch (err) {
-				chatUtils.error(err);
+				chat.error(err);
 			}
 		});
 
-		socket.on('new_message', async message => {
+		socket.on('load_more', async (data: {skip: number}) => {
 			try {
-				const newMessage = await chatUtils.newMessage(message);
+				const {messages, end} = await chat.loadMore(data.skip);
 
-				main.emit('new_message', newMessage);
+				socket.emit('load_more', {messages, end});
 			} catch (err) {
-				chatUtils.error(err);
+				chat.error(err);
 			}
 		});
 
-		socket.on('remove_messages', async messages => {
+		socket.on('new_message', async (data: {newMessage: IMessage}) => {
 			try {
-				await Promise.all(messages.map(async (_id: string) => chatUtils.removeMessage(_id)));
+				const newMessage = await chat.newMessage(data.newMessage);
 
-				main.emit('remove_messages', messages);
+				main.emit('new_message', {newMessage});
 			} catch (err) {
-				chatUtils.error(err);
+				chat.error(err);
+			}
+		});
+
+		socket.on('remove_messages', async (data: {removedMessages: string[]}) => {
+			try {
+				await Promise.all(data.removedMessages.map(async (_id: string) => chat.removeMessage(_id)));
+
+				main.emit('remove_messages', {removedMessages: data.removedMessages});
+			} catch (err) {
+				chat.error(err);
 			}
 		});
 	});
