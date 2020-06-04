@@ -1,5 +1,6 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
+import passport from 'passport';
 
 import {upload, removeImage, getImageUrl} from '../utils/images';
 import {getNotFoundError} from '../utils/errors';
@@ -29,6 +30,7 @@ router.get('/:userLink', async (req: Request, res: Response, next: NextFunction)
 
 router.put(
 	'/:userId',
+	passport.authenticate('isAuth', {session: false}),
 	editUserValidators,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -58,15 +60,19 @@ router.put(
 	},
 );
 
-router.delete('/:userId', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		await User.updateOne({_id: req.params.userId}, {$set: {isRemoved: true}});
+router.delete(
+	'/:userId',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			await User.updateOne({_id: req.params.userId}, {$set: {isRemoved: true}});
 
-		res.json({success: true});
-	} catch (err) {
-		next(err);
-	}
-});
+			res.json({success: true});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
 
 router.get('/two_factor_auth/:userId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -87,49 +93,57 @@ router.get('/two_factor_auth/:userId', async (req: Request, res: Response, next:
 
 const avatarUpload = upload.single('avatar');
 
-router.post('/avatar', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		avatarUpload(req, res, (err: any) => {
-			if (err) {
-				return res.json({success: false, message: err.message});
-			}
-
-			const imageUrl = getImageUrl(req);
-
-			(async function addAvatar(): Promise<void> {
-				const user = await User.findById(req.body.userId);
-
-				if (user) {
-					user.avatar.images.unshift(imageUrl);
-
-					await user.save();
+router.post(
+	'/avatar',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			avatarUpload(req, res, (err: any) => {
+				if (err) {
+					return res.json({success: false, message: err.message});
 				}
-			})();
 
-			res.json({success: true, imageUrl});
-		});
-	} catch (err) {
-		next(err);
-	}
-});
+				const imageUrl = getImageUrl(req);
 
-router.post('/avatar/remove', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const user = await User.findById(req.body.userId);
+				(async function addAvatar(): Promise<void> {
+					const user = await User.findById(req.body.userId);
 
-		if (user) {
-			await User.updateOne(
-				{_id: req.body.userId},
-				{$pullAll: {'avatar.images': [req.body.imageUrl]}},
-			);
+					if (user) {
+						user.avatar.images.unshift(imageUrl);
 
-			removeImage(req.body.imageUrl);
+						await user.save();
+					}
+				})();
 
-			res.json({success: true});
+				res.json({success: true, imageUrl});
+			});
+		} catch (err) {
+			next(err);
 		}
-	} catch (err) {
-		next(err);
-	}
-});
+	},
+);
+
+router.post(
+	'/avatar/remove',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const user = await User.findById(req.body.userId);
+
+			if (user) {
+				await User.updateOne(
+					{_id: req.body.userId},
+					{$pullAll: {'avatar.images': [req.body.imageUrl]}},
+				);
+
+				removeImage(req.body.imageUrl);
+
+				res.json({success: true});
+			}
+		} catch (err) {
+			next(err);
+		}
+	},
+);
 
 export default router;

@@ -1,5 +1,6 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
+import passport from 'passport';
 
 import Article from '../models/Article';
 import Category from '../models/Category';
@@ -19,28 +20,33 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 	}
 });
 
-router.post('/', categoryValidators, async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.json({errors: errors.array()});
+router.post(
+	'/',
+	passport.authenticate('isAuth', {session: false}),
+	categoryValidators,
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.json({errors: errors.array()});
+			}
+
+			const slug = getSlug(req.body.title);
+
+			const slugValidate = await Category.findOne({slug});
+
+			if (slugValidate) {
+				return res.json({errors: [{msg: 'This category exists.'}]});
+			}
+
+			const category = await Category.create(req.body);
+
+			res.json({category});
+		} catch (err) {
+			next(err);
 		}
-
-		const slug = getSlug(req.body.title);
-
-		const slugValidate = await Category.findOne({slug});
-
-		if (slugValidate) {
-			return res.json({errors: [{msg: 'This category exists.'}]});
-		}
-
-		const category = await Category.create(req.body);
-
-		res.json({category});
-	} catch (err) {
-		next(err);
-	}
-});
+	},
+);
 
 router.get('/:categoryId/articles', async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -58,6 +64,7 @@ router.get('/:categoryId/articles', async (req: Request, res: Response, next: Ne
 
 router.put(
 	'/:categoryId',
+	passport.authenticate('isAuth', {session: false}),
 	categoryValidators,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -87,24 +94,28 @@ router.put(
 	},
 );
 
-router.post('/remove', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const categories = req.body.categories;
+router.post(
+	'/remove',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const categories = req.body.categories;
 
-		await Promise.all(
-			categories.map(async (categoryId: string) => {
-				await Category.deleteOne({_id: categoryId});
+			await Promise.all(
+				categories.map(async (categoryId: string) => {
+					await Category.deleteOne({_id: categoryId});
 
-				const articles = await Article.find({category: categoryId});
+					const articles = await Article.find({category: categoryId});
 
-				await Promise.all(articles.map(async article => removeArticle(article._id)));
-			}),
-		);
+					await Promise.all(articles.map(async article => removeArticle(article._id)));
+				}),
+			);
 
-		res.json({success: true});
-	} catch (err) {
-		next(err);
-	}
-});
+			res.json({success: true});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
 
 export default router;

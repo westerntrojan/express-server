@@ -1,5 +1,6 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
+import passport from 'passport';
 
 import {articleValidators, commentValidators} from '../utils/validators';
 import {upload, removeImage, getImageUrl} from '../utils/images';
@@ -21,14 +22,22 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 			.sort({created: -1})
 			.skip(skip)
 			.limit(10)
-			.populate('comments', null, null, {
-				sort: {created: -1},
-				populate: {
-					path: 'user',
+			.populate('user category')
+			.populate({
+				path: 'comments',
+				options: {
+					sort: {created: -1},
+					populate: {
+						path: 'user replies',
+						options: {
+							sort: {created: 1},
+							populate: {
+								path: 'user',
+							},
+						},
+					},
 				},
-			})
-			.populate('user')
-			.populate('category');
+			});
 
 		res.json({articles});
 	} catch (err) {
@@ -55,9 +64,7 @@ router.post(
 				image: imageUrl,
 				user: req.body.userId,
 			});
-			const article = await Article.findById(newArticle._id)
-				.populate('user')
-				.populate('category');
+			const article = await Article.findById(newArticle._id).populate('user category');
 
 			res.json({article});
 		} catch (err) {
@@ -70,14 +77,22 @@ router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => 
 	try {
 		const article = await Article.findOne({slug: req.params.slug})
 			.sort({created: -1})
-			.populate('comments', null, null, {
-				sort: {created: -1},
-				populate: {
-					path: 'user',
+			.populate('user category')
+			.populate({
+				path: 'comments',
+				options: {
+					sort: {created: -1},
+					populate: {
+						path: 'user replies',
+						options: {
+							sort: {created: 1},
+							populate: {
+								path: 'user',
+							},
+						},
+					},
 				},
-			})
-			.populate('user')
-			.populate('category');
+			});
 
 		if (!article) {
 			const notFoundError = getNotFoundError();
@@ -93,6 +108,7 @@ router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => 
 
 router.put(
 	'/:articleId',
+	passport.authenticate('isAuth', {session: false}),
 	imageUpload,
 	articleValidators,
 	async (req: Request, res: Response, next: NextFunction) => {
@@ -128,14 +144,13 @@ router.put(
 				},
 				{new: true},
 			)
+				.populate('user category')
 				.populate('comments', null, null, {
 					sort: {created: -1},
 					populate: {
 						path: 'user',
 					},
-				})
-				.populate('user')
-				.populate('category');
+				});
 
 			res.json({article});
 		} catch (err) {
@@ -144,19 +159,23 @@ router.put(
 	},
 );
 
-router.delete('/:articleId', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const article = await removeArticle(req.params.articleId);
+router.delete(
+	'/:articleId',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const article = await removeArticle(req.params.articleId);
 
-		if (article) {
-			removeImage(article.image);
+			if (article) {
+				removeImage(article.image);
+			}
+
+			res.json({article});
+		} catch (err) {
+			next(err);
 		}
-
-		res.json({article});
-	} catch (err) {
-		next(err);
-	}
-});
+	},
+);
 
 router.get('/views/:articleId', async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -168,18 +187,27 @@ router.get('/views/:articleId', async (req: Request, res: Response, next: NextFu
 	}
 });
 
-router.get('/like/:articleId/:userId', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const success = await addLike(req.params.articleId, req.params.userId);
+router.get(
+	'/like/:articleId/:userId',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const success = await addLike(req.params.articleId, req.params.userId);
 
-		res.json({success});
-	} catch (err) {
-		next(err);
-	}
-});
+			if (!success) {
+				return res.json({remove_like: true});
+			}
+
+			res.json({add_like: true});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
 
 router.post(
 	'/comments',
+	passport.authenticate('isAuth', {session: false}),
 	commentValidators,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -200,15 +228,67 @@ router.post(
 	},
 );
 
-router.delete('/comments/:commentId', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const comment = await Comment.findByIdAndRemove(req.params.commentId);
+router.delete(
+	'/comments/:commentId',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const comment = await Comment.findByIdAndRemove(req.params.commentId);
 
-		res.json({comment});
-	} catch (err) {
-		next(err);
-	}
-});
+			if (comment) {
+				await Promise.all([
+					Comment.deleteMany({parentId: comment._id}),
+					Article.updateOne({_id: comment.articleId}, {$pullAll: {comments: [comment._id]}}),
+				]);
+			}
+
+			res.json({success: true, comment});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
+
+router.post(
+	'/comments/replies',
+	passport.authenticate('isAuth', {session: false}),
+	commentValidators,
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.json({success: false, message: errors.array()[0].msg});
+			}
+
+			let reply = await Comment.create(req.body);
+			reply = await reply.populate('user').execPopulate();
+
+			await Comment.updateOne({_id: reply.parentId}, {$push: {replies: reply._id}});
+
+			res.json({success: true, reply});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
+
+router.delete(
+	'/comments/replies/:replyId',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const reply = await Comment.findByIdAndRemove(req.params.replyId);
+
+			if (reply) {
+				await Comment.updateOne({_id: reply.parentId}, {$pullAll: {replies: [reply._id]}});
+			}
+
+			res.json({success: true, reply});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
 
 router.get('/tag/:tag', async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -224,18 +304,23 @@ router.get('/tag/:tag', async (req: Request, res: Response, next: NextFunction) 
 	}
 });
 
-router.get('/comments/like/:commentId', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const success = await Comment.updateOne({_id: req.params.commentId}, {$inc: {likes: 1}});
+router.get(
+	'/comments/like/:commentId',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const success = await Comment.updateOne({_id: req.params.commentId}, {$inc: {likes: 1}});
 
-		res.json({success});
-	} catch (err) {
-		next(err);
-	}
-});
+			res.json({success});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
 
 router.get(
 	'/comments/dislike/:commentId',
+	passport.authenticate('isAuth', {session: false}),
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const success = await Comment.updateOne({_id: req.params.commentId}, {$inc: {dislikes: 1}});
@@ -246,38 +331,5 @@ router.get(
 		}
 	},
 );
-
-router.post('/comments/add', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const comment = await Comment.create(req.body);
-
-		await Article.updateOne({_id: req.body.articleId}, {$push: {comments: comment._id}});
-
-		res.json({comment});
-	} catch (err) {
-		next(err);
-	}
-});
-
-router.get('/comments/get', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const comments = await Comment.find({parentId: null}).sort({created: -1});
-		const replies = await Comment.find({parentId: {$ne: null}}).sort({created: -1});
-
-		const newComments = comments.map(comment => {
-			replies.forEach(reply => {
-				if (comment._id === reply.parentId) {
-					console.log(comment._id + ' = ' + reply._id);
-				}
-			});
-
-			return comment;
-		});
-
-		res.json({newComments});
-	} catch (err) {
-		next(err);
-	}
-});
 
 export default router;

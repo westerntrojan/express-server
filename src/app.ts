@@ -13,19 +13,19 @@ import tinify from 'tinify';
 import moment from 'moment';
 import passport from 'passport';
 import config from 'config';
-// import * as Sentry from '@sentry/node';
+import * as Sentry from '@sentry/node';
 
 import {getLogger} from './utils/logger';
 import {getNotFoundError} from './utils/errors';
 import apiRouter from './api';
 import {login, isAuth, registerVerify, passwordResetVerify} from './utils/passport-strategies';
-import {makeSeeding} from './seeding';
 
 const logger = getLogger(module);
 const isProd = process.env.NODE_ENV === 'production';
 
-// Sentry
-// Sentry.init({dsn: 'https://42a70964b139445a9f9f2e4e59993747@sentry.io/5167390'});
+if (isProd) {
+	Sentry.init({dsn: 'https://42a70964b139445a9f9f2e4e59993747@sentry.io/5167390'});
+}
 
 const app: Application = express();
 const apiLimiter = new rateLimit({
@@ -41,25 +41,20 @@ mongoose
 		useUnifiedTopology: true,
 		autoIndex: !isProd,
 	})
-	.then(() => {
-		logger.info('MongoDB');
-
-		if (isProd) {
-			return makeSeeding();
-		}
-	})
+	.then(() => logger.info('MongoDB'))
 	.catch((err: Error) => logger.error(err.message));
 
 tinify.key = config.get('tinify_api_key');
 
 // middleware
-// app.use(
-// 	Sentry.Handlers.requestHandler({
-// 		serverName: false,
-// 		user: ['email'],
-// 	}),
-// );
 if (isProd) {
+	app.use(
+		Sentry.Handlers.requestHandler({
+			serverName: false,
+			user: ['email'],
+		}),
+	);
+
 	app.use(morgan('combined'));
 } else {
 	app.use(morgan('dev'));
@@ -84,7 +79,9 @@ passport.use('passwordResetVerify', passwordResetVerify);
 // api
 app.use('/api/v1', apiRouter);
 
-// app.use(Sentry.Handlers.errorHandler());
+if (isProd) {
+	app.use(Sentry.Handlers.errorHandler());
+}
 
 // 404
 app.use((req, res) => {
@@ -95,7 +92,7 @@ app.use((req, res) => {
 
 // 500
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-	logger.error(err.message);
+	logger.error(err);
 
 	res.status(500).json({
 		timestamp: moment().format(),
