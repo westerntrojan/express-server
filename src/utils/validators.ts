@@ -53,7 +53,7 @@ export const editUserValidators = [
 		.isEmail()
 		.withMessage('Invalid Email')
 		.trim(),
-	check('info.bio')
+	check('bio')
 		.isLength({max: 1000})
 		.withMessage('Invalid Bio(Max: 1000)')
 		.trim(),

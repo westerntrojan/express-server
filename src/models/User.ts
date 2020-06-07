@@ -48,18 +48,16 @@ const UserSchema: Schema = new Schema({
 			trim: true,
 		},
 	},
-	info: {
-		bio: {
-			type: String,
-			trim: true,
-			default: '',
-		},
+	bio: {
+		type: String,
+		trim: true,
+		default: '',
 	},
 	role: {
 		type: Number,
 		default: Role.USER,
 	},
-	likedArticles: [
+	bookmarks: [
 		{
 			type: Schema.Types.ObjectId,
 			ref: 'articles',
@@ -108,11 +106,9 @@ interface IValidUser {
 		images: string[];
 		color: string;
 	};
-	info: {
-		bio: string;
-	};
+	bio: string;
 	role: Role.ADMIN | Role.MODERATOR | Role.USER;
-	likedArticles: string[];
+	bookmarks: string[];
 	isRemoved: boolean;
 	emailVerified: boolean;
 	twoFactorAuth: boolean;
@@ -127,9 +123,9 @@ UserSchema.methods.getValidUser = function(): IValidUser {
 		username: this.username,
 		email: this.email,
 		avatar: this.avatar,
-		info: this.info,
+		bio: this.bio,
 		role: this.role,
-		likedArticles: this.likedArticles,
+		bookmarks: this.bookmarks,
 		isRemoved: this.isRemoved,
 		emailVerified: this.emailVerified,
 		twoFactorAuth: this.twoFactorAuth,
@@ -148,11 +144,9 @@ export interface IUser extends Document {
 		images: string[];
 		color: string;
 	};
-	info: {
-		bio?: string;
-	};
+	bio: string;
 	role?: Role.ADMIN | Role.MODERATOR | Role.USER;
-	likedArticles: string[];
+	bookmarks: string[];
 	isRemoved?: boolean;
 	emailVerified: boolean;
 	twoFactorAuth: boolean;

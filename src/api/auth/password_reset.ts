@@ -67,9 +67,7 @@ router.post(
 				});
 			}
 
-			const passwordHashed = await user.hashPassword(password);
-
-			user.password = passwordHashed;
+			user.password = await user.hashPassword(password);
 			await user.save();
 
 			res.json({success: true});

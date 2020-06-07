@@ -7,7 +7,7 @@ import {upload, removeImage, getImageUrl} from '../utils/images';
 import {getNotFoundError} from '../utils/errors';
 import Article from '../models/Article';
 import Comment from '../models/Comment';
-import {removeArticle, addLike} from '../utils/articles';
+import {removeArticle, addToBookmarks} from '../utils/articles';
 import {getSlug} from '../utils/app';
 
 const router = Router();
@@ -188,17 +188,45 @@ router.get('/views/:articleId', async (req: Request, res: Response, next: NextFu
 });
 
 router.get(
-	'/like/:articleId/:userId',
+	'/like/:articleId',
 	passport.authenticate('isAuth', {session: false}),
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const success = await addLike(req.params.articleId, req.params.userId);
+			const success = await Article.updateOne({_id: req.params.articleId}, {$inc: {likes: 1}});
+
+			res.json({success});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
+
+router.get(
+	'/dislike/:articleId',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const success = await Article.updateOne({_id: req.params.articleId}, {$inc: {dislikes: 1}});
+
+			res.json({success});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
+
+router.get(
+	'/bookmarks/:articleId/:userId',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const success = await addToBookmarks(req.params.articleId, req.params.userId);
 
 			if (!success) {
-				return res.json({remove_like: true});
+				return res.json({remove: true});
 			}
 
-			res.json({add_like: true});
+			res.json({add: true});
 		} catch (err) {
 			next(err);
 		}
