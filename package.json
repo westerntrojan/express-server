@@ -9,7 +9,7 @@
 		"test": "jest --watch",
 		"coverage": "jest --coverage",
 		"build": "tsc -p .",
-		"start": "NODE_ENV=production node public/server.js",
+		"start": "node public/server.js",
 		"pm2": "pm2 start public/server.js -i max"
 	},
 	"devDependencies": {
