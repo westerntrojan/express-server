@@ -12,7 +12,7 @@ import cors from 'cors';
 import tinify from 'tinify';
 import moment from 'moment';
 import passport from 'passport';
-import config from 'config';
+import dotenv from 'dotenv';
 import * as Sentry from '@sentry/node';
 
 import {getLogger} from './utils/logger';
@@ -20,6 +20,7 @@ import {getNotFoundError} from './utils/errors';
 import apiRouter from './api';
 import {login, isAuth, registerVerify, passwordResetVerify} from './utils/passport-strategies';
 
+dotenv.config();
 const logger = getLogger(module);
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -34,7 +35,7 @@ const apiLimiter = new rateLimit({
 });
 
 mongoose
-	.connect(config.get('mongo_uri'), {
+	.connect(String(process.env.MONGO_URI), {
 		useNewUrlParser: true,
 		useCreateIndex: true,
 		useFindAndModify: false,
@@ -44,7 +45,7 @@ mongoose
 	.then(() => logger.info('MongoDB'))
 	.catch((err: Error) => logger.error(err.message));
 
-tinify.key = config.get('tinify_api_key');
+tinify.key = String(process.env.TINIFY_API_KEY);
 
 // middleware
 if (isProd) {

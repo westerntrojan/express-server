@@ -1,12 +1,14 @@
 import passportJwt from 'passport-jwt';
-import config from 'config';
+import dotenv from 'dotenv';
 
 import User from '../../models/User';
+
+dotenv.config();
 
 const JwtStrategy = passportJwt.Strategy;
 const ExtractJwt = passportJwt.ExtractJwt;
 
-const jwt_signature = config.get('jwt_signature');
+const jwt_signature = String(process.env.JWT_SIGNATURE);
 
 const options = {
 	jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),

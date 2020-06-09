@@ -1,9 +1,11 @@
 import jwt from 'jsonwebtoken';
-import config from 'config';
+import dotenv from 'dotenv';
 
 import {IUser} from '../models/User';
 
-const jwt_signature = config.get('jwt_signature');
+dotenv.config();
+
+const jwt_signature = String(process.env.JWT_SIGNATURE);
 
 export const generateToken = (user: IUser): string => {
 	const data = {

@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer';
-import config from 'config';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const sendEmail = async (
 	to: string,
@@ -8,8 +10,8 @@ export const sendEmail = async (
 	html?: string,
 ): Promise<boolean> => {
 	const emailAccount = {
-		user: String(config.get('gmail.user')),
-		pass: String(config.get('gmail.password')),
+		user: String(process.env.GMAIL_USER),
+		pass: String(process.env.GMAIL_PASSWORD),
 	};
 
 	const transporter = nodemailer.createTransport({
