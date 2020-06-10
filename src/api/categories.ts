@@ -70,15 +70,15 @@ router.put(
 		try {
 			const errors = validationResult(req);
 			if (!errors.isEmpty()) {
-				return res.json({errors: errors.array()});
+				return res.json({success: false, message: errors.array()[0].msg});
 			}
 
 			const slug = getSlug(req.body.title);
 
-			const slugValidate = await Category.findOne({slug});
+			const slugValidate = await Category.findOne({_id: {$ne: req.params.categoryId}, slug});
 
 			if (slugValidate) {
-				return res.json({errors: [{msg: 'This category exists.'}]});
+				return res.json({success: false, message: 'This category exists'});
 			}
 
 			const category = await Category.findByIdAndUpdate(
@@ -87,7 +87,7 @@ router.put(
 				{new: true},
 			);
 
-			res.json({category});
+			res.json({success: true, category});
 		} catch (err) {
 			next(err);
 		}
