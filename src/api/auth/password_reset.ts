@@ -1,8 +1,11 @@
 import {Router, Request, Response, NextFunction} from 'express';
 import passport from 'passport';
+import dotenv from 'dotenv';
 
 import User from '../../models/User';
 import {sendEmail} from '../../utils/email';
+
+dotenv.config();
 
 const router = Router();
 
@@ -16,10 +19,10 @@ router.post('/email', async (req: Request, res: Response, next: NextFunction) =>
 
 		const token = user.generateToken();
 		const html = `
-			<a href="http://localhost:3000/password_reset/verify/${token}">Link</a>
+			<a href="${process.env.CLIENT_URI}/password_reset/verify/${token}">Link</a>
 			<br/>
 			<br/>
-			You can use the following link to reset your password: http://localhost:3000/password_reset/verify/${token}
+			You can use the following link to reset your password: ${process.env.CLIENT_URI}/password_reset/verify/${token}
 		`;
 		const result = await sendEmail(user.email, 'Please reset your password', '', html);
 

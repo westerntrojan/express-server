@@ -2,10 +2,13 @@ import {Router, Request, Response, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 import passport from 'passport';
 import randomColor from 'randomcolor';
+import dotenv from 'dotenv';
 
 import User from '../../models/User';
 import {registerValidators} from '../../utils/validators';
 import {sendEmail} from '../../utils/email';
+
+dotenv.config();
 
 const router = Router();
 
@@ -29,10 +32,10 @@ router.post('/', registerValidators, async (req: Request, res: Response, next: N
 
 		const token = newUser.generateToken();
 		const html = `
-			<a href="http://localhost:3000/register/verify/${token}">Link</a>
+			<a href="${process.env.CLIENT_URI}/register/verify/${token}">Link</a>
 			<br/>
 			<br/>
-			Or, copy and paste the following URL into your browser: http://localhost:3000/register/verify/${token}
+			Or, copy and paste the following URL into your browser: ${process.env.CLIENT_URI}/register/verify/${token}
 		`;
 		const result = await sendEmail(newUser.email, 'Verify your email', '', html);
 

@@ -99,7 +99,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 		timestamp: moment().format(),
 		status: 500,
 		error: 'Internal Server Error',
-		err,
 	});
 });
 
