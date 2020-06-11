@@ -2,9 +2,9 @@
 	"name": "sn-server",
 	"version": "1.0.0",
 	"license": "ISC",
-	"main": "publick/server.js",
+	"main": "public/server.js",
 	"scripts": {
-		"dev": "npx nodemon src/index.ts",
+		"dev": "npx nodemon src/server.ts",
 		"start": "node public/server.js",
 		"lint": "eslint ./src/**/*.{js,ts} ",
 		"prettify": "prettier ./src/**/*.{js,ts} --write",

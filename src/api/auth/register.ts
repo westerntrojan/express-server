@@ -34,7 +34,7 @@ router.post('/', registerValidators, async (req: Request, res: Response, next: N
 			<br/>
 			Or, copy and paste the following URL into your browser: http://localhost:3000/register/verify/${token}
 		`;
-		const result = await sendEmail(newUser.email, 'Verify your email', '', html);
+		const result = sendEmail(newUser.email, 'Verify your email', '', html);
 
 		if (!result) {
 			return res.json({success: false, message: 'Something went wrong. Try logging in later'});
