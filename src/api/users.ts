@@ -7,6 +7,7 @@ import {getNotFoundError} from '../utils/errors';
 import User from '../models/User';
 import {getUserByLink, getUserStatistics} from '../utils/users';
 import {editUserValidators} from '../utils/validators';
+import {optimizeImage} from '../middleware';
 
 const router = Router();
 
@@ -74,49 +75,49 @@ router.delete(
 	},
 );
 
-router.get('/two_factor_auth/:userId', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const user = await User.findById(req.params.userId);
+router.get(
+	'/two_factor_auth/:userId',
+	passport.authenticate('isAuth', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const user = await User.findById(req.params.userId);
 
-		if (!user) {
-			return res.json({success: false, message: 'User not found'});
+			if (!user) {
+				return res.json({success: false, message: 'User not found'});
+			}
+
+			user.twoFactorAuth = !user.twoFactorAuth;
+			await user.save();
+
+			res.json({success: true});
+		} catch (err) {
+			next(err);
 		}
-
-		user.twoFactorAuth = !user.twoFactorAuth;
-		await user.save();
-
-		res.json({success: true});
-	} catch (err) {
-		next(err);
-	}
-});
+	},
+);
 
 const avatarUpload = upload.single('avatar');
 
 router.post(
 	'/avatar',
 	passport.authenticate('isAuth', {session: false}),
+	avatarUpload,
+	optimizeImage,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			avatarUpload(req, res, (err: any) => {
-				if (err) {
-					return res.json({success: false, message: err.message});
+			const imageUrl = getImageUrl(req);
+
+			(async function addAvatar(): Promise<void> {
+				const user = await User.findById(req.body.userId);
+
+				if (user) {
+					user.avatar.images.unshift(imageUrl);
+
+					await user.save();
 				}
+			})();
 
-				const imageUrl = getImageUrl(req);
-
-				(async function addAvatar(): Promise<void> {
-					const user = await User.findById(req.body.userId);
-
-					if (user) {
-						user.avatar.images.unshift(imageUrl);
-
-						await user.save();
-					}
-				})();
-
-				res.json({success: true, imageUrl});
-			});
+			res.json({success: true, imageUrl});
 		} catch (err) {
 			next(err);
 		}

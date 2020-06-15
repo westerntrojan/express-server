@@ -1,5 +1,7 @@
 import {Router, Request, Response, NextFunction} from 'express';
 import argon2 from 'argon2';
+import shelljs from 'shelljs';
+import passport from 'passport';
 
 import data from '../seed.json';
 
@@ -7,36 +9,42 @@ import {Article, AuthCode, Comment, Category, User, Message, UserChat} from '../
 
 const router = Router();
 
-router.get('/reset', async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		await Promise.all([
-			Article.deleteMany({}),
-			AuthCode.deleteMany({}),
-			Category.deleteMany({}),
-			Comment.deleteMany({}),
-			Message.deleteMany({}),
-			User.deleteMany({}),
-			UserChat.deleteMany({}),
-		]);
+router.get(
+	'/reset',
+	passport.authenticate('isAdmin', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			shelljs.rm('-rf', __dirname + '/..' + '/uploads');
 
-		const users = await Promise.all(
-			data.users.map(async user => {
-				return {
-					...user,
-					password: await argon2.hash(user.password),
-				};
-			}),
-		);
+			await Promise.all([
+				Article.deleteMany({}),
+				AuthCode.deleteMany({}),
+				Category.deleteMany({}),
+				Comment.deleteMany({}),
+				Message.deleteMany({}),
+				User.deleteMany({}),
+				UserChat.deleteMany({}),
+			]);
 
-		const [, categories] = await Promise.all([
-			User.create(users),
-			Category.create(data.categories),
-		]);
+			const users = await Promise.all(
+				data.users.map(async user => {
+					return {
+						...user,
+						password: await argon2.hash(user.password),
+					};
+				}),
+			);
 
-		res.json({success: true, categories});
-	} catch (err) {
-		next(err);
-	}
-});
+			const [, categories] = await Promise.all([
+				User.create(users),
+				Category.create(data.categories),
+			]);
+
+			res.json({success: true, categories});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
 
 export default router;

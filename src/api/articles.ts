@@ -9,6 +9,7 @@ import Article from '../models/Article';
 import Comment from '../models/Comment';
 import {removeArticle, addToBookmarks} from '../utils/articles';
 import {getSlug} from '../utils/app';
+import {optimizeImage} from '../middleware';
 
 const router = Router();
 
@@ -47,7 +48,9 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
 router.post(
 	'/',
+	passport.authenticate('isAuth', {session: false}),
 	imageUpload,
+	optimizeImage,
 	articleValidators,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -110,6 +113,7 @@ router.put(
 	'/:articleId',
 	passport.authenticate('isAuth', {session: false}),
 	imageUpload,
+	optimizeImage,
 	articleValidators,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {

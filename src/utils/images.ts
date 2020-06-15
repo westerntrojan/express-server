@@ -4,7 +4,6 @@ import {v4 as uuidv4} from 'uuid';
 import shelljs from 'shelljs';
 import path from 'path';
 import Url from 'url-parse';
-import tinify from 'tinify';
 
 import {getSlug} from './app';
 
@@ -19,6 +18,19 @@ const getPathToImage = (url: string): string => {
 	return pathToImage;
 };
 
+export const getImageUrl = (req: Request): string => {
+	if (req.file) {
+		const currentUrl = req.protocol + '://' + req.get('host');
+		const imageUrl = `${currentUrl}/static/${req.body.userId}/${req.file.filename}`;
+
+		return imageUrl;
+	} else if (req.body.imagePreview) {
+		return req.body.imagePreview;
+	}
+
+	return '';
+};
+
 export const removeImage = (url: string): string => {
 	if (!url) {
 		return '';
@@ -31,23 +43,7 @@ export const removeImage = (url: string): string => {
 	return pathToImage;
 };
 
-export const getImageUrl = (req: Request): string => {
-	if (req.file) {
-		// optimize image
-		const source = tinify.fromFile(req.file.path);
-		source.toFile(req.file.path);
-
-		const currentUrl = req.protocol + '://' + req.get('host');
-		const imageUrl = `${currentUrl}/static/${req.body.userId}/${req.file.filename}`;
-
-		return imageUrl;
-	} else if (req.body.imagePreview) {
-		return req.body.imagePreview;
-	}
-
-	return '';
-};
-
+// multer
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		const pathToImageFolder = path.resolve(__dirname, '../uploads', req.body.userId);
@@ -66,7 +62,7 @@ const storage = multer.diskStorage({
 export const upload = multer({
 	storage,
 	fileFilter: (req, file, cb) => {
-		const filetypes = /jpg|png|jpeg/;
+		const filetypes = /jpg|jpeg|png/;
 
 		const mimetype = filetypes.test(file.mimetype);
 		const extname = filetypes.test(path.extname(file.originalname).toLowerCase());

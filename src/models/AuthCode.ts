@@ -7,7 +7,7 @@ const AuthCode: Schema = new Schema({
 		required: true,
 	},
 	code: {
-		type: String,
+		type: Number,
 		required: true,
 	},
 	created: {
@@ -18,7 +18,7 @@ const AuthCode: Schema = new Schema({
 
 export interface IAuthCode extends Document {
 	userId: string;
-	code: string;
+	code: number;
 	created?: Date;
 }
 

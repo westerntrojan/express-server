@@ -26,9 +26,10 @@
 			"emailVerified": true,
 			"password": "password",
 			"avatar": {
-				"color": "rgb(0, 0, 0)",
-				"images": []
+				"images": [],
+				"color": "rgb(0, 0, 0)"
 			},
+			"bookmarks": [],
 			"role": 0
 		},
 		{
@@ -39,9 +40,11 @@
 			"emailVerified": true,
 			"password": "password",
 			"avatar": {
-				"color": "rgb(0, 0, 0)",
-				"images": []
-			}
+				"images": [],
+				"color": "rgb(0, 0, 0)"
+			},
+			"bookmarks": [],
+			"role": 1
 		}
 	]
 }

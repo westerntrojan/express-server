@@ -134,7 +134,6 @@ UserSchema.methods.getValidUser = function(): IValidUser {
 };
 
 export interface IUser extends Document {
-	_id: string;
 	firstName: string;
 	lastName?: string;
 	username?: string;
@@ -144,12 +143,12 @@ export interface IUser extends Document {
 		images: string[];
 		color: string;
 	};
-	bio: string;
+	bio?: string;
 	role?: Role.ADMIN | Role.MODERATOR | Role.USER;
 	bookmarks: string[];
 	isRemoved?: boolean;
-	emailVerified: boolean;
-	twoFactorAuth: boolean;
+	emailVerified?: boolean;
+	twoFactorAuth?: boolean;
 	created?: Date;
 	hashPassword: (password: string) => Promise<string>;
 	validatePassword: (password: string) => Promise<boolean>;

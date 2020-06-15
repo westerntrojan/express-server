@@ -9,7 +9,6 @@ import compression from 'compression';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import tinify from 'tinify';
 import moment from 'moment';
 import passport from 'passport';
 import dotenv from 'dotenv';
@@ -18,7 +17,13 @@ import * as Sentry from '@sentry/node';
 import {getLogger} from './utils/logger';
 import {getNotFoundError} from './utils/errors';
 import apiRouter from './api';
-import {login, isAuth, registerVerify, passwordResetVerify} from './utils/passport-strategies';
+import {
+	login,
+	isAuth,
+	isAdmin,
+	registerVerify,
+	passwordResetVerify,
+} from './utils/passport-strategies';
 
 dotenv.config();
 const logger = getLogger(module);
@@ -44,8 +49,6 @@ mongoose
 	})
 	.then(() => logger.info('MongoDB'))
 	.catch((err: Error) => logger.error(err.message));
-
-tinify.key = String(process.env.TINIFY_API_KEY);
 
 // middleware
 if (isProd) {
@@ -74,6 +77,7 @@ app.use('/static', express.static(__dirname + '/uploads'));
 // passport strategies
 passport.use('login', login);
 passport.use('isAuth', isAuth);
+passport.use('isAdmin', isAdmin);
 passport.use('registerVerify', registerVerify);
 passport.use('passwordResetVerify', passwordResetVerify);
 

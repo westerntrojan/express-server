@@ -29,6 +29,7 @@ src/uploads
 src/seed.json
 src/seeding.ts
 
+.env
 .vercel
 vercel.json
 .vercelignore

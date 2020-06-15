@@ -5,6 +5,7 @@ import {upload, getImageUrl} from '../utils/images';
 import User from '../models/User';
 import UserChat from '../models/UserChat';
 import Message from '../models/Message';
+import {optimizeImage} from '../middleware';
 
 const router = Router();
 
@@ -76,17 +77,13 @@ const imageUpload = upload.single('image');
 router.post(
 	'/image',
 	passport.authenticate('isAuth', {session: false}),
+	imageUpload,
+	optimizeImage,
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			imageUpload(req, res, (err: any) => {
-				if (err) {
-					return res.json({success: false, message: err.message});
-				}
+			const imageUrl = getImageUrl(req);
 
-				const imageUrl = getImageUrl(req);
-
-				res.json({success: true, imageUrl});
-			});
+			res.json({success: true, imageUrl});
 		} catch (err) {
 			next(err);
 		}

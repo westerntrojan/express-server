@@ -36,8 +36,8 @@ CategorySchema.pre('save', function(next) {
 export interface ICategory extends Document {
 	title: string;
 	desc: string;
-	subs: number;
-	slug: string;
+	subs?: number;
+	slug?: string;
 }
 
 export default model<ICategory>('categories', CategorySchema);
