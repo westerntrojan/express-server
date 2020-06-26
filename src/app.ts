@@ -13,7 +13,6 @@ import moment from 'moment';
 import passport from 'passport';
 import dotenv from 'dotenv';
 import * as Sentry from '@sentry/node';
-import path from 'path';
 
 import {getLogger} from './utils/logger';
 import {getNotFoundError} from './utils/errors';

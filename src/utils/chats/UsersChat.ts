@@ -6,7 +6,7 @@ import {getLogger} from '../logger';
 
 const logger = getLogger(module);
 
-interface IUsers {
+interface IUsersChat {
 	error: (err: Error) => void;
 	findChat: (condition: IUserChat) => Promise<IUserChat | null>;
 	getMessages: (chatId: string) => Promise<IMessage[]>;
@@ -15,8 +15,12 @@ interface IUsers {
 	removeMessage: (messageId: string) => Promise<void>;
 }
 
-class Users implements IUsers {
-	constructor(private readonly _socket: Socket) {}
+class UsersChat implements IUsersChat {
+	private readonly _socket: Socket;
+
+	constructor(socket: Socket) {
+		this._socket = socket;
+	}
 
 	error(err: Error): void {
 		logger.error(`socket.id: ${this._socket.id}`);
@@ -55,4 +59,4 @@ class Users implements IUsers {
 	}
 }
 
-export default Users;
+export default UsersChat;

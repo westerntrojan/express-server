@@ -3,7 +3,7 @@ import argon2 from 'argon2';
 
 import {generateToken} from '../utils/auth';
 
-enum Role {
+export enum Role {
 	ADMIN,
 	MODERATOR,
 	USER,

@@ -6,17 +6,20 @@ import {removeImage} from '../../utils/images';
 
 const logger = getLogger(module);
 
-interface IMain {
-	error: (err: Error) => void;
+interface IMainChat {
 	getMessages: (limit: number) => Promise<IMessage[]>;
 	newMessage: (message: IMessage) => Promise<IMessage | null>;
 	removeMessage: (messageId: string) => Promise<void>;
 }
 
-class Main implements IMain {
-	constructor(private readonly _socket: Socket) {}
+class MainChat implements IMainChat {
+	private readonly _socket: Socket;
 
-	error(err: Error): void {
+	constructor(socket: Socket) {
+		this._socket = socket;
+	}
+
+	public error(err: Error): void {
 		logger.error(`socket.id: ${this._socket.id}`);
 		logger.error(err);
 
@@ -64,4 +67,4 @@ class Main implements IMain {
 	}
 }
 
-export default Main;
+export default MainChat;

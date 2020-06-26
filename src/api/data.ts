@@ -12,14 +12,15 @@ router.get('/top-tags', async (req: Request, res: Response, next: NextFunction) 
 			'news',
 			'events',
 			'article',
-			'buissness',
-			'success',
-			'john wick',
-			'call of duty',
-			'assassins creed',
-			'the witcher',
-			'gerland',
-			'pravns',
+			'random',
+			'text',
+			'lorem ipsum',
+			'other',
+			'asd',
+			'some tag',
+			'people',
+			'beautiful',
+			'forest',
 		];
 
 		res.json({tags});

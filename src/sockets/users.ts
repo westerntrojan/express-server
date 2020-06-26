@@ -1,6 +1,6 @@
 import {Socket, Server} from 'socket.io';
 
-import Chat from '../utils/chatUtils/users';
+import UsersChat from '../utils/chats/UsersChat';
 
 // room
 let chatId: string;
@@ -12,7 +12,7 @@ export default (io: Server): void => {
 	users.on('connection', (socket: Socket) => {
 		console.log('[users] connection');
 
-		const chatUtils = new Chat(socket);
+		const chatUtils = new UsersChat(socket);
 
 		socket.on('disconnect', () => {
 			console.log('[users] disconnect');

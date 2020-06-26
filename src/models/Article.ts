@@ -98,6 +98,7 @@ export interface IArticle extends Document {
 	tags?: string[];
 	slug?: string;
 	comments: IComment[];
+	commentsCount?: number;
 	created?: Date;
 }
 

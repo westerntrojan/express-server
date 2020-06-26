@@ -1,6 +1,6 @@
 import {Socket, Server} from 'socket.io';
 
-import Chat from '../utils/chatUtils/main';
+import MainChat from '../utils/chats/MainChat';
 import {IMessage} from '../models/Message';
 
 export default (io: Server): void => {
@@ -12,7 +12,7 @@ export default (io: Server): void => {
 	main.on('connection', (socket: Socket) => {
 		console.log('[main] connection');
 
-		const chat = new Chat(socket);
+		const chat = new MainChat(socket);
 
 		socket.on('disconnect', () => {
 			console.log('[main] disconnect');

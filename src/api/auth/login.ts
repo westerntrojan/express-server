@@ -24,7 +24,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 				const result = await sendEmail(user.email, 'Your verification code', text);
 
 				if (result) {
-					await AuthCode.create({userId: user._id, code});
+					await AuthCode.create({userId: user._id, code: code.toString()});
 
 					return res.json({success: false, twoFactorAuth: true, userId: user._id});
 				}

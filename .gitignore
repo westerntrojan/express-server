@@ -24,12 +24,8 @@ logs
 public
 config
 
-src/__tests__
 src/uploads
 src/seed.json
 src/seeding.ts
 
 .env
-.vercel
-vercel.json
-.vercelignore

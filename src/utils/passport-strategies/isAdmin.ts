@@ -1,7 +1,7 @@
 import passportJwt from 'passport-jwt';
 import dotenv from 'dotenv';
 
-import User from '../../models/User';
+import User, {Role} from '../../models/User';
 
 dotenv.config();
 
@@ -21,7 +21,7 @@ export default new JwtStrategy(options, async (jwt_payload, done) => {
 			_id: jwt_payload.data.userId,
 			emailVerified: true,
 			isRemoved: false,
-			role: 0,
+			role: Role.ADMIN,
 		});
 
 		if (!user) {
