@@ -24,7 +24,6 @@ logs
 public
 config
 
-src/uploads
 src/seed.json
 src/seeding.ts
 

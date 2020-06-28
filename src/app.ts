@@ -79,7 +79,6 @@ app.use('/api/', apiLimiter);
 app.use(compression());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use('/static', express.static(__dirname + '/uploads'));
 
 // passport strategies
 passport.use('login', login);
