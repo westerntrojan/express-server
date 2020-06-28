@@ -8,7 +8,7 @@ const logger = getLogger(module);
 
 const server = http.createServer(app);
 const pid = process.pid;
-server.timeout = 5000;
+// server.timeout = 5000;
 
 io(server);
 

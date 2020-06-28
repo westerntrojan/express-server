@@ -1,15 +1,15 @@
 import {Router} from 'express';
 
-import login from './login';
-import register from './register';
-import verify from './verify';
-import password_reset from './password_reset';
+import loginRotuer from './login';
+import registerRotuer from './register';
+import verifyRotuer from './verify';
+import passwordResetRouter from './password_reset';
 
 const router = Router();
 
-router.use('/login', login);
-router.use('/register', register);
-router.use('/verify', verify);
-router.use('/password_reset', password_reset);
+router.use('/login', loginRotuer);
+router.use('/register', registerRotuer);
+router.use('/verify', verifyRotuer);
+router.use('/password_reset', passwordResetRouter);
 
 export default router;

@@ -1,77 +1,48 @@
-import {Request} from 'express';
-import multer from 'multer';
 import {v4 as uuidv4} from 'uuid';
-import shelljs from 'shelljs';
-import path from 'path';
-import Url from 'url-parse';
+import cloudinary, {UploadApiOptions} from 'cloudinary';
+import formidable from 'formidable';
 
-import {getSlug} from './app';
+const validateImage = (
+	file: formidable.File,
+): {success: true} | {success: false; message: string} => {
+	const types = ['image/jpg', 'image/jpeg', 'image/png'];
 
-const getPathToImage = (url: string): string => {
-	const pathnameArray = new Url(url).pathname.split('/');
-
-	const userId = pathnameArray[pathnameArray.length - 2];
-	const imageName = pathnameArray[pathnameArray.length - 1];
-
-	const pathToImage = path.resolve(__dirname, '../uploads', userId, imageName);
-
-	return pathToImage;
-};
-
-export const getImageUrl = (req: Request): string => {
-	if (req.file) {
-		const currentUrl = req.protocol + '://' + req.get('host');
-		const imageUrl = `${currentUrl}/static/${req.body.userId}/${req.file.filename}`;
-
-		return imageUrl;
-	} else if (req.body.imagePreview) {
-		return req.body.imagePreview;
+	if (!types.includes(file.type)) {
+		return {success: false, message: 'Invalid file type (only: jpg, jpeg, png)'};
 	}
 
-	return '';
-};
-
-export const removeImage = (url: string): string => {
-	if (!url) {
-		return '';
+	if (file.size > 5 * 1024 * 1024) {
+		return {success: false, message: 'Invalid file size (max: 5MB)'};
 	}
 
-	const pathToImage = getPathToImage(url);
-
-	shelljs.rm('-rf', pathToImage);
-
-	return pathToImage;
+	return {success: true};
 };
 
-// multer
-const storage = multer.diskStorage({
-	destination: (req, file, cb) => {
-		const pathToImageFolder = path.resolve(__dirname, '../uploads', req.body.userId);
+export const uploadImage = async (
+	image: formidable.File,
+	options?: UploadApiOptions,
+): Promise<{success: true; public_id: string} | {success: false; message: string}> => {
+	const validateImageResult = validateImage(image);
 
-		shelljs.mkdir('-p', pathToImageFolder);
+	if (!validateImageResult.success) {
+		return {success: false, message: validateImageResult.message};
+	}
 
-		cb(null, pathToImageFolder);
-	},
-	filename: (req, file, cb) => {
-		const filename = getSlug(file.originalname);
+	const {public_id} = await cloudinary.v2.uploader.upload(image.path, {
+		public_id: uuidv4(),
+		async: true,
+		...options,
+	});
 
-		cb(null, uuidv4() + '-' + filename);
-	},
-});
+	return {success: true, public_id};
+};
 
-export const upload = multer({
-	storage,
-	fileFilter: (req, file, cb) => {
-		const filetypes = /jpg|jpeg|png/;
+export const removeImage = async (public_id: string): Promise<boolean> => {
+	const {result} = await cloudinary.v2.uploader.destroy(public_id);
 
-		const mimetype = filetypes.test(file.mimetype);
-		const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+	if (result === 'not found') {
+		return false;
+	}
 
-		if (extname && mimetype) {
-			return cb(null, true);
-		}
-
-		cb(new Error('Invalid file type'));
-	},
-	limits: {fileSize: 5 * 1024 * 1024},
-});
+	return true;
+};

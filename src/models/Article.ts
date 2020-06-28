@@ -90,15 +90,14 @@ export interface IArticle extends Document {
 	title: string;
 	text: string;
 	image: string;
-	views: number;
-	likes: number;
-	dislikes: number;
-	bookmarksCount: number;
+	views?: number;
+	likes?: number;
+	dislikes?: number;
+	bookmarksCount?: number;
 	category: string;
 	tags?: string[];
 	slug?: string;
 	comments: IComment[];
-	commentsCount?: number;
 	created?: Date;
 }
 

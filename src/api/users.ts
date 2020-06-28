@@ -1,13 +1,13 @@
 import {Request, Response, Router, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 import passport from 'passport';
+import formidable from 'formidable';
 
-import {upload, removeImage, getImageUrl} from '../utils/images';
+import {removeImage, uploadImage} from '../utils/images';
 import {getNotFoundError} from '../utils/errors';
 import User from '../models/User';
 import {getUserByLink, getUserStatistics} from '../utils/users';
 import {editUserValidators} from '../utils/validators';
-import {optimizeImage} from '../middleware';
 
 const router = Router();
 
@@ -96,28 +96,30 @@ router.get(
 	},
 );
 
-const avatarUpload = upload.single('avatar');
-
 router.post(
 	'/avatar',
 	passport.authenticate('isAuth', {session: false}),
-	avatarUpload,
-	optimizeImage,
-	async (req: Request, res: Response, next: NextFunction) => {
+	(req: Request, res: Response, next: NextFunction) => {
 		try {
-			const imageUrl = getImageUrl(req);
+			const form = new formidable.IncomingForm();
 
-			(async function addAvatar(): Promise<void> {
-				const user = await User.findById(req.body.userId);
+			form.parse(req, async (err, fields: any, files) => {
+				const result = await uploadImage(files.image);
+
+				if (!result.success) {
+					return res.json({success: false, message: result.message});
+				}
+
+				const user = await User.findById(fields.userId);
 
 				if (user) {
-					user.avatar.images.unshift(imageUrl);
+					user.avatar.images.unshift(result.public_id);
 
 					await user.save();
 				}
-			})();
 
-			res.json({success: true, imageUrl});
+				res.json({success: true, image: result.public_id});
+			});
 		} catch (err) {
 			next(err);
 		}
@@ -134,10 +136,10 @@ router.post(
 			if (user) {
 				await User.updateOne(
 					{_id: req.body.userId},
-					{$pullAll: {'avatar.images': [req.body.imageUrl]}},
+					{$pullAll: {'avatar.images': [req.body.image]}},
 				);
 
-				removeImage(req.body.imageUrl);
+				await removeImage(req.body.image);
 
 				res.json({success: true});
 			}

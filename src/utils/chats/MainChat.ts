@@ -61,8 +61,8 @@ class MainChat implements IMainChat {
 	async removeMessage(messageId: string): Promise<void> {
 		const message = await Message.findByIdAndRemove(messageId);
 
-		if (message && message.image.url) {
-			removeImage(message.image.url);
+		if (message && message.image) {
+			await removeImage(message.image);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 import {Router, Request, Response, NextFunction} from 'express';
 import argon2 from 'argon2';
-import shelljs from 'shelljs';
 import passport from 'passport';
+import cloudinary from 'cloudinary';
 
 import data from '../seed.json';
 
@@ -14,8 +14,6 @@ router.get(
 	passport.authenticate('isAdmin', {session: false}),
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			shelljs.rm('-rf', __dirname + '/..' + '/uploads');
-
 			await Promise.all([
 				Article.deleteMany({}),
 				AuthCode.deleteMany({}),
@@ -24,6 +22,7 @@ router.get(
 				Message.deleteMany({}),
 				User.deleteMany({}),
 				UserChat.deleteMany({}),
+				cloudinary.v2.api.delete_all_resources(),
 			]);
 
 			const users = await Promise.all(

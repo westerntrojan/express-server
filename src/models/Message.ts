@@ -23,15 +23,13 @@ const MessageSchema: Schema = new Schema({
 		trim: true,
 	},
 	image: {
-		url: {
-			type: String,
-			default: '',
-		},
-		caption: {
-			type: String,
-			default: '',
-			trim: true,
-		},
+		type: String,
+		default: '',
+	},
+	caption: {
+		type: String,
+		default: '',
+		trim: true,
 	},
 	type: {
 		type: String,
@@ -47,10 +45,8 @@ export interface IMessage extends Document {
 	chatId?: string | null;
 	user: string;
 	text: string;
-	image: {
-		url?: string;
-		caption?: string;
-	};
+	image?: string;
+	caption?: string;
 	type: string;
 	created?: string;
 }

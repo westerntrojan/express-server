@@ -1,11 +1,11 @@
 import {Router, Request, Response, NextFunction} from 'express';
 import passport from 'passport';
+import formidable from 'formidable';
 
-import {upload, getImageUrl} from '../utils/images';
 import User from '../models/User';
 import UserChat from '../models/UserChat';
 import Message from '../models/Message';
-import {optimizeImage} from '../middleware';
+import {uploadImage} from '../utils/images';
 
 const router = Router();
 
@@ -72,18 +72,26 @@ router.delete(
 	},
 );
 
-const imageUpload = upload.single('image');
-
 router.post(
 	'/image',
 	passport.authenticate('isAuth', {session: false}),
-	imageUpload,
-	optimizeImage,
-	async (req: Request, res: Response, next: NextFunction) => {
+	(req: Request, res: Response, next: NextFunction) => {
 		try {
-			const imageUrl = getImageUrl(req);
+			const form = new formidable.IncomingForm();
 
-			res.json({success: true, imageUrl});
+			form.parse(req, async (err, fields, files) => {
+				if (err) {
+					return res.json({success: false, message: 'Error. Try again'});
+				}
+
+				const result = await uploadImage(files.image);
+
+				if (!result.success) {
+					return res.json({success: false, message: result.message});
+				}
+
+				res.json({success: true, image: result.public_id});
+			});
 		} catch (err) {
 			next(err);
 		}

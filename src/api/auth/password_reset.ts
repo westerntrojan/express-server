@@ -9,6 +9,38 @@ dotenv.config();
 
 const router = Router();
 
+router.post(
+	'/',
+	passport.authenticate('passwordResetVerify', {session: false}),
+	async (req: Request, res: Response, next: NextFunction) => {
+		try {
+			const {password} = req.body;
+
+			const user = await User.findOne({_id: req.user, emailVerified: true});
+
+			if (!user) {
+				return res.json({success: false, message: 'User not found'});
+			}
+
+			const correctPassword = await user.validatePassword(password);
+
+			if (correctPassword) {
+				return res.json({
+					success: false,
+					message: 'The current password will match the past. Please enter another',
+				});
+			}
+
+			user.password = await user.hashPassword(password);
+			await user.save();
+
+			res.json({success: true});
+		} catch (err) {
+			next(err);
+		}
+	},
+);
+
 router.post('/email', async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const user = await User.findOne({email: req.body.email, emailVerified: true});
@@ -42,38 +74,6 @@ router.get(
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			res.json({success: true, userId: req.user});
-		} catch (err) {
-			next(err);
-		}
-	},
-);
-
-router.post(
-	'/',
-	passport.authenticate('passwordResetVerify', {session: false}),
-	async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			const {password} = req.body;
-
-			const user = await User.findOne({_id: req.user, emailVerified: true});
-
-			if (!user) {
-				return res.json({success: false, message: 'User not found'});
-			}
-
-			const correctPassword = await user.validatePassword(password);
-
-			if (correctPassword) {
-				return res.json({
-					success: false,
-					message: 'The current password will match the past. Please enter another',
-				});
-			}
-
-			user.password = await user.hashPassword(password);
-			await user.save();
-
-			res.json({success: true});
 		} catch (err) {
 			next(err);
 		}

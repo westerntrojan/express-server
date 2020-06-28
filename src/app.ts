@@ -13,6 +13,7 @@ import moment from 'moment';
 import passport from 'passport';
 import dotenv from 'dotenv';
 import * as Sentry from '@sentry/node';
+import cloudinary from 'cloudinary';
 
 import {getLogger} from './utils/logger';
 import {getNotFoundError} from './utils/errors';
@@ -32,6 +33,12 @@ const isProd = process.env.NODE_ENV === 'production';
 if (isProd) {
 	Sentry.init({dsn: 'https://42a70964b139445a9f9f2e4e59993747@sentry.io/5167390'});
 }
+
+cloudinary.v2.config({
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+	api_key: process.env.CLOUDINARY_API_KEY,
+	api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const app: Application = express();
 const apiLimiter = new rateLimit({
