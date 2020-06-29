@@ -10,7 +10,15 @@ router.get('/:tag', async (req: Request, res: Response, next: NextFunction) => {
 			.sort({created: -1})
 			.skip(Number(req.query.skip))
 			.limit(10)
-			.populate('user');
+			.populate('user')
+			.populate({
+				path: 'comments',
+				options: {
+					populate: {
+						path: 'replies',
+					},
+				},
+			});
 
 		res.json({articles});
 	} catch (err) {
