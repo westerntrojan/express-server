@@ -23,8 +23,6 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
 				return res.json({success: false, message: result.message});
 			}
 
-			console.log(result.public_id);
-
 			res.json({success: true, image: result.public_id});
 		});
 	} catch (err) {

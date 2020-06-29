@@ -59,22 +59,28 @@ router.post(
 					return res.json({success: false, message: 'Error. Try again'});
 				}
 
-				const result = await uploadImage(files.image);
+				let image = '';
 
-				if (!result.success) {
-					return res.json({success: false, message: result.message});
+				if (files.image) {
+					const result = await uploadImage(files.image);
+
+					if (!result.success) {
+						return res.json({success: false, message: result.message});
+					}
+
+					image = result.public_id;
 				}
 
 				const newArticle = await Article.create({
 					...fields,
 					tags: JSON.parse(fields.tags),
-					image: result.public_id,
+					image,
 					user: fields.userId,
 				});
 
 				const article = await Article.findById(newArticle._id).populate('user category');
 
-				res.json({article});
+				res.json({success: true, article});
 			});
 		} catch (err) {
 			next(err);
@@ -128,7 +134,6 @@ router.put(
 				}
 
 				const slug = getSlug(fields.title);
-
 				let image = fields.image;
 
 				if (files.image) {
@@ -180,7 +185,7 @@ router.put(
 						},
 					});
 
-				res.json({article});
+				res.json({success: true, article});
 			});
 		} catch (err) {
 			next(err);
@@ -195,11 +200,17 @@ router.delete(
 		try {
 			const article = await removeArticle(req.params.articleId);
 
-			if (article) {
+			if (!article) {
+				const notFoundError = getNotFoundError();
+
+				return res.status(404).json(notFoundError);
+			}
+
+			if (article.image) {
 				await removeImage(article.image);
 			}
 
-			res.json({article});
+			return res.json({success: true});
 		} catch (err) {
 			next(err);
 		}
