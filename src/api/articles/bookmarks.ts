@@ -11,21 +11,24 @@ router.get(
 	passport.authenticate('isAuth', {session: false}),
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const user = await User.findById(req.body.userId);
+			const user = await User.findById(req.params.userId);
 
 			if (user) {
-				if (user.bookmarks.includes(req.body.articleId)) {
+				if (user.bookmarks.includes(req.params.articleId)) {
 					await Promise.all([
-						Article.updateOne({_id: req.body.articleId}, {$inc: {bookmarksCount: -1}}),
-						User.updateOne({_id: req.body.userId}, {$pullAll: {bookmarks: [req.body.articleId]}}),
+						Article.updateOne({_id: req.params.articleId}, {$inc: {bookmarksCount: -1}}),
+						User.updateOne(
+							{_id: req.params.userId},
+							{$pullAll: {bookmarks: [req.params.articleId]}},
+						),
 					]);
 
 					return res.json({success: true, removed: true});
 				}
 
 				await Promise.all([
-					Article.updateOne({_id: req.body.articleId}, {$inc: {bookmarksCount: 1}}),
-					User.updateOne({_id: req.body.userId}, {$push: {bookmarks: req.body.articleId}}),
+					Article.updateOne({_id: req.params.articleId}, {$inc: {bookmarksCount: 1}}),
+					User.updateOne({_id: req.params.userId}, {$push: {bookmarks: req.params.articleId}}),
 				]);
 
 				return res.json({success: true, added: true});
