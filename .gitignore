@@ -22,9 +22,7 @@ yarn-error.log*
 .vscode
 logs
 public
-config
 
 src/seed.json
 src/seeding.ts
-
-.env
+src/test.ts

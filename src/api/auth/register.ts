@@ -2,13 +2,10 @@ import {Router, Request, Response, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 import passport from 'passport';
 import randomColor from 'randomcolor';
-import dotenv from 'dotenv';
 
 import User from '../../models/User';
 import {registerValidators} from '../../utils/validators';
 import {sendEmail} from '../../utils/email';
-
-dotenv.config();
 
 const router = Router();
 

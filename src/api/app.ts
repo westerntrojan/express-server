@@ -1,7 +1,7 @@
 import {Router, Request, Response, NextFunction} from 'express';
 import argon2 from 'argon2';
 import passport from 'passport';
-import cloudinary from 'cloudinary';
+// import cloudinary from 'cloudinary';
 
 import data from '../seed.json';
 
@@ -22,7 +22,7 @@ router.get(
 				Message.deleteMany({}),
 				User.deleteMany({}),
 				UserChat.deleteMany({}),
-				cloudinary.v2.api.delete_all_resources(),
+				// cloudinary.v2.api.delete_all_resources(),
 			]);
 
 			const users = await Promise.all(

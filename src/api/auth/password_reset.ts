@@ -1,11 +1,8 @@
 import {Router, Request, Response, NextFunction} from 'express';
 import passport from 'passport';
-import dotenv from 'dotenv';
 
 import User from '../../models/User';
 import {sendEmail} from '../../utils/email';
-
-dotenv.config();
 
 const router = Router();
 

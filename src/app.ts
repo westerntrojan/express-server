@@ -11,7 +11,6 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import moment from 'moment';
 import passport from 'passport';
-import dotenv from 'dotenv';
 import * as Sentry from '@sentry/node';
 import cloudinary from 'cloudinary';
 
@@ -26,7 +25,6 @@ import {
 	passwordResetVerify,
 } from './utils/passport-strategies';
 
-dotenv.config();
 const logger = getLogger(module);
 const isProd = process.env.NODE_ENV === 'production';
 

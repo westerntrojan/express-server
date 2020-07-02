@@ -1,9 +1,6 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 
 import {IUser} from '../models/User';
-
-dotenv.config();
 
 const jwt_signature = String(process.env.JWT_SIGNATURE);
 
