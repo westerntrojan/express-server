@@ -24,5 +24,3 @@ logs
 public
 
 src/seed.json
-src/seeding.ts
-src/test.ts
