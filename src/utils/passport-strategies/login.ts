@@ -14,13 +14,13 @@ export default new LocalStrategy(options, async (userLink, password, done) => {
 		const user = await getUserByLink(userLink, {emailVerified: true, isRemoved: false});
 
 		if (!user) {
-			return done(null, false, {message: 'Invalid data'});
+			return done(null, false, {message: 'User not found'});
 		}
 
 		const correctPassword = await user.validatePassword(password);
 
 		if (!correctPassword) {
-			return done(null, false, {message: 'Invalid data'});
+			return done(null, false, {message: 'User not found'});
 		}
 
 		return done(null, user);

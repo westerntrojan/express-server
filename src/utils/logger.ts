@@ -1,4 +1,4 @@
-import {createLogger, format, transports, Logger} from 'winston';
+import winston, {createLogger, format, transports, Logger} from 'winston';
 
 export const getLogger = (module: NodeModule): Logger => {
 	const filename = module.filename
@@ -37,6 +37,7 @@ export const getLogger = (module: NodeModule): Logger => {
 		logger.add(
 			new transports.Console({
 				format: format.combine(format.colorize(), format.simple()),
+				silent: process.env.NODE_ENV === 'test',
 			}),
 		);
 	}

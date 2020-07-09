@@ -26,7 +26,9 @@ import {
 } from './utils/passport-strategies';
 
 const logger = getLogger(module);
+
 const isProd = process.env.NODE_ENV === 'production';
+const isDev = process.env.NODE_ENV === 'development';
 
 if (isProd) {
 	Sentry.init({dsn: 'https://42a70964b139445a9f9f2e4e59993747@sentry.io/5167390'});
@@ -65,7 +67,7 @@ if (isProd) {
 	);
 
 	app.use(morgan('combined'));
-} else {
+} else if (isDev) {
 	app.use(morgan('dev'));
 }
 app.use(cors());
