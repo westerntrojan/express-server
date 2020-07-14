@@ -10,7 +10,7 @@
 		"prettify": "prettier ./src/**/*.{js,ts} --write",
 		"build": "npx tsc -p .",
 		"pm2": "pm2 start public/server.js -i max",
-		"test-dev": "export NODE_ENV=test && nodemon --watch . --ext ts --exec \"mocha -r ts-node/register src/test/**/*.test.ts\""
+		"test-dev": "export NODE_ENV=test && nodemon --watch . --ext ts --exec \"mocha -r ts-node/register src/tests/**/*.test.ts\""
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.11",
