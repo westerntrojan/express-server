@@ -12,9 +12,9 @@ const router = Router();
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const category = await Category.find();
+		const categories = await Category.find();
 
-		res.json({category});
+		res.json({categories});
 	} catch (err) {
 		next(err);
 	}
@@ -47,6 +47,20 @@ router.post(
 		}
 	},
 );
+
+router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const category = await Category.findOne({slug: req.params.slug});
+
+		if (!category) {
+			res.json({success: false, message: 'Category not found'});
+		}
+
+		res.json({success: true, category});
+	} catch (err) {
+		next(err);
+	}
+});
 
 router.get('/:categoryId/articles', async (req: Request, res: Response, next: NextFunction) => {
 	try {

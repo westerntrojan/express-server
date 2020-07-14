@@ -134,58 +134,56 @@ router.put(
 				}
 
 				const slug = getSlug(fields.title);
-				let image = fields.image;
+				let image = fields.image || '';
 
-				if (files.image) {
-					const article = await Article.findById(req.params.articleId);
+				const article = await Article.findById(req.params.articleId);
 
-					if (article) {
+				if (article) {
+					if (files.image) {
 						if (article.image) {
 							await removeImage(article.image);
 						}
+
+						const result = await uploadImage(files.image);
+
+						if (!result.success) {
+							return res.json({success: false, message: result.message});
+						}
+
+						image = result.public_id;
 					}
 
-					const result = await uploadImage(files.image);
-
-					if (!result.success) {
-						return res.json({success: false, message: result.message});
-					}
-
-					image = result.public_id;
-				}
-
-				if (!image) {
-					const article = await Article.findById(req.params.articleId);
-
-					if (article) {
+					if (!image) {
 						if (article.image !== image) {
 							await removeImage(article.image);
 						}
 					}
+
+					const newArticle = await Article.findByIdAndUpdate(
+						req.params.articleId,
+						{
+							$set: {
+								...fields,
+								slug,
+								image,
+								tags: fields.tags ? JSON.parse(fields.tags) : article.tags,
+								user: fields.userId,
+							},
+						},
+						{new: true},
+					)
+						.populate('user category')
+						.populate('comments', null, null, {
+							sort: {created: -1},
+							populate: {
+								path: 'user',
+							},
+						});
+
+					return res.json({success: true, article: newArticle});
 				}
 
-				const article = await Article.findByIdAndUpdate(
-					req.params.articleId,
-					{
-						$set: {
-							...fields,
-							slug,
-							tags: JSON.parse(fields.tags),
-							image,
-							user: fields.userId,
-						},
-					},
-					{new: true},
-				)
-					.populate('user category')
-					.populate('comments', null, null, {
-						sort: {created: -1},
-						populate: {
-							path: 'user',
-						},
-					});
-
-				res.json({success: true, article});
+				return res.json({success: false, message: 'Article not found'});
 			});
 		} catch (err) {
 			next(err);
