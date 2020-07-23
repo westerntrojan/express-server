@@ -18,7 +18,7 @@ router.get(
 
 				await Promise.all(
 					user.bookmarks.map(async (articleId: string) => {
-						const article = await Article.findById(articleId).populate('user');
+						const article = await Article.findById(articleId).populate('user comments');
 
 						if (article) {
 							articles.push(article);
