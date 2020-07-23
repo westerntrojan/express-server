@@ -1,6 +1,6 @@
 import {Socket, Server} from 'socket.io';
 
-import UsersChat from '../utils/chats/UsersChat';
+import UsersChat from '../../utils/chats/UsersChat';
 
 // room
 let chatId: string;

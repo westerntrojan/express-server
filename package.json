@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "export NODE_ENV=development && npx nodemon src/server.ts",
 		"start": "node public/server.js",
-		"lint": "eslint ./src/**/*.{js,ts} ",
+		"lint": "yarn prettify && eslint ./src/**/*.{js,ts} ",
 		"prettify": "prettier ./src/**/*.{js,ts} --write",
 		"build": "npx tsc -p .",
 		"pm2": "pm2 start public/server.js -i max",

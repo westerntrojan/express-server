@@ -13,7 +13,7 @@ interface IMainChat {
 }
 
 class MainChat implements IMainChat {
-	private readonly _socket: Socket;
+	private _socket: Socket;
 
 	constructor(socket: Socket) {
 		this._socket = socket;

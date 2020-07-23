@@ -1,7 +1,7 @@
 import {Socket, Server} from 'socket.io';
 
-import MainChat from '../utils/chats/MainChat';
-import {IMessage} from '../models/Message';
+import MainChat from '../../utils/chats/MainChat';
+import {IMessage} from '../../models/Message';
 
 export default (io: Server): void => {
 	let users = 0;
