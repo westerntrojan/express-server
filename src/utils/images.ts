@@ -11,8 +11,8 @@ const validateImage = (
 		return {success: false, message: 'Invalid file type (only: jpg, jpeg, png)'};
 	}
 
-	if (file.size > 5 * 1024 * 1024) {
-		return {success: false, message: 'Invalid file size (max: 5MB)'};
+	if (file.size > 10 * 1024 * 1024) {
+		return {success: false, message: 'Invalid file size (max: 10MB)'};
 	}
 
 	return {success: true};

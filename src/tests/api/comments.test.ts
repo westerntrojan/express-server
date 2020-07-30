@@ -28,11 +28,13 @@ describe('Comments API Test', () => {
 			body: {article},
 		} = await request(server)
 			.post('/api/v1/articles')
-			.field('title', title)
-			.field('text', text)
-			.field('tags', JSON.stringify(tags))
-			.field('category', category)
-			.field('userId', userId)
+			.send({
+				title,
+				text,
+				tags,
+				category,
+				user: userId,
+			})
 			.auth(token, {type: 'bearer'});
 
 		const testComment = getTestComment({articleId: article._id, userId: user._id});

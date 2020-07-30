@@ -7,6 +7,8 @@ import chatsRouter from './chats';
 import categoriesRouter from './categories';
 import dataRouter from './data';
 import appRouter from './app';
+import searchRouter from './search';
+import cloudRouter from './cloud';
 import testRouter from './test';
 
 const router = Router();
@@ -18,6 +20,8 @@ router.use('/chats', chatsRouter);
 router.use('/categories', categoriesRouter);
 router.use('/data', dataRouter);
 router.use('/app', appRouter);
+router.use('/search', searchRouter);
+router.use('/cloud', cloudRouter);
 router.use('/test', testRouter);
 
 export default router;

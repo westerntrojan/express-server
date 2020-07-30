@@ -35,11 +35,13 @@ describe('Articles API Test', () => {
 
 		const res = await request(server)
 			.post('/api/v1/articles')
-			.field('title', title)
-			.field('text', text)
-			.field('tags', JSON.stringify(tags))
-			.field('category', category)
-			.field('userId', userId)
+			.send({
+				title,
+				text,
+				tags,
+				category,
+				user: userId,
+			})
 			.auth(token, {type: 'bearer'});
 
 		expect(res.status).to.equal(200);
@@ -58,11 +60,13 @@ describe('Articles API Test', () => {
 			body: {article},
 		} = await request(server)
 			.post('/api/v1/articles')
-			.field('title', title)
-			.field('text', text)
-			.field('tags', JSON.stringify(tags))
-			.field('category', category)
-			.field('userId', userId)
+			.send({
+				title,
+				text,
+				tags,
+				category,
+				user: userId,
+			})
 			.auth(token, {type: 'bearer'});
 
 		const res = await request(server).get(`/api/v1/articles/${article.slug}`);
@@ -85,11 +89,13 @@ describe('Articles API Test', () => {
 			body: {article},
 		} = await request(server)
 			.post('/api/v1/articles')
-			.field('title', title)
-			.field('text', text)
-			.field('tags', JSON.stringify(tags))
-			.field('category', category)
-			.field('userId', userId)
+			.send({
+				title,
+				text,
+				tags,
+				category,
+				user: userId,
+			})
 			.auth(token, {type: 'bearer'});
 
 		const newTitle = 'Title updated';
@@ -116,11 +122,13 @@ describe('Articles API Test', () => {
 			body: {article},
 		} = await request(server)
 			.post('/api/v1/articles')
-			.field('title', title)
-			.field('text', text)
-			.field('tags', JSON.stringify(tags))
-			.field('category', category)
-			.field('userId', userId)
+			.send({
+				title,
+				text,
+				tags,
+				category,
+				user: userId,
+			})
 			.auth(token, {type: 'bearer'});
 
 		const res = await request(server)

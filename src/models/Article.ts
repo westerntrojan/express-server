@@ -24,6 +24,11 @@ const ArticleSchema: Schema = new Schema(
 			trim: true,
 			default: '',
 		},
+		video: {
+			type: String,
+			trim: true,
+			default: '',
+		},
 		views: {
 			type: Number,
 			default: 0,
@@ -90,6 +95,7 @@ export interface IArticle extends Document {
 	title: string;
 	text: string;
 	image: string;
+	video: string;
 	views?: number;
 	likes?: number;
 	dislikes?: number;

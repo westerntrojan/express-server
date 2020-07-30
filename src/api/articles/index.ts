@@ -50,38 +50,33 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 router.post(
 	'/',
 	passport.authenticate('isAuth', {session: false}),
-	(req: Request, res: Response, next: NextFunction) => {
+	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const form = new formidable.IncomingForm();
+			// const form = new formidable.IncomingForm();
 
-			form.parse(req, async (err, fields: any, files) => {
-				if (err) {
-					return res.json({success: false, message: 'Error. Try again'});
-				}
+			// form.parse(req, async (err, fields: any, files) => {
+			// 	if (err) {
+			// 		return res.json({success: false, message: 'Error. Try again'});
+			// 	}
 
-				let image = '';
+			// let image = '';
 
-				if (files.image) {
-					const result = await uploadImage(files.image);
+			// if (files.image) {
+			// 	const result = await uploadImage(files.image);
 
-					if (!result.success) {
-						return res.json({success: false, message: result.message});
-					}
+			// 	if (!result.success) {
+			// 		return res.json({success: false, message: result.message});
+			// 	}
 
-					image = result.public_id;
-				}
+			// 	image = result.public_id;
+			// }
 
-				const newArticle = await Article.create({
-					...fields,
-					tags: JSON.parse(fields.tags),
-					image,
-					user: fields.userId,
-				});
+			const newArticle = await Article.create(req.body);
 
-				const article = await Article.findById(newArticle._id).populate('user category');
+			const article = await Article.findById(newArticle._id).populate('user category');
 
-				res.json({success: true, article});
-			});
+			res.json({success: true, article});
+			// });
 		} catch (err) {
 			next(err);
 		}
