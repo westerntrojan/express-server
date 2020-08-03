@@ -37,8 +37,8 @@ export const uploadImage = async (
 	return {success: true, public_id};
 };
 
-export const removeImage = async (public_id: string): Promise<boolean> => {
-	const {result} = await cloudinary.v2.uploader.destroy(public_id);
+export const removeImage = async (publicId: string): Promise<boolean> => {
+	const {result} = await cloudinary.v2.uploader.destroy(publicId);
 
 	if (result === 'not found') {
 		return false;

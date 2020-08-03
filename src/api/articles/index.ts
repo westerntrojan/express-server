@@ -52,31 +52,10 @@ router.post(
 	passport.authenticate('isAuth', {session: false}),
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			// const form = new formidable.IncomingForm();
-
-			// form.parse(req, async (err, fields: any, files) => {
-			// 	if (err) {
-			// 		return res.json({success: false, message: 'Error. Try again'});
-			// 	}
-
-			// let image = '';
-
-			// if (files.image) {
-			// 	const result = await uploadImage(files.image);
-
-			// 	if (!result.success) {
-			// 		return res.json({success: false, message: result.message});
-			// 	}
-
-			// 	image = result.public_id;
-			// }
-
-			const newArticle = await Article.create(req.body);
-
-			const article = await Article.findById(newArticle._id).populate('user category');
+			let article = await Article.create(req.body);
+			article = await article.populate('user category').execPopulate();
 
 			res.json({success: true, article});
-			// });
 		} catch (err) {
 			next(err);
 		}

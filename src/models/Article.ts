@@ -29,6 +29,12 @@ const ArticleSchema: Schema = new Schema(
 			trim: true,
 			default: '',
 		},
+		audio: [
+			{
+				filename: String,
+				publicId: String,
+			},
+		],
 		views: {
 			type: Number,
 			default: 0,
@@ -96,6 +102,7 @@ export interface IArticle extends Document {
 	text: string;
 	image: string;
 	video: string;
+	audio: Array<{filename: string; publicId: string}>;
 	views?: number;
 	likes?: number;
 	dislikes?: number;
