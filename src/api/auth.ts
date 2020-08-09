@@ -2,6 +2,7 @@ import {Router, Request, Response, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 import passport from 'passport';
 import randomColor from 'randomcolor';
+import jwt from 'jsonwebtoken';
 
 import {User, AuthCode} from '../models';
 import {registerValidators} from '../utils/validators';
@@ -186,16 +187,34 @@ router.get(
 	},
 );
 
-router.get(
-	'/verify',
-	passport.authenticate('isAuth', {session: false}),
-	async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			res.json({success: true, user: req.user});
-		} catch (err) {
-			next(err);
+router.get('/verify', async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		if (req.headers.authorization) {
+			const token = req.headers.authorization.slice(7);
+
+			try {
+				const decoded: any = jwt.verify(String(token), String(process.env.JWT_SIGNATURE));
+
+				const user = await User.findOne({
+					_id: decoded.data.userId,
+					emailVerified: true,
+					isRemoved: false,
+				});
+
+				if (!user) {
+					return res.json({success: false});
+				}
+
+				return res.json({success: true, user: user.getValidUser()});
+			} catch (err) {
+				return res.json({success: false});
+			}
 		}
-	},
-);
+
+		res.json({success: false});
+	} catch (err) {
+		next(err);
+	}
+});
 
 export default router;
