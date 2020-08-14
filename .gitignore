@@ -21,6 +21,5 @@ yarn-error.log*
 
 .vscode
 logs
-public
 
 src/seed.json
