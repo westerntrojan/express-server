@@ -1,6 +1,6 @@
 import {Schema, model, Document} from 'mongoose';
 
-import {getSlug} from '../utils/app';
+import {getSlug} from '../utils/common';
 
 const CategorySchema: Schema = new Schema({
 	title: {

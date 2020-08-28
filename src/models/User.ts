@@ -96,7 +96,7 @@ UserSchema.methods.generateToken = function(): string {
 	return generateToken(this as IUser);
 };
 
-interface IValidUser {
+export interface IValidUser {
 	_id: string;
 	firstName: string;
 	lastName: string;

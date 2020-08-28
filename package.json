@@ -2,15 +2,15 @@
 	"name": "sn-server",
 	"version": "1.0.0",
 	"license": "ISC",
-	"main": "public/server.js",
+	"main": "build/server.js",
 	"scripts": {
-		"dev": "export NODE_ENV=development && npx nodemon src/server.ts",
-		"start": "node public/server.js",
+		"dev": "export NODE_ENV=development && npx nodemon src/server.ts -e js,ts,gql,json",
+		"start": "node build/server.js",
 		"lint": "eslint ./src/**/*.{js,ts} ",
 		"prettify": "prettier ./src/**/*.{js,ts} --write",
 		"build": "npx tsc -p .",
-		"pm2": "pm2 start public/server.js -i max",
-		"test-dev": "export NODE_ENV=test && nodemon --watch . --ext ts --exec \"mocha -r ts-node/register src/tests/**/*.test.ts\""
+		"pm2": "pm2 start build/server.js -i max",
+		"test:dev": "export NODE_ENV=test && nodemon --watch . --ext ts --exec \"mocha -r ts-node/register src/tests/**/*.test.ts\""
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.11",
@@ -58,6 +58,7 @@
 	},
 	"dependencies": {
 		"@sentry/node": "5.14.1",
+		"apollo-server-express": "^2.16.1",
 		"argon2": "^0.26.2",
 		"body-parser": "^1.19.0",
 		"cloudinary": "^1.22.0",
@@ -69,6 +70,8 @@
 		"express-rate-limit": "^5.0.0",
 		"express-validator": "^6.1.1",
 		"formidable": "^1.2.2",
+		"graphql": "^15.3.0",
+		"graphql-playground-middleware-express": "^1.7.18",
 		"helmet": "^3.18.0",
 		"hpp": "^0.2.2",
 		"jsonwebtoken": "^8.5.1",

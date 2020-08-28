@@ -11,12 +11,13 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import moment from 'moment';
 import passport from 'passport';
+import expressPlayground from 'graphql-playground-middleware-express';
 import * as Sentry from '@sentry/node';
 import cloudinary from 'cloudinary';
 
 import {getLogger} from './utils/logger';
 import {getNotFoundError} from './utils/errors';
-import apiRouter from './api';
+import routes from './routes/v1';
 import {
 	login,
 	isAuth,
@@ -24,6 +25,7 @@ import {
 	registerVerify,
 	passwordResetVerify,
 } from './utils/passport-strategies';
+import {apolloServer} from './apolloServer';
 
 const logger = getLogger(module);
 
@@ -81,6 +83,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../public'));
 
+// apollo server
+apolloServer.applyMiddleware({app});
+
 // passport strategies
 passport.use('login', login);
 passport.use('isAuth', isAuth);
@@ -88,8 +93,11 @@ passport.use('isAdmin', isAdmin);
 passport.use('registerVerify', registerVerify);
 passport.use('passwordResetVerify', passwordResetVerify);
 
-// api
-app.use('/api/v1', apiRouter);
+// api routes
+app.use('/api/v1', routes);
+
+// graphql playground middleware
+app.get('/playground', expressPlayground({endpoint: '/graphql'}));
 
 if (isProd) {
 	app.use(Sentry.Handlers.errorHandler());

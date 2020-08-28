@@ -106,13 +106,11 @@ describe('Auth Test', () => {
 	});
 
 	it('expect GET /api/v1/auth/verify with fake token', async () => {
-		const testUser = getTestUser();
-
 		const res = await request(server)
 			.get('/api/v1/auth/verify')
 			.auth('some token', {type: 'bearer'});
 
-		expect(res.status).to.equal(401);
-		expect(res.text).to.equal('Unauthorized');
+		expect(res.body.success).to.equal(false);
+		expect(res.body.message).to.equal('Something went wrong. Try again');
 	});
 });

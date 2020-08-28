@@ -1,7 +1,7 @@
 import {Schema, model, Document} from 'mongoose';
 
 import {IComment} from './Comment';
-import {getSlug} from '../utils/app';
+import {getSlug} from '../utils/common';
 
 const ArticleSchema: Schema = new Schema(
 	{
@@ -103,12 +103,12 @@ export interface IArticle extends Document {
 	image: string;
 	video: string;
 	audio: Array<{filename: string; publicId: string}>;
-	views?: number;
-	likes?: number;
-	dislikes?: number;
+	views: number;
+	likes: number;
+	dislikes: number;
 	bookmarksCount?: number;
 	category: string;
-	tags?: string[];
+	tags: string[];
 	slug?: string;
 	comments: IComment[];
 	created?: Date;
