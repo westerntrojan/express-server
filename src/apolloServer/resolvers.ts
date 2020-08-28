@@ -34,14 +34,14 @@ export default {
 		addLike: async (_: object, args: {id: string}, context: {pubsub: IPubSub}) => {
 			const article = await Article.findByIdAndUpdate(args.id, {$inc: {likes: 1}}, {new: true});
 
-			context.pubsub.publish('likes-added', {likeAdded: article});
+			context.pubsub.publish('likes-added', {likesAdded: article});
 
 			return true;
 		},
 		addDislike: async (_: object, args: {id: string}, context: {pubsub: IPubSub}) => {
 			const article = await Article.findByIdAndUpdate(args.id, {$inc: {dislikes: 1}}, {new: true});
 
-			context.pubsub.publish('dislikes-added', {dislikeAdded: article});
+			context.pubsub.publish('dislikes-added', {dislikesAdded: article});
 
 			return true;
 		},
