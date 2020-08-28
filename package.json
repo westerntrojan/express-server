@@ -8,7 +8,8 @@
 		"start": "node build/server.js",
 		"lint": "eslint ./src/**/*.{js,ts} ",
 		"prettify": "prettier ./src/**/*.{js,ts} --write",
-		"build": "npx tsc -p .",
+		"copy:schema": "npx cpx 'src/apolloServer/schema.gql' 'build/apolloServer'",
+		"build": "npx tsc -p . && yarn copy:schema",
 		"pm2": "pm2 start build/server.js -i max",
 		"test:dev": "export NODE_ENV=test && nodemon --watch . --ext ts --exec \"mocha -r ts-node/register src/tests/**/*.test.ts\""
 	},
@@ -40,6 +41,7 @@
 		"@typescript-eslint/eslint-plugin": "^2.0.0",
 		"@typescript-eslint/parser": "^2.0.0",
 		"chai": "^4.2.0",
+		"cpx": "^1.5.0",
 		"eslint": "5.16.0",
 		"eslint-config-prettier": "^6.0.0",
 		"eslint-plugin-fp": "^2.3.0",
