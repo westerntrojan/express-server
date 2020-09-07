@@ -52,11 +52,9 @@ export default {
 	userBookmarks: async (_: object, args: {userId: string}) => {
 		const user = await User.findById(args.userId);
 
-		// // ---------------------------------
-		// if (!user) {
-		// 	throw new Error('User not found');
-		// }
-		// // ---------------------------------
+		if (!user) {
+			throw new Error('User not found');
+		}
 
 		const articles: IArticle[] = [];
 
