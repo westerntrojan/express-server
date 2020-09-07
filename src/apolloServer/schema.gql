@@ -1,26 +1,68 @@
+scalar Email
+scalar DateTime
+
+type UserAvatar {
+	color: String!
+	images: [String!]!
+}
+type User {
+	_id: String!
+	email: Email!
+	firstName: String!
+	lastName: String
+	username: String
+	avatar: UserAvatar!
+	bookmarks: [ID!]!
+}
+
+type Comment {
+	_id: String!
+	text: String!
+	user: User!
+	created: DateTime!
+}
+
 type Article {
 	_id: ID!
 	title: String!
+	text: String!
+	image: String!
 	slug: String!
 	views: Int!
 	likes: Int!
 	dislikes: Int!
-	comments: [String!]!
+	created: DateTime!
+	comments: [Comment!]!
+	user: User!
 }
 
+type ArticleStatistics {
+	labels: [String!]!
+	views: [Int!]!
+	comments: [Int!]!
+}
+
+# all queries
 type Query {
 	allArticles: [Article!]!
+	allUsers: [User!]!
 	Article(id: String!): Article!
+
 	topTags: [String!]!
 	topArticles(limit: Int = 5): [Article!]!
+
+	articleStatistics: ArticleStatistics!
+	userBookmarks(userId: ID!): [Article!]!
 }
 
+# all mutations
 type Mutation {
 	addLike(id: ID!): Boolean!
 	addDislike(id: ID!): Boolean!
 	addView(id: ID!): Boolean!
 }
 
+# all subscriptions
 type Subscription {
 	likesAdded: Article!
 	dislikesAdded: Article!

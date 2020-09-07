@@ -12,10 +12,10 @@ const options = {
 	secretOrKey: String(jwt_signature),
 };
 
-export default new JwtStrategy(options, async (jwt_payload, done) => {
+export default new JwtStrategy(options, async ({data}, done) => {
 	try {
 		const user = await User.findOne({
-			_id: jwt_payload.data.userId,
+			_id: data.userId,
 			emailVerified: true,
 			isRemoved: false,
 		});
