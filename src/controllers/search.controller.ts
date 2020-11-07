@@ -4,9 +4,13 @@ import SearchService from '../services/search.service';
 
 class SearchController {
 	async search(req: Request, res: Response, next: NextFunction) {
-		const result = await SearchService.search({searchQuery: String(req.query.search_query)});
+		try {
+			const result = await SearchService.search({searchQuery: String(req.query.search_query)});
 
-		res.json({result});
+			res.json({result});
+		} catch (err) {
+			next(err);
+		}
 	}
 }
 

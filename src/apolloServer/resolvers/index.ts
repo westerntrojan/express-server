@@ -1,4 +1,4 @@
-import {GraphQLEmail, GraphQLDateTime, GraphQLURL} from 'graphql-custom-types';
+import {GraphQLEmail, GraphQLDateTime} from 'graphql-custom-types';
 
 import Query from './Query';
 import Mutation from './Mutation';

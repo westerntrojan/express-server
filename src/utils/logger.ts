@@ -1,4 +1,4 @@
-import winston, {createLogger, format, transports, Logger} from 'winston';
+import {createLogger, format, transports, Logger} from 'winston';
 
 export const getLogger = (module: NodeModule): Logger => {
 	const filename = module.filename

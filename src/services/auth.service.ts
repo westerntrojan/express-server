@@ -1,4 +1,3 @@
-import passport from 'passport';
 import randomColor from 'randomcolor';
 import jwt from 'jsonwebtoken';
 

@@ -129,7 +129,7 @@ class ArticlesService {
 		return {success: true, article: newArticle};
 	}
 
-	async deleteArticle({articleId}: {articleId: string}) {
+	async deleteArticle({articleId}: {articleId: string}): Promise<{success: boolean}> {
 		const article = await removeArticle(articleId);
 
 		if (!article) {
@@ -177,7 +177,7 @@ class ArticlesService {
 
 	async createReply({data}: {data: IComment}): Promise<{reply: IComment}> {
 		let reply = await Comment.create(data);
-		reply = await data.populate('user').execPopulate();
+		reply = await reply.populate('user').execPopulate();
 
 		await Comment.updateOne({_id: reply.parentId}, {$push: {replies: reply._id}});
 
@@ -264,7 +264,13 @@ class ArticlesService {
 		return {success: true, action: 'added'};
 	}
 
-	async getArticlesByTag({tag, skip}: {tag: string; skip: number}) {
+	async getArticlesByTag({
+		tag,
+		skip,
+	}: {
+		tag: string;
+		skip: number;
+	}): Promise<{articles: IArticle[]}> {
 		const articles = await Article.find({tags: tag})
 			.sort({created: -1})
 			.skip(skip)

@@ -1,4 +1,4 @@
-import {Request, Response, Router, NextFunction} from 'express';
+import {Router} from 'express';
 import passport from 'passport';
 
 import {categoryValidators} from '../../middlewares/validators';
