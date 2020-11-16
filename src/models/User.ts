@@ -63,6 +63,12 @@ const UserSchema: Schema = new Schema({
 			ref: 'articles',
 		},
 	],
+	subscriptions: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'users',
+		},
+	],
 	isRemoved: {
 		type: Boolean,
 		default: false,
@@ -109,6 +115,7 @@ export interface IValidUser {
 	bio: string;
 	role: Role.ADMIN | Role.MODERATOR | Role.USER;
 	bookmarks: string[];
+	subscriptions: string[];
 	isRemoved: boolean;
 	emailVerified: boolean;
 	twoFactorAuth: boolean;
@@ -126,6 +133,7 @@ UserSchema.methods.getValidUser = function(): IValidUser {
 		bio: this.bio,
 		role: this.role,
 		bookmarks: this.bookmarks,
+		subscriptions: this.subscriptions,
 		isRemoved: this.isRemoved,
 		emailVerified: this.emailVerified,
 		twoFactorAuth: this.twoFactorAuth,

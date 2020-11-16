@@ -126,6 +126,30 @@ class UsersService {
 
 		return {success: true};
 	}
+
+	async subscribe({
+		userId1,
+		userId2,
+	}: {
+		userId1: string;
+		userId2: string;
+	}): Promise<{success: true} | {success: false; message: string}> {
+		await User.updateOne({_id: userId1}, {$push: {subscriptions: userId2}});
+
+		return {success: true};
+	}
+
+	async unsubscribe({
+		userId1,
+		userId2,
+	}: {
+		userId1: string;
+		userId2: string;
+	}): Promise<{success: true} | {success: false; message: string}> {
+		await User.updateOne({_id: userId1}, {$pullAll: {subscriptions: [userId2]}});
+
+		return {success: true};
+	}
 }
 
 export default new UsersService();

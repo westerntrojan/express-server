@@ -102,6 +102,40 @@ class UsersController {
 			next(err);
 		}
 	}
+
+	async subscribe(req: Request, res: Response, next: NextFunction) {
+		try {
+			const result = await UsersService.subscribe({
+				userId1: req.body.userId1,
+				userId2: req.body.userId2,
+			});
+
+			if (!result.success) {
+				return res.json({success: false, message: result.message});
+			}
+
+			res.json({success: true});
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	async unsubscribe(req: Request, res: Response, next: NextFunction) {
+		try {
+			const result = await UsersService.unsubscribe({
+				userId1: req.body.userId1,
+				userId2: req.body.userId2,
+			});
+
+			if (!result.success) {
+				return res.json({success: false, message: result.message});
+			}
+
+			res.json({success: true});
+		} catch (err) {
+			next(err);
+		}
+	}
 }
 
 export default new UsersController();

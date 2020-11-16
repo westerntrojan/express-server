@@ -60,7 +60,18 @@ export default {
 
 		await Promise.all(
 			user.bookmarks.map(async (articleId: string) => {
-				const article = await Article.findById(articleId).populate('user comments');
+				const article = await Article.findById(articleId)
+					.populate('user')
+					.populate({
+						path: 'comments',
+						options: {
+							populate: {
+								path: 'replies',
+							},
+						},
+					});
+
+				console.log(article);
 
 				if (article) {
 					articles.push(article);

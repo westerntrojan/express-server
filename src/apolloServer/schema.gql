@@ -19,6 +19,7 @@ type Comment {
 	_id: String!
 	text: String!
 	user: User!
+	replies: [Comment!]!
 	created: DateTime!
 }
 

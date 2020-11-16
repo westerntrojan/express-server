@@ -39,4 +39,15 @@ router.post(
 	UsersController.addAvatar,
 );
 
+router.post(
+	'/subscribe',
+	passport.authenticate('isAuth', {session: false}),
+	UsersController.subscribe,
+);
+router.post(
+	'/unsubscribe',
+	passport.authenticate('isAuth', {session: false}),
+	UsersController.unsubscribe,
+);
+
 export default router;

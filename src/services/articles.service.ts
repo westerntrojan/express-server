@@ -17,7 +17,7 @@ class ArticlesService {
 
 	async getArticles({skip}: {skip: number}): Promise<{articles: IArticle[]}> {
 		const articles = await Article.find()
-			.sort({created: -1})
+			.sort({views: -1})
 			.skip(skip)
 			.limit(10)
 			.populate('user category')
