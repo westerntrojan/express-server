@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import {User, AuthCode} from '../models';
 import {IUser, IValidUser} from '../models/User';
 import {sendEmail} from '../utils/email';
+import {getUniqueCode} from '../utils/common';
 
 const isTest = process.env.NODE_ENV === 'test';
 
@@ -13,7 +14,7 @@ class AuthService {
 	}: {
 		user: IUser;
 	}): Promise<{success: true} | {success: false; message: string}> {
-		const code = Math.floor(100000 + Math.random() * 900000); // Example - 341772
+		const code = getUniqueCode();
 		const text = `Code: ${code}`;
 		const result = await sendEmail(user.email, 'Your verification code', text);
 

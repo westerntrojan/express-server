@@ -1,7 +1,7 @@
 import {Schema, model, Document} from 'mongoose';
 
 import {IComment} from './Comment';
-import {getSlug} from '../utils/common';
+import {getUniqueCode, getSlug} from '../utils/common';
 
 const ArticleSchema: Schema = new Schema(
 	{
@@ -91,7 +91,7 @@ ArticleSchema.index({category: 1});
 ArticleSchema.pre('save', function(next) {
 	const self = this as IArticle;
 
-	self.slug = getSlug(self.title);
+	self.slug = getUniqueCode() + '-' + getSlug(self.title);
 
 	next();
 });

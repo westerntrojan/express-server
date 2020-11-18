@@ -1,7 +1,6 @@
 import formidable from 'formidable';
 
 import {removeArticle} from '../utils/articles';
-import {getSlug} from '../utils/common';
 import {uploadImage, removeImage} from '../utils/images';
 import {Article, Comment, User} from '../models/';
 import {IArticle} from '../models/Article';
@@ -46,7 +45,6 @@ class ArticlesService {
 		slug: string;
 	}): Promise<{success: true; article: IArticle} | {success: false}> {
 		const article = await Article.findOne({slug})
-			.sort({created: -1})
 			.populate('user category')
 			.populate({
 				path: 'comments',
@@ -107,8 +105,7 @@ class ArticlesService {
 			{
 				$set: {
 					...fields,
-					tags: fields.tags ? JSON.parse(JSON.stringify(fields.tags)) : article.tags,
-					slug: fields.title ? getSlug(String(fields.title)) : article.slug,
+					tags: fields.tags ? JSON.parse(String(fields.tags)) : article.tags,
 					image,
 				},
 			},
