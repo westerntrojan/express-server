@@ -1,7 +1,5 @@
-import formidable from 'formidable';
-
 import {removeArticle} from '../utils/articles';
-import {uploadImage, removeImage} from '../utils/images';
+import {removeImage} from '../utils/images';
 import {Article, Comment, User} from '../models/';
 import {IArticle} from '../models/Article';
 import {IComment} from '../models/Comment';
@@ -70,43 +68,21 @@ class ArticlesService {
 	}
 
 	async updateArticle({
-		articleId,
-		fields,
-		files,
+		data,
 	}: {
-		articleId: string;
-		fields: formidable.Fields;
-		files: formidable.Files;
+		data: IArticle;
 	}): Promise<{success: true; article: IArticle} | {success: false; message: string}> {
-		let image = String(fields.image) || '';
-
-		if (files.image) {
-			const uploadResult = await uploadImage(files.image);
-
-			if (!uploadResult.success) {
-				return {success: false, message: uploadResult.message};
-			}
-
-			image = uploadResult.public_id;
-		}
-
-		const article = await Article.findById(articleId);
+		const article = await Article.findById(data._id);
 
 		if (!article) {
 			return {success: false, message: 'Article not found'};
 		}
 
-		if (article.image && fields.image !== article.image) {
-			await removeImage(article.image);
-		}
-
 		const newArticle = await Article.findByIdAndUpdate(
-			articleId,
+			article._id,
 			{
 				$set: {
-					...fields,
-					tags: fields.tags ? JSON.parse(String(fields.tags)) : article.tags,
-					image,
+					...data,
 				},
 			},
 			{new: true},
@@ -135,6 +111,10 @@ class ArticlesService {
 
 		if (article.image) {
 			await removeImage(article.image);
+		}
+
+		if (!!article.images.length) {
+			await Promise.all(article.images.map(async image => removeImage(image)));
 		}
 
 		return {success: true};

@@ -23,6 +23,4 @@ router.delete(
 	ChatsController.deleteChatMessages,
 );
 
-router.post('/image', passport.authenticate('isAuth', {session: false}), ChatsController.addImage);
-
 export default router;

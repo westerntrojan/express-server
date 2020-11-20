@@ -1,10 +1,7 @@
-import formidable from 'formidable';
-
 import {User, UserChat, Message} from '../models';
 import {IUserChat} from '../models/UserChat';
 import {IUser} from '../models/User';
 import {IMessage} from '../models/Message';
-import {uploadImage} from '../utils/images';
 
 interface IReturningChat extends IUserChat {
 	user: IUser;
@@ -42,20 +39,6 @@ class ChatsService {
 
 	async deleteChatMessages({chatId}: {chatId: string}): Promise<void> {
 		await Message.deleteMany({chatId});
-	}
-
-	async addImage({
-		files,
-	}: {
-		files: formidable.Files;
-	}): Promise<{success: true; image: string} | {success: false; message: string}> {
-		const result = await uploadImage(files.image);
-
-		if (!result.success) {
-			return {success: false, message: result.message};
-		}
-
-		return {success: true, image: result.public_id};
 	}
 }
 

@@ -1,5 +1,4 @@
 import {Request, Response, NextFunction} from 'express';
-import formidable from 'formidable';
 
 import ChatsService from '../services/chats.service';
 
@@ -29,28 +28,6 @@ class ChatsController {
 			await ChatsService.deleteChatMessages({chatId: req.params.chatId});
 
 			res.json({success: true});
-		} catch (err) {
-			next(err);
-		}
-	}
-
-	addImage(req: Request, res: Response, next: NextFunction) {
-		try {
-			const form = new formidable.IncomingForm();
-
-			form.parse(req, async (err, fields, files) => {
-				if (err) {
-					return res.json({success: false, message: 'Error. Try again'});
-				}
-
-				const result = await ChatsService.addImage({files});
-
-				if (!result.success) {
-					return res.json({success: false, message: result.message});
-				}
-
-				res.json({success: true, image: result.image});
-			});
 		} catch (err) {
 			next(err);
 		}

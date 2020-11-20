@@ -1,5 +1,4 @@
 import {Request, Response, NextFunction} from 'express';
-import formidable from 'formidable';
 import {validationResult} from 'express-validator';
 
 import {getNotFoundError} from '../utils/errors';
@@ -42,26 +41,15 @@ class ArticlesController {
 		}
 	}
 
-	updateArticle(req: Request, res: Response, next: NextFunction) {
+	async updateArticle(req: Request, res: Response, next: NextFunction) {
 		try {
-			const form = new formidable.IncomingForm();
+			const result = await ArticlesService.updateArticle({data: req.body});
 
-			form.parse(req, async (err, fields, files) => {
-				if (err) {
-					return res.json({success: false, message: 'Error. Try again'});
-				}
-				const result = await ArticlesService.updateArticle({
-					articleId: req.params.articleId,
-					fields: {...fields},
-					files,
-				});
+			if (!result.success) {
+				return res.json({success: false, message: result.message});
+			}
 
-				if (!result.success) {
-					return res.json({success: false, message: result.message});
-				}
-
-				return res.json({success: true, article: result.article});
-			});
+			return res.json({success: true, article: result.article});
 		} catch (err) {
 			next(err);
 		}
