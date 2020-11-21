@@ -2,14 +2,13 @@ import {Socket} from 'socket.io';
 
 import Message, {IMessage} from '../../models/Message';
 import {getLogger} from '../../utils/logger';
-import {removeImage} from '../../utils/images';
 
 const logger = getLogger(module);
 
 interface IMainChat {
 	getMessages: (limit: number) => Promise<IMessage[]>;
 	newMessage: (message: IMessage) => Promise<IMessage | null>;
-	removeMessage: (messageId: string) => Promise<void>;
+	removeMessage: (_id: string) => Promise<void>;
 }
 
 class MainChat implements IMainChat {
@@ -58,12 +57,8 @@ class MainChat implements IMainChat {
 		return Message.findById(newMessage._id).populate('user');
 	}
 
-	async removeMessage(messageId: string): Promise<void> {
-		const message = await Message.findByIdAndRemove(messageId);
-
-		if (message && message.image) {
-			await removeImage(message.image);
-		}
+	async removeMessage(_id: string): Promise<void> {
+		await Message.deleteOne({_id});
 	}
 }
 

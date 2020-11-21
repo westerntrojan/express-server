@@ -1,6 +1,4 @@
-import formidable from 'formidable';
-
-import {uploadImage, removeImage} from '../utils/images';
+import {removeImage} from '../utils/images';
 import {Article, User, Comment, Message} from '../models';
 import {IUser} from '../models/User';
 import {getUserByLink} from '../utils/users';
@@ -82,28 +80,22 @@ class UsersService {
 	}
 
 	async addAvatar({
-		fields,
-		files,
+		userId,
+		newAvatar,
 	}: {
-		fields: formidable.Fields;
-		files: formidable.Files;
-	}): Promise<{success: true; image: string} | {success: false; message: string}> {
-		const user = await User.findById(fields.userId);
+		userId: string;
+		newAvatar: string;
+	}): Promise<{success: true; newAvatar: string} | {success: false; message: string}> {
+		const user = await User.findById(userId);
 
 		if (!user) {
 			return {success: false, message: 'User not found'};
 		}
 
-		const uploadResult = await uploadImage(files.image);
-
-		if (!uploadResult.success) {
-			return {success: false, message: uploadResult.message};
-		}
-
-		user.avatar.images.unshift(uploadResult.public_id);
+		user.avatar.images.unshift(newAvatar);
 		await user.save();
 
-		return {success: true, image: uploadResult.public_id};
+		return {success: true, newAvatar};
 	}
 
 	async deleteAvatar({

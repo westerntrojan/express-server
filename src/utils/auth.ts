@@ -10,7 +10,7 @@ export const generateToken = (user: IUser): string => {
 		email: user.email,
 	};
 	const signature = String(jwt_signature);
-	const expiresIn = '4h';
+	const expiresIn = '6h';
 
 	return jwt.sign({data}, signature, {expiresIn});
 };

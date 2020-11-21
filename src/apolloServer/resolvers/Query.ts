@@ -71,8 +71,6 @@ export default {
 						},
 					});
 
-				console.log(article);
-
 				if (article) {
 					articles.push(article);
 				}

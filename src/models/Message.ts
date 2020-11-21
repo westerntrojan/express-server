@@ -22,19 +22,7 @@ const MessageSchema: Schema = new Schema({
 		default: '',
 		trim: true,
 	},
-	image: {
-		type: String,
-		default: '',
-	},
-	caption: {
-		type: String,
-		default: '',
-		trim: true,
-	},
-	type: {
-		type: String,
-		default: Type.TEXT,
-	},
+
 	created: {
 		type: Date,
 		default: Date.now,
@@ -45,9 +33,6 @@ export interface IMessage extends Document {
 	chatId?: string | null;
 	user: string;
 	text: string;
-	image?: string;
-	caption?: string;
-	type: string;
 	created?: string;
 }
 

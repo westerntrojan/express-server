@@ -28,6 +28,7 @@ type Article {
 	title: String!
 	text: String!
 	image: String!
+	images: [String!]!
 	slug: String!
 	views: Int!
 	likes: Int!

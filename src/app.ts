@@ -12,7 +12,6 @@ import cors from 'cors';
 import moment from 'moment';
 import passport from 'passport';
 import expressPlayground from 'graphql-playground-middleware-express';
-import * as Sentry from '@sentry/node';
 import cloudinary from 'cloudinary';
 
 import {getLogger} from './utils/logger';
@@ -31,10 +30,6 @@ const logger = getLogger(module);
 
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'development';
-
-if (isProd) {
-	Sentry.init({dsn: 'https://42a70964b139445a9f9f2e4e59993747@sentry.io/5167390'});
-}
 
 cloudinary.v2.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -61,13 +56,6 @@ mongoose
 
 // middleware
 if (isProd) {
-	app.use(
-		Sentry.Handlers.requestHandler({
-			serverName: false,
-			user: ['email'],
-		}),
-	);
-
 	app.use(morgan('combined'));
 } else if (isDev) {
 	app.use(morgan('dev'));
@@ -98,10 +86,6 @@ app.use('/api/v1', routes);
 
 // graphql playground middleware
 app.get('/playground', expressPlayground({endpoint: '/graphql'}));
-
-if (isProd) {
-	app.use(Sentry.Handlers.errorHandler());
-}
 
 // 404
 app.use((req, res) => {

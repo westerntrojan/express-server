@@ -1,6 +1,5 @@
 import {Request, Response, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
-import formidable from 'formidable';
 
 import {getNotFoundError} from '../utils/errors';
 import UsersService from '../services/users.service';
@@ -65,22 +64,15 @@ class UsersController {
 		}
 	}
 
-	addAvatar(req: Request, res: Response, next: NextFunction) {
+	async addAvatar(req: Request, res: Response, next: NextFunction) {
 		try {
-			const form = new formidable.IncomingForm();
+			const result = await UsersService.addAvatar(req.body);
 
-			form.parse(req, async (err, fields, files) => {
-				const result = await UsersService.addAvatar({
-					fields,
-					files,
-				});
+			if (!result.success) {
+				return res.json({scucess: false, message: result.message});
+			}
 
-				if (!result.success) {
-					return res.json({scucess: false, message: result.message});
-				}
-
-				res.json({success: true, image: result.image});
-			});
+			res.json({success: true, newAvatar: result.newAvatar});
 		} catch (err) {
 			next(err);
 		}
