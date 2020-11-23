@@ -95,9 +95,9 @@ class UsersController {
 		}
 	}
 
-	async subscribe(req: Request, res: Response, next: NextFunction) {
+	async follow(req: Request, res: Response, next: NextFunction) {
 		try {
-			const result = await UsersService.subscribe({
+			const result = await UsersService.follow({
 				userId1: req.body.userId1,
 				userId2: req.body.userId2,
 			});
@@ -112,9 +112,9 @@ class UsersController {
 		}
 	}
 
-	async unsubscribe(req: Request, res: Response, next: NextFunction) {
+	async unfollow(req: Request, res: Response, next: NextFunction) {
 		try {
-			const result = await UsersService.unsubscribe({
+			const result = await UsersService.unfollow({
 				userId1: req.body.userId1,
 				userId2: req.body.userId2,
 			});

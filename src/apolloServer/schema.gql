@@ -55,6 +55,7 @@ type Query {
 
 	articleStatistics: ArticleStatistics!
 	userBookmarks(userId: ID!): [Article!]!
+	userFeed(userId: ID!): [Article!]!
 }
 
 # all mutations

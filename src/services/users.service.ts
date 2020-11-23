@@ -1,13 +1,13 @@
 import {removeImage} from '../utils/images';
-import {Article, User, Comment, Message} from '../models';
+import {Article, User} from '../models';
 import {IUser} from '../models/User';
 import {getUserByLink} from '../utils/users';
 
 interface IUserByLink extends IUser {
 	statistics: {
 		articles: number;
-		comments: number;
-		messages: number;
+		followers: number;
+		following: number;
 	};
 }
 
@@ -23,13 +23,13 @@ class UsersService {
 			return {success: false, message: 'User not found'};
 		}
 
-		const [articles, comments, messages] = await Promise.all([
+		const [articles, followers] = await Promise.all([
 			Article.find({user: user._id}).countDocuments(),
-			Comment.find({user: user._id}).countDocuments(),
-			Message.find({user: user._id}).countDocuments(),
+			User.find({following: user._id}).countDocuments(),
 		]);
+		const following = user.following.length;
 
-		const statistics = {articles, comments, messages};
+		const statistics = {articles, followers, following};
 
 		return {success: true, user: {...user.toObject(), statistics}};
 	}
@@ -119,26 +119,26 @@ class UsersService {
 		return {success: true};
 	}
 
-	async subscribe({
+	async follow({
 		userId1,
 		userId2,
 	}: {
 		userId1: string;
 		userId2: string;
 	}): Promise<{success: true} | {success: false; message: string}> {
-		await User.updateOne({_id: userId1}, {$push: {subscriptions: userId2}});
+		await User.updateOne({_id: userId1}, {$push: {following: userId2}});
 
 		return {success: true};
 	}
 
-	async unsubscribe({
+	async unfollow({
 		userId1,
 		userId2,
 	}: {
 		userId1: string;
 		userId2: string;
 	}): Promise<{success: true} | {success: false; message: string}> {
-		await User.updateOne({_id: userId1}, {$pullAll: {subscriptions: [userId2]}});
+		await User.updateOne({_id: userId1}, {$pullAll: {following: [userId2]}});
 
 		return {success: true};
 	}

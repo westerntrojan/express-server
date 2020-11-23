@@ -1,11 +1,5 @@
 import {Schema, model, Document} from 'mongoose';
 
-enum Type {
-	TEXT = 'text',
-	IMAGE = 'image',
-	IMAGE_CAPTION = 'image_caption',
-}
-
 const MessageSchema: Schema = new Schema({
 	chatId: {
 		type: Schema.Types.ObjectId,

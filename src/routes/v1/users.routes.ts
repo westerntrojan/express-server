@@ -39,15 +39,12 @@ router.post(
 	UsersController.addAvatar,
 );
 
+router.post('/follow', passport.authenticate('isAuth', {session: false}), UsersController.follow);
+
 router.post(
-	'/subscribe',
+	'/unfollow',
 	passport.authenticate('isAuth', {session: false}),
-	UsersController.subscribe,
-);
-router.post(
-	'/unsubscribe',
-	passport.authenticate('isAuth', {session: false}),
-	UsersController.unsubscribe,
+	UsersController.unfollow,
 );
 
 export default router;

@@ -29,6 +29,7 @@
 				"color": "rgb(0, 0, 0)"
 			},
 			"bookmarks": [],
+			"following": [],
 			"role": 0
 		},
 		{
@@ -42,7 +43,8 @@
 				"images": [],
 				"color": "rgb(0, 0, 0)"
 			},
-			"bookmarks": []
+			"bookmarks": [],
+			"following": []
 		}
 	]
 }

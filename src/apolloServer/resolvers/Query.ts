@@ -1,3 +1,5 @@
+import lodash from 'lodash';
+
 import {Article, User} from '../../models';
 import {IArticle} from '../../models/Article';
 
@@ -78,5 +80,34 @@ export default {
 		);
 
 		return articles;
+	},
+	userFeed: async (_: object, args: {userId: string}) => {
+		const user = await User.findById(args.userId);
+
+		if (!user) {
+			throw new Error('User not found');
+		}
+
+		const articles: IArticle[] = [];
+
+		await Promise.all(
+			user.following.map(async (userId: string) => {
+				const userArticles = await Article.find({user: userId})
+					.limit(0)
+					.populate('user')
+					.populate({
+						path: 'comments',
+						options: {
+							populate: {
+								path: 'replies',
+							},
+						},
+					});
+
+				articles.push(...userArticles);
+			}),
+		);
+
+		return lodash.orderBy(articles, 'created', 'desc');
 	},
 };
