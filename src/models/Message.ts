@@ -22,7 +22,10 @@ const MessageSchema: Schema = new Schema({
 		default: '',
 		trim: true,
 	},
-
+	isRead: {
+		type: Boolean,
+		default: false,
+	},
 	created: {
 		type: Date,
 		default: Date.now,
@@ -33,6 +36,7 @@ export interface IMessage extends Document {
 	chatId?: string | null;
 	user: string;
 	text: string;
+	isRead: boolean;
 	created?: string;
 }
 

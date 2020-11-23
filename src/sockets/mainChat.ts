@@ -36,6 +36,16 @@ export default (io: Server): void => {
 			}
 		});
 
+		socket.on('new_message', async (data: {newMessage: IMessage}) => {
+			try {
+				const newMessage = await chat.newMessage(data.newMessage);
+
+				main.emit('new_message', {newMessage});
+			} catch (err) {
+				chat.error(err);
+			}
+		});
+
 		socket.on('load_more', async (data: {skip: number}) => {
 			try {
 				const {messages, end} = await chat.loadMore(data.skip);
@@ -46,11 +56,11 @@ export default (io: Server): void => {
 			}
 		});
 
-		socket.on('new_message', async (data: {newMessage: IMessage}) => {
+		socket.on('read_message', async (data: {messageId: string}) => {
 			try {
-				const newMessage = await chat.newMessage(data.newMessage);
+				await chat.readMessage(data.messageId);
 
-				main.emit('new_message', {newMessage});
+				main.emit('read_message', {messageId: data.messageId});
 			} catch (err) {
 				chat.error(err);
 			}

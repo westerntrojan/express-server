@@ -34,6 +34,12 @@ class MainChat implements IMainChat {
 		return messages.reverse();
 	}
 
+	async newMessage(message: IMessage): Promise<IMessage | null> {
+		const newMessage = await Message.create(message);
+
+		return Message.findById(newMessage._id).populate('user');
+	}
+
 	async loadMore(skip = 0): Promise<{messages: IMessage[]; end: boolean}> {
 		const limit = 20;
 
@@ -51,10 +57,8 @@ class MainChat implements IMainChat {
 		};
 	}
 
-	async newMessage(message: IMessage): Promise<IMessage | null> {
-		const newMessage = await Message.create(message);
-
-		return Message.findById(newMessage._id).populate('user');
+	async readMessage(_id: string): Promise<void> {
+		return Message.updateOne({_id}, {$set: {isRead: true}});
 	}
 
 	async removeMessage(_id: string): Promise<void> {
