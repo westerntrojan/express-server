@@ -1,19 +1,19 @@
 import {IPubSub} from './types';
 
 export default {
-	likesAdded: {
-		subscribe: (_: object, args: {id: string}, context: {pubsub: IPubSub}) => {
-			return context.pubsub.asyncIterator('likes-added');
+	viewAdded: {
+		subscribe: (_: object, __: object, context: {pubsub: IPubSub}) => {
+			return context.pubsub.asyncIterator('view-added');
 		},
 	},
-	dislikesAdded: {
-		subscribe: (_: object, args: {id: string}, context: {pubsub: IPubSub}) => {
-			return context.pubsub.asyncIterator('dislikes-added');
+	likeAdded: {
+		subscribe: (_: object, __: object, context: {pubsub: IPubSub}) => {
+			return context.pubsub.asyncIterator('like-added');
 		},
 	},
-	viewsAdded: {
-		subscribe: (_: object, args: {id: string}, context: {pubsub: IPubSub}) => {
-			return context.pubsub.asyncIterator('views-added');
+	dislikeAdded: {
+		subscribe: (_: object, __: object, context: {pubsub: IPubSub}) => {
+			return context.pubsub.asyncIterator('dislike-added');
 		},
 	},
 };

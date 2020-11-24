@@ -3,7 +3,7 @@ import cloudinary from 'cloudinary';
 import {removeImage} from '../utils/images';
 
 class CloudService {
-	async deleteResource({
+	async removeResource({
 		publicId,
 		resourceType,
 	}: {

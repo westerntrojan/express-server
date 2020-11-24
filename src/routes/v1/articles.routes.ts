@@ -24,7 +24,7 @@ router.put(
 router.delete(
 	'/:articleId',
 	passport.authenticate('isAuth', {session: false}),
-	ArticlesController.deleteArticle,
+	ArticlesController.removeArticle,
 );
 
 router.get('/views/:articleId', ArticlesController.addArticleView);
@@ -38,7 +38,7 @@ router.post(
 router.delete(
 	'/comments/:commentId',
 	passport.authenticate('isAuth', {session: false}),
-	ArticlesController.deleteComment,
+	ArticlesController.removeComment,
 );
 
 router.post(
@@ -50,7 +50,7 @@ router.post(
 router.delete(
 	'/comments/replies/:replyId',
 	passport.authenticate('isAuth', {session: false}),
-	ArticlesController.deleteReply,
+	ArticlesController.removeReply,
 );
 
 router.get(
@@ -63,18 +63,6 @@ router.get(
 	'/comments/dislike/:commentId',
 	passport.authenticate('isAuth', {session: false}),
 	ArticlesController.addCommentDislike,
-);
-
-router.get(
-	'/bookmarks/:articleId/:userId',
-	passport.authenticate('isAuth', {session: false}),
-	ArticlesController.setBookmark,
-);
-
-router.get(
-	'/bookmarks/:userId',
-	passport.authenticate('isAuth', {session: false}),
-	ArticlesController.getUserBookmarks,
 );
 
 router.get('/tag/:tag', ArticlesController.getArticlesByTag);

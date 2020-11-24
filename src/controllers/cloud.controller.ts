@@ -3,9 +3,9 @@ import {Request, Response, NextFunction} from 'express';
 import CloudService from '../services/cloud.service';
 
 class CloudController {
-	async deleteResource(req: Request, res: Response, next: NextFunction) {
+	async removeResource(req: Request, res: Response, next: NextFunction) {
 		try {
-			const result = await CloudService.deleteResource({
+			const result = await CloudService.removeResource({
 				publicId: String(req.query.public_id),
 				resourceType: req.params.resource_type,
 			});

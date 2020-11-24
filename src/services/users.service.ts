@@ -1,6 +1,7 @@
 import {removeImage} from '../utils/images';
 import {Article, User} from '../models';
 import {IUser} from '../models/User';
+import {IArticle} from '../models/Article';
 import {getUserByLink} from '../utils/users';
 
 interface IUserByLink extends IUser {
@@ -58,7 +59,7 @@ class UsersService {
 		return {success: true, user: updatedUser};
 	}
 
-	async deleteUser({userId}: {userId: string}): Promise<void> {
+	async removeUser({userId}: {userId: string}): Promise<void> {
 		await User.updateOne({_id: userId}, {$set: {isRemoved: true}});
 	}
 
@@ -98,7 +99,7 @@ class UsersService {
 		return {success: true, newAvatar};
 	}
 
-	async deleteAvatar({
+	async removeAvatar({
 		userId,
 		image,
 	}: {
@@ -141,6 +142,56 @@ class UsersService {
 		await User.updateOne({_id: userId1}, {$pullAll: {following: [userId2]}});
 
 		return {success: true};
+	}
+
+	async addToBookmarks({
+		userId,
+		articleId,
+	}: {
+		userId: string;
+		articleId: string;
+	}): Promise<{success: true; action: 'removed' | 'added'} | {success: false; message: string}> {
+		const user = await User.findById(userId);
+
+		if (!user) {
+			return {success: false, message: 'User not found'};
+		}
+
+		if (user.bookmarks.includes(articleId)) {
+			await User.updateOne({_id: userId}, {$pullAll: {bookmarks: [articleId]}});
+
+			return {success: true, action: 'removed'};
+		}
+
+		await User.updateOne({_id: userId}, {$push: {bookmarks: articleId}});
+
+		return {success: true, action: 'added'};
+	}
+
+	async getBookmarks({
+		userId,
+	}: {
+		userId: string;
+	}): Promise<{success: true; articles: IArticle[]} | {success: false; message: string}> {
+		const user = await User.findById(userId);
+
+		if (!user) {
+			return {success: false, message: 'User not found'};
+		}
+
+		const articles: IArticle[] = [];
+
+		await Promise.all(
+			user.bookmarks.map(async (articleId: string) => {
+				const article = await Article.findById(articleId).populate('user comments');
+
+				if (article) {
+					articles.push(article);
+				}
+			}),
+		);
+
+		return {success: true, articles};
 	}
 }
 

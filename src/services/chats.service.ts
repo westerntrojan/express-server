@@ -33,11 +33,11 @@ class ChatsService {
 		return chats;
 	}
 
-	async deleteChat({chatId}: {chatId: string}): Promise<void> {
+	async removeChat({chatId}: {chatId: string}): Promise<void> {
 		await Promise.all([UserChat.deleteOne({_id: chatId}), Message.deleteMany({chatId})]);
 	}
 
-	async deleteChatMessages({chatId}: {chatId: string}): Promise<void> {
+	async removeChatMessages({chatId}: {chatId: string}): Promise<void> {
 		await Message.deleteMany({chatId});
 	}
 }

@@ -63,11 +63,12 @@ type Mutation {
 	addLike(id: ID!): Boolean!
 	addDislike(id: ID!): Boolean!
 	addView(id: ID!): Boolean!
+	addToBookmarks(articleId: ID!, userId: ID!): Boolean!
 }
 
 # all subscriptions
 type Subscription {
-	likesAdded: Article!
-	dislikesAdded: Article!
-	viewsAdded: Article!
+	likeAdded: Article!
+	dislikeAdded: Article!
+	viewAdded: Article!
 }

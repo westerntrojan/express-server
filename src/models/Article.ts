@@ -53,10 +53,7 @@ const ArticleSchema: Schema = new Schema(
 			type: Number,
 			default: 0,
 		},
-		bookmarksCount: {
-			type: Number,
-			default: 0,
-		},
+
 		comments: [
 			{
 				type: Schema.Types.ObjectId,
@@ -113,7 +110,6 @@ export interface IArticle extends Document {
 	views: number;
 	likes: number;
 	dislikes: number;
-	bookmarksCount?: number;
 	category: string;
 	tags: string[];
 	slug?: string;

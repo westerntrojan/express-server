@@ -27,7 +27,7 @@ router.put(
 router.post(
 	'/remove',
 	passport.authenticate('isAuth', {session: false}),
-	CategoriesController.deleteCategories,
+	CategoriesController.removeCategories,
 );
 
 router.get('/:categoryId/articles', CategoriesController.getCategoryArticles);

@@ -40,9 +40,9 @@ class UsersController {
 		}
 	}
 
-	async deleteUser(req: Request, res: Response, next: NextFunction) {
+	async removeUser(req: Request, res: Response, next: NextFunction) {
 		try {
-			await UsersService.deleteUser({userId: req.params.userId});
+			await UsersService.removeUser({userId: req.params.userId});
 
 			res.json({success: true});
 		} catch (err) {
@@ -78,9 +78,9 @@ class UsersController {
 		}
 	}
 
-	async deleteAvatar(req: Request, res: Response, next: NextFunction) {
+	async removeAvatar(req: Request, res: Response, next: NextFunction) {
 		try {
-			const result = await UsersService.deleteAvatar({
+			const result = await UsersService.removeAvatar({
 				userId: req.body.userId,
 				image: req.body.image,
 			});
@@ -124,6 +124,37 @@ class UsersController {
 			}
 
 			res.json({success: true});
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	async addToBookmarks(req: Request, res: Response, next: NextFunction) {
+		try {
+			const result = await UsersService.addToBookmarks({
+				userId: req.params.userId,
+				articleId: req.params.articleId,
+			});
+
+			if (!result.success) {
+				return res.json({success: false, message: result.message});
+			}
+
+			return res.json({success: true, [result.action]: true});
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	async getBookmarks(req: Request, res: Response, next: NextFunction) {
+		try {
+			const result = await UsersService.getBookmarks({userId: req.params.userId});
+
+			if (!result.success) {
+				return res.json({success: false, message: result.message});
+			}
+
+			return res.json({success: true, articles: result.articles});
 		} catch (err) {
 			next(err);
 		}

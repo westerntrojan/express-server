@@ -14,13 +14,13 @@ router.get(
 router.delete(
 	'/:chatId',
 	passport.authenticate('isAuth', {session: false}),
-	ChatsController.deleteChat,
+	ChatsController.removeChat,
 );
 
 router.delete(
 	'/messages/:chatId',
 	passport.authenticate('isAuth', {session: false}),
-	ChatsController.deleteChatMessages,
+	ChatsController.removeChatMessages,
 );
 
 export default router;

@@ -18,7 +18,7 @@ router.put(
 router.delete(
 	'/:userId',
 	passport.authenticate('isAuth', {session: false}),
-	UsersController.deleteUser,
+	UsersController.removeUser,
 );
 
 router.get(
@@ -30,7 +30,7 @@ router.get(
 router.post(
 	'/avatar/remove',
 	passport.authenticate('isAuth', {session: false}),
-	UsersController.deleteAvatar,
+	UsersController.removeAvatar,
 );
 
 router.post(
@@ -45,6 +45,18 @@ router.post(
 	'/unfollow',
 	passport.authenticate('isAuth', {session: false}),
 	UsersController.unfollow,
+);
+
+router.get(
+	'/bookmarks/:articleId/:userId',
+	passport.authenticate('isAuth', {session: false}),
+	UsersController.addToBookmarks,
+);
+
+router.get(
+	'/bookmarks/:userId',
+	passport.authenticate('isAuth', {session: false}),
+	UsersController.getBookmarks,
 );
 
 export default router;

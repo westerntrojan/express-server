@@ -1,6 +1,6 @@
 import {removeArticle} from '../utils/articles';
 import {removeImage} from '../utils/images';
-import {Article, Comment, User} from '../models/';
+import {Article, Comment} from '../models/';
 import {IArticle} from '../models/Article';
 import {IComment} from '../models/Comment';
 
@@ -102,7 +102,7 @@ class ArticlesService {
 		return {success: true, article: newArticle};
 	}
 
-	async deleteArticle({articleId}: {articleId: string}): Promise<{success: boolean}> {
+	async removeArticle({articleId}: {articleId: string}): Promise<{success: boolean}> {
 		const article = await removeArticle(articleId);
 
 		if (!article) {
@@ -133,7 +133,7 @@ class ArticlesService {
 		return {comment};
 	}
 
-	async deleteComment({
+	async removeComment({
 		commentId,
 	}: {
 		commentId: string;
@@ -161,7 +161,7 @@ class ArticlesService {
 		return {reply};
 	}
 
-	async deleteReply({
+	async removeReply({
 		replyId,
 	}: {
 		replyId: string;
@@ -183,62 +183,6 @@ class ArticlesService {
 
 	async addCommentDislike({commentId}: {commentId: string}): Promise<void> {
 		await Comment.updateOne({_id: commentId}, {$inc: {dislikes: 1}});
-	}
-
-	async getUserBookmarks({
-		userId,
-	}: {
-		userId: string;
-	}): Promise<{success: true; articles: IArticle[]} | {success: false; message: string}> {
-		const user = await User.findById(userId);
-
-		if (!user) {
-			return {success: false, message: 'User not found'};
-		}
-
-		const articles: IArticle[] = [];
-
-		await Promise.all(
-			user.bookmarks.map(async (articleId: string) => {
-				const article = await Article.findById(articleId).populate('user comments');
-
-				if (article) {
-					articles.push(article);
-				}
-			}),
-		);
-
-		return {success: true, articles};
-	}
-
-	async setBookmark({
-		userId,
-		articleId,
-	}: {
-		userId: string;
-		articleId: string;
-	}): Promise<{success: true; action: 'removed' | 'added'} | {success: false; message: string}> {
-		const user = await User.findById(userId);
-
-		if (!user) {
-			return {success: false, message: 'User not found'};
-		}
-
-		if (user.bookmarks.includes(articleId)) {
-			await Promise.all([
-				Article.updateOne({_id: articleId}, {$inc: {bookmarksCount: -1}}),
-				User.updateOne({_id: userId}, {$pullAll: {bookmarks: [articleId]}}),
-			]);
-
-			return {success: true, action: 'removed'};
-		}
-
-		await Promise.all([
-			Article.updateOne({_id: articleId}, {$inc: {bookmarksCount: 1}}),
-			User.updateOne({_id: userId}, {$push: {bookmarks: articleId}}),
-		]);
-
-		return {success: true, action: 'added'};
 	}
 
 	async getArticlesByTag({

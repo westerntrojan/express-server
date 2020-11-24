@@ -55,9 +55,9 @@ class ArticlesController {
 		}
 	}
 
-	async deleteArticle(req: Request, res: Response, next: NextFunction) {
+	async removeArticle(req: Request, res: Response, next: NextFunction) {
 		try {
-			const result = await ArticlesService.deleteArticle({articleId: req.params.articleId});
+			const result = await ArticlesService.removeArticle({articleId: req.params.articleId});
 
 			if (!result.success) {
 				const notFoundError = getNotFoundError();
@@ -96,9 +96,9 @@ class ArticlesController {
 		}
 	}
 
-	async deleteComment(req: Request, res: Response, next: NextFunction) {
+	async removeComment(req: Request, res: Response, next: NextFunction) {
 		try {
-			const result = await ArticlesService.deleteComment({commentId: req.params.commentId});
+			const result = await ArticlesService.removeComment({commentId: req.params.commentId});
 
 			if (!result.success) {
 				return res.json({success: false, message: result.message});
@@ -125,9 +125,9 @@ class ArticlesController {
 		}
 	}
 
-	async deleteReply(req: Request, res: Response, next: NextFunction) {
+	async removeReply(req: Request, res: Response, next: NextFunction) {
 		try {
-			const result = await ArticlesService.deleteReply({replyId: req.params.replyId});
+			const result = await ArticlesService.removeReply({replyId: req.params.replyId});
 
 			if (!result.success) {
 				return res.json({success: false, message: result.message});
@@ -154,37 +154,6 @@ class ArticlesController {
 			await ArticlesService.addCommentDislike({commentId: req.params.commentId});
 
 			res.json({success: true});
-		} catch (err) {
-			next(err);
-		}
-	}
-
-	async getUserBookmarks(req: Request, res: Response, next: NextFunction) {
-		try {
-			const result = await ArticlesService.getUserBookmarks({userId: req.params.userId});
-
-			if (!result.success) {
-				return res.json({success: false, message: result.message});
-			}
-
-			return res.json({success: true, articles: result.articles});
-		} catch (err) {
-			next(err);
-		}
-	}
-
-	async setBookmark(req: Request, res: Response, next: NextFunction) {
-		try {
-			const result = await ArticlesService.setBookmark({
-				userId: req.params.userId,
-				articleId: req.params.articleId,
-			});
-
-			if (!result.success) {
-				return res.json({success: false, message: result.message});
-			}
-
-			return res.json({success: true, [result.action]: true});
 		} catch (err) {
 			next(err);
 		}

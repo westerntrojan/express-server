@@ -69,9 +69,9 @@ class CategoriesController {
 		}
 	}
 
-	async deleteCategories(req: Request, res: Response, next: NextFunction) {
+	async removeCategories(req: Request, res: Response, next: NextFunction) {
 		try {
-			await CategoriesService.deleteCategories({categoriesIds: req.body.categoriesIds});
+			await CategoriesService.removeCategories({categoriesIds: req.body.categoriesIds});
 
 			res.json({success: true});
 		} catch (err) {

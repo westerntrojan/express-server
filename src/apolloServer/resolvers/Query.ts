@@ -4,11 +4,6 @@ import {Article, User} from '../../models';
 import {IArticle} from '../../models/Article';
 
 export default {
-	allArticles: async () => Article.find().populate('user comments'),
-	allUsers: async () => User.find(),
-	Article: async (_: object, args: {id: string}) =>
-		Article.findById(args.id).populate('user comments'),
-
 	topTags: () => [
 		'development',
 		'news',
@@ -93,7 +88,7 @@ export default {
 		await Promise.all(
 			user.following.map(async (userId: string) => {
 				const userArticles = await Article.find({user: userId})
-					.limit(0)
+					.limit(5)
 					.populate('user')
 					.populate({
 						path: 'comments',

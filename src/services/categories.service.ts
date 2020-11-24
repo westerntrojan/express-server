@@ -62,7 +62,7 @@ class CategoriesService {
 		return {success: true, category: updatedCategory};
 	}
 
-	async deleteCategories({categoriesIds}: {categoriesIds: string[]}): Promise<void> {
+	async removeCategories({categoriesIds}: {categoriesIds: string[]}): Promise<void> {
 		await Promise.all(
 			categoriesIds.map(async (categoryId: string) => {
 				await Category.deleteOne({_id: categoryId});

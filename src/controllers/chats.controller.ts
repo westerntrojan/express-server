@@ -13,9 +13,9 @@ class ChatsController {
 		}
 	}
 
-	async deleteChat(req: Request, res: Response, next: NextFunction) {
+	async removeChat(req: Request, res: Response, next: NextFunction) {
 		try {
-			await ChatsService.deleteChat({chatId: req.params.chatId});
+			await ChatsService.removeChat({chatId: req.params.chatId});
 
 			res.json({success: true});
 		} catch (err) {
@@ -23,9 +23,9 @@ class ChatsController {
 		}
 	}
 
-	async deleteChatMessages(req: Request, res: Response, next: NextFunction) {
+	async removeChatMessages(req: Request, res: Response, next: NextFunction) {
 		try {
-			await ChatsService.deleteChatMessages({chatId: req.params.chatId});
+			await ChatsService.removeChatMessages({chatId: req.params.chatId});
 
 			res.json({success: true});
 		} catch (err) {
