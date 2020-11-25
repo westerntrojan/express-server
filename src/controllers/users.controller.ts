@@ -129,23 +129,6 @@ class UsersController {
 		}
 	}
 
-	async addToBookmarks(req: Request, res: Response, next: NextFunction) {
-		try {
-			const result = await UsersService.addToBookmarks({
-				userId: req.params.userId,
-				articleId: req.params.articleId,
-			});
-
-			if (!result.success) {
-				return res.json({success: false, message: result.message});
-			}
-
-			return res.json({success: true, [result.action]: true});
-		} catch (err) {
-			next(err);
-		}
-	}
-
 	async getBookmarks(req: Request, res: Response, next: NextFunction) {
 		try {
 			const result = await UsersService.getBookmarks({userId: req.params.userId});

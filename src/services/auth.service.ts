@@ -1,10 +1,10 @@
 import randomColor from 'randomcolor';
-import jwt from 'jsonwebtoken';
 
 import {User, AuthCode} from '../models';
 import {IUser, IValidUser} from '../models/User';
 import {sendEmail} from '../utils/email';
 import {getUniqueCode} from '../utils/common';
+import {verifyToken} from '../utils/auth';
 
 const isTest = process.env.NODE_ENV === 'test';
 
@@ -143,19 +143,13 @@ class AuthService {
 		token: string;
 	}): Promise<{success: true; user: IValidUser} | {success: false; message: string}> {
 		try {
-			const decoded: any = jwt.verify(String(token), String(process.env.JWT_SIGNATURE));
-
-			const user = await User.findOne({
-				_id: decoded.data.userId,
-				emailVerified: true,
-				isRemoved: false,
-			});
+			const user = await verifyToken(token);
 
 			if (!user) {
 				return {success: false, message: 'User not found'};
 			}
 
-			return {success: true, user: user.getValidUser()};
+			return {success: true, user};
 		} catch (err) {
 			return {success: false, message: 'Something went wrong. Try again'};
 		}

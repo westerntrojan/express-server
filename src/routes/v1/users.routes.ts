@@ -48,12 +48,6 @@ router.post(
 );
 
 router.get(
-	'/bookmarks/:articleId/:userId',
-	passport.authenticate('isAuth', {session: false}),
-	UsersController.addToBookmarks,
-);
-
-router.get(
 	'/bookmarks/:userId',
 	passport.authenticate('isAuth', {session: false}),
 	UsersController.getBookmarks,

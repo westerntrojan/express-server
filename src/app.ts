@@ -11,7 +11,6 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import moment from 'moment';
 import passport from 'passport';
-import expressPlayground from 'graphql-playground-middleware-express';
 import cloudinary from 'cloudinary';
 
 import {getLogger} from './utils/logger';
@@ -83,9 +82,6 @@ passport.use('passwordResetVerify', passwordResetVerify);
 
 // api routes
 app.use('/api/v1', routes);
-
-// graphql playground middleware
-app.get('/playground', expressPlayground({endpoint: '/graphql'}));
 
 // 404
 app.use((req, res) => {

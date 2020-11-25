@@ -144,30 +144,6 @@ class UsersService {
 		return {success: true};
 	}
 
-	async addToBookmarks({
-		userId,
-		articleId,
-	}: {
-		userId: string;
-		articleId: string;
-	}): Promise<{success: true; action: 'removed' | 'added'} | {success: false; message: string}> {
-		const user = await User.findById(userId);
-
-		if (!user) {
-			return {success: false, message: 'User not found'};
-		}
-
-		if (user.bookmarks.includes(articleId)) {
-			await User.updateOne({_id: userId}, {$pullAll: {bookmarks: [articleId]}});
-
-			return {success: true, action: 'removed'};
-		}
-
-		await User.updateOne({_id: userId}, {$push: {bookmarks: articleId}});
-
-		return {success: true, action: 'added'};
-	}
-
 	async getBookmarks({
 		userId,
 	}: {
