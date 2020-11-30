@@ -21,13 +21,25 @@ export default {
 		return true;
 	},
 	addDislike: async (_: object, args: {id: string}, context: Context) => {
+		if (!context.isAuth) {
+			return false;
+		}
+
 		const article = await Article.findByIdAndUpdate(args.id, {$inc: {dislikes: 1}}, {new: true});
 
 		context.pubsub.publish('dislike-added', {dislikeAdded: article});
 
 		return true;
 	},
-	addToBookmarks: async (_: object, args: {userId: string; articleId: string}) => {
+	addToBookmarks: async (
+		_: object,
+		args: {userId: string; articleId: string},
+		context: Context,
+	) => {
+		if (!context.isAuth) {
+			return false;
+		}
+
 		const user = await User.findById(args.userId);
 
 		if (!user) {

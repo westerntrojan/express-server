@@ -11,9 +11,19 @@ const MessageSchema: Schema = new Schema({
 		ref: 'users',
 		required: true,
 	},
+	audio: {
+		type: String,
+		default: '',
+		trim: true,
+	},
 	text: {
 		type: String,
 		default: '',
+		trim: true,
+	},
+	type: {
+		type: String,
+		default: 'text',
 		trim: true,
 	},
 	isRead: {
@@ -29,7 +39,9 @@ const MessageSchema: Schema = new Schema({
 export interface IMessage extends Document {
 	chatId?: string | null;
 	user: string;
+	audio: string;
 	text: string;
+	type: 'text' | 'audio';
 	isRead: boolean;
 	created?: string;
 }

@@ -36,11 +36,11 @@ export default (io: Server): void => {
 			}
 		});
 
-		socket.on('new_message', async (data: {newMessage: IMessage}) => {
+		socket.on('new_message', async (data: {message: IMessage}) => {
 			try {
-				const newMessage = await chat.newMessage(data.newMessage);
+				const message = await chat.newMessage(data.message);
 
-				main.emit('new_message', {newMessage});
+				main.emit('new_message', {message});
 			} catch (err) {
 				chat.error(err);
 			}
@@ -66,11 +66,11 @@ export default (io: Server): void => {
 			}
 		});
 
-		socket.on('remove_messages', async (data: {removedMessages: string[]}) => {
+		socket.on('remove_messages', async (data: {messages: string[]}) => {
 			try {
-				await Promise.all(data.removedMessages.map(async (_id: string) => chat.removeMessage(_id)));
+				await Promise.all(data.messages.map(async (_id: string) => chat.removeMessage(_id)));
 
-				main.emit('remove_messages', {removedMessages: data.removedMessages});
+				main.emit('remove_messages', {messages: data.messages});
 			} catch (err) {
 				chat.error(err);
 			}
