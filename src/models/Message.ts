@@ -26,7 +26,15 @@ const MessageSchema: Schema = new Schema({
 		default: 'text',
 		trim: true,
 	},
+	loading: {
+		type: Boolean,
+		default: true,
+	},
 	isRead: {
+		type: Boolean,
+		default: false,
+	},
+	edited: {
 		type: Boolean,
 		default: false,
 	},
@@ -37,13 +45,15 @@ const MessageSchema: Schema = new Schema({
 });
 
 export interface IMessage extends Document {
-	chatId?: string | null;
+	chatId: string | null;
 	user: string;
 	audio: string;
 	text: string;
 	type: 'text' | 'audio';
+	loading: boolean;
 	isRead: boolean;
-	created?: string;
+	edited: boolean;
+	created: string;
 }
 
 export default model<IMessage>('messages', MessageSchema);

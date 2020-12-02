@@ -1,4 +1,5 @@
 import {Socket} from 'socket.io';
+import cloudinary from 'cloudinary';
 
 import Message, {IMessage} from '../../models/Message';
 import {getLogger} from '../../utils/logger';
@@ -8,6 +9,7 @@ const logger = getLogger(module);
 interface IMainChat {
 	getMessages: (limit: number) => Promise<IMessage[]>;
 	newMessage: (message: IMessage) => Promise<IMessage | null>;
+	updateMessage: (message: IMessage) => Promise<IMessage | null>;
 	removeMessage: (_id: string) => Promise<void>;
 }
 
@@ -40,6 +42,16 @@ class MainChat implements IMainChat {
 		return Message.findById(newMessage._id).populate('user');
 	}
 
+	async updateMessage(message: IMessage): Promise<IMessage | null> {
+		const updatedMessage = await Message.findByIdAndUpdate(
+			message._id,
+			{$set: {...message}},
+			{new: true},
+		).populate('user');
+
+		return updatedMessage;
+	}
+
 	async loadMore(skip = 0): Promise<{messages: IMessage[]; end: boolean}> {
 		const limit = 20;
 
@@ -62,7 +74,17 @@ class MainChat implements IMainChat {
 	}
 
 	async removeMessage(_id: string): Promise<void> {
-		await Message.deleteOne({_id});
+		const message = await Message.findById(_id);
+
+		if (message) {
+			if (message.type === 'audio') {
+				await cloudinary.v2.api.delete_resources([message.audio], {
+					resource_type: 'video',
+				});
+			}
+
+			await message.remove();
+		}
 	}
 }
 

@@ -46,6 +46,16 @@ export default (io: Server): void => {
 			}
 		});
 
+		socket.on('update_message', async (data: {message: IMessage}) => {
+			try {
+				const message = await chat.updateMessage(data.message);
+
+				main.emit('update_message', {message});
+			} catch (err) {
+				chat.error(err);
+			}
+		});
+
 		socket.on('load_more', async (data: {skip: number}) => {
 			try {
 				const {messages, end} = await chat.loadMore(data.skip);
