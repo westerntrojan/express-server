@@ -8,7 +8,7 @@
 		"start": "node build/server.js",
 		"lint": "eslint ./src/**/*.{js,ts} ",
 		"prettify": "prettier ./src/**/*.{js,ts} --write",
-		"copy:schema": "npx cpx 'src/apolloServer/schema.gql' 'build/apolloServer'",
+		"copy:schema": "npx cpx 'src/apollo-server/schema.gql' 'build/apollo-server'",
 		"build": "npx tsc -p . && yarn copy:schema",
 		"pm2": "pm2 start build/server.js -i max",
 		"test:dev": "export NODE_ENV=test && nodemon --watch . --ext ts --exec \"mocha -r ts-node/register src/tests/**/*.test.ts\""

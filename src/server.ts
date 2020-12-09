@@ -3,16 +3,15 @@ import './env';
 
 import app from './app';
 import {getLogger} from './utils/logger';
-import io from './sockets';
-import {apolloServer} from './apolloServer';
+import socketServer from './socket-server';
+import apolloServer from './apollo-server';
 
 const logger = getLogger(module);
 
 const httpServer = http.createServer(app);
 const pid = process.pid;
-// httpServer.timeout = 5000;
 
-io(httpServer);
+socketServer(httpServer);
 
 apolloServer.installSubscriptionHandlers(httpServer);
 

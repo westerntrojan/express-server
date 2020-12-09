@@ -1,6 +1,6 @@
 import argon2 from 'argon2';
 
-import {Article, AuthCode, Comment, Category, User, Message, UserChat} from '../models';
+import {Article, AuthCode, Comment, Category, User, Message, Chat} from '../models';
 import {ICategory} from '../models/Category';
 import data from '../seed.json';
 
@@ -13,7 +13,7 @@ class AppService {
 			Comment.deleteMany({}),
 			Message.deleteMany({}),
 			User.deleteMany({}),
-			UserChat.deleteMany({}),
+			Chat.deleteMany({}),
 		]);
 
 		const users = await Promise.all(

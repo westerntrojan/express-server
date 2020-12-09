@@ -124,7 +124,7 @@ export interface IValidUser {
 
 UserSchema.methods.getValidUser = function(): IValidUser {
 	return {
-		_id: this._id,
+		_id: this._id.toString(),
 		firstName: this.firstName,
 		lastName: this.lastName,
 		username: this.username,

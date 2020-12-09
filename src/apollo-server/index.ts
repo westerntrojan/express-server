@@ -10,7 +10,7 @@ const typeDefs = fs.readFileSync(path.join(__dirname, 'schema.gql'), 'utf-8');
 
 const pubsub = new PubSub();
 
-export const apolloServer = new ApolloServer({
+export default new ApolloServer({
 	typeDefs,
 	resolvers,
 	context: async ({req, connection}): Promise<Context> => {

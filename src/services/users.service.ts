@@ -144,6 +144,26 @@ class UsersService {
 		return {success: true};
 	}
 
+	async following({
+		userId,
+	}: {
+		userId: string;
+	}): Promise<{success: true; users: (IUser | null)[]} | {success: false; message: string}> {
+		const user = await User.findById(userId);
+
+		if (!user) {
+			return {success: false, message: 'not found'};
+		}
+
+		const users = await Promise.all(
+			user.following.map(async userId => {
+				return User.findById(userId);
+			}),
+		);
+
+		return {success: true, users};
+	}
+
 	async getBookmarks({
 		userId,
 	}: {

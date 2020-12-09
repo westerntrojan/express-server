@@ -23,7 +23,7 @@ import {
 	registerVerify,
 	passwordResetVerify,
 } from './utils/passport-strategies';
-import {apolloServer} from './apolloServer';
+import apolloServer from './apollo-server';
 
 const logger = getLogger(module);
 

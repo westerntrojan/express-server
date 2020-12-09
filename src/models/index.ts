@@ -4,6 +4,7 @@ import Category from './Category';
 import Comment from './Comment';
 import Message from './Message';
 import User from './User';
-import UserChat from './UserChat';
+import Chat from './Chat';
+import Group from './Group';
 
-export {Article, AuthCode, Category, Comment, Message, User, UserChat};
+export {Article, AuthCode, Category, Comment, Message, User, Chat, Group};

@@ -129,6 +129,20 @@ class UsersController {
 		}
 	}
 
+	async following(req: Request, res: Response, next: NextFunction) {
+		try {
+			const result = await UsersService.following({userId: req.params.userId});
+
+			if (!result.success) {
+				return res.json({success: false, message: result.message});
+			}
+
+			res.json({success: true, users: result.users});
+		} catch (err) {
+			next(err);
+		}
+	}
+
 	async getBookmarks(req: Request, res: Response, next: NextFunction) {
 		try {
 			const result = await UsersService.getBookmarks({userId: req.params.userId});

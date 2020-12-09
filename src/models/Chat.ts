@@ -1,12 +1,12 @@
 import {Schema, model, Document} from 'mongoose';
 
-const UserChatSchema: Schema = new Schema({
-	from: {
+const Chat: Schema = new Schema({
+	user1: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
 		required: true,
 	},
-	to: {
+	user2: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
 		required: true,
@@ -17,10 +17,10 @@ const UserChatSchema: Schema = new Schema({
 	},
 });
 
-export interface IUserChat extends Document {
-	from: string;
-	to: string;
+export interface IChat extends Document {
+	user1: string;
+	user2: string;
 	created?: Date;
 }
 
-export default model<IUserChat>('user-chats', UserChatSchema);
+export default model<IChat>('chats', Chat);
