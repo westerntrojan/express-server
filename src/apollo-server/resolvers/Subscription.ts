@@ -1,3 +1,5 @@
+import {withFilter} from 'apollo-server-express';
+
 import {Context} from '../types';
 
 export default {
@@ -15,5 +17,14 @@ export default {
 		subscribe: (_: object, __: object, context: Context) => {
 			return context.pubsub.asyncIterator('dislike-added');
 		},
+	},
+
+	userOnline: {
+		subscribe: withFilter(
+			(_: object, __: object, context: Context) => context.pubsub.asyncIterator('user-online'),
+			(payload, variables) => {
+				return payload.userOnline.userId === variables.userId;
+			},
+		),
 	},
 };

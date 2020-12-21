@@ -2,6 +2,7 @@ import lodash from 'lodash';
 
 import {Article, User} from '../../models';
 import {IArticle} from '../../models/Article';
+import redisClient from '../../redis-client';
 
 export default {
 	topTags: () => [
@@ -104,5 +105,11 @@ export default {
 		);
 
 		return lodash.orderBy(articles, 'created', 'desc');
+	},
+
+	userOnline: async (_: object, args: {userId: string}) => {
+		const result = await redisClient.getAsync(args.userId);
+
+		return {userId: args.userId, online: result ? true : false};
 	},
 };

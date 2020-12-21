@@ -44,6 +44,11 @@ type ArticleStatistics {
 	comments: [Int!]!
 }
 
+type UserOnline {
+	userId: ID!
+	online: Boolean!
+}
+
 # all queries
 type Query {
 	allArticles: [Article!]!
@@ -56,6 +61,8 @@ type Query {
 	articleStatistics: ArticleStatistics!
 	userBookmarks(userId: ID!): [Article!]!
 	userFeed(userId: ID!): [Article!]!
+
+	userOnline(userId: ID!): UserOnline!
 }
 
 # all mutations
@@ -64,6 +71,9 @@ type Mutation {
 	addDislike(id: ID!): Boolean!
 	addView(id: ID!): Boolean!
 	addToBookmarks(articleId: ID!, userId: ID!): Boolean!
+
+	startSession: Boolean!
+	endSession: Boolean!
 }
 
 # all subscriptions
@@ -71,4 +81,6 @@ type Subscription {
 	likeAdded: Article!
 	dislikeAdded: Article!
 	viewAdded: Article!
+
+	userOnline(userId: ID!): UserOnline!
 }

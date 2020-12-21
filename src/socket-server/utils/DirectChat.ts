@@ -15,10 +15,13 @@ interface IDirectChat {
 }
 
 class DirectChat implements IDirectChat {
-	private readonly _socket: Socket;
+	private readonly client: Socket;
+	private readonly chatId: string;
+	private sentMessages = 0;
 
-	constructor(socket: Socket) {
-		this._socket = socket;
+	constructor(client: Socket, chatId: string) {
+		this.client = client;
+		this.chatId = chatId;
 	}
 
 	static async loginCheck({
@@ -50,24 +53,29 @@ class DirectChat implements IDirectChat {
 		return {success: true};
 	}
 
-	error(err: Error): void {
-		logger.error(`socket.id: ${this._socket.id}`);
+	error(err: Error) {
+		logger.error(`client.id: ${this.client.id}`);
 		logger.error(err);
 
-		this._socket.emit('user_error');
+		this.client.emit('user_error');
 	}
 
-	async getMessages({chatId}: {chatId: string}): Promise<IMessage[]> {
-		const messages = await Message.find({chatId})
+	async getMessages(): Promise<IMessage[]> {
+		const limit = 20;
+
+		const messages = await Message.find({chatId: this.chatId})
 			.populate('user')
 			.sort({created: -1})
-			.limit(20);
+			.skip(this.sentMessages)
+			.limit(limit);
+
+		this.sentMessages += messages.length;
 
 		return messages.reverse();
 	}
 
 	async newMessage(message: IMessage): Promise<IMessage> {
-		const newMessage = await Message.create(message);
+		const newMessage = await Message.create({...message, chatId: this.chatId});
 
 		return newMessage.populate('user').execPopulate();
 	}

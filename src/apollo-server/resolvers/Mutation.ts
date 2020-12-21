@@ -1,5 +1,6 @@
 import {Article, User} from '../../models';
 import {Context} from '../types';
+import redisClient from '../../redis-client';
 
 export default {
 	addView: async (_: object, args: {id: string}, context: Context) => {
@@ -10,7 +11,7 @@ export default {
 		return true;
 	},
 	addLike: async (_: object, args: {id: string}, context: Context) => {
-		if (!context.isAuth) {
+		if (!context.user) {
 			return false;
 		}
 
@@ -21,7 +22,7 @@ export default {
 		return true;
 	},
 	addDislike: async (_: object, args: {id: string}, context: Context) => {
-		if (!context.isAuth) {
+		if (!context.user) {
 			return false;
 		}
 
@@ -36,7 +37,7 @@ export default {
 		args: {userId: string; articleId: string},
 		context: Context,
 	) => {
-		if (!context.isAuth) {
+		if (!context.user) {
 			return false;
 		}
 
@@ -53,6 +54,29 @@ export default {
 		}
 
 		await User.updateOne({_id: args.userId}, {$push: {bookmarks: args.articleId}});
+
+		return true;
+	},
+
+	startSession: async (_: object, __: object, {user, pubsub}: Context) => {
+		if (!user) {
+			return false;
+		}
+
+		redisClient.set(user._id, user._id);
+
+		pubsub.publish('user-online', {userOnline: {userId: user._id, online: true}});
+
+		return true;
+	},
+	endSession: async (_: object, __: object, {user, pubsub}: Context) => {
+		if (!user) {
+			return false;
+		}
+
+		redisClient.del(user._id);
+
+		pubsub.publish('user-online', {userOnline: {userId: user._id, online: false}});
 
 		return true;
 	},

@@ -25,7 +25,7 @@ class GlobalChat implements IGlobalChat {
 		this._socket = socket;
 	}
 
-	error(err: Error): void {
+	error(err: Error) {
 		logger.error(`socket.id: ${this._socket.id}`);
 		logger.error(err);
 

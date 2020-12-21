@@ -24,6 +24,7 @@ import {
 	passwordResetVerify,
 } from './utils/passport-strategies';
 import apolloServer from './apollo-server';
+import redisClient from './redis-client';
 
 const logger = getLogger(module);
 
@@ -43,7 +44,7 @@ const apiLimiter = new rateLimit({
 });
 
 mongoose
-	.connect(String(process.env.MONGO_URI), {
+	.connect(String(process.env.MONGO_URL), {
 		useNewUrlParser: true,
 		useCreateIndex: true,
 		useFindAndModify: false,
@@ -52,6 +53,8 @@ mongoose
 	})
 	.then(() => logger.info('MongoDB'))
 	.catch((err: Error) => logger.error(err.message));
+
+redisClient.flushall();
 
 // middleware
 if (isProd) {

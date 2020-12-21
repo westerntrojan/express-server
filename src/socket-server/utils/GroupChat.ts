@@ -50,7 +50,7 @@ class GroupChat implements IGroupChat {
 		return {success: true};
 	}
 
-	error(err: Error): void {
+	error(err: Error) {
 		logger.error(`socket.id: ${this._socket.id}`);
 		logger.error(err);
 

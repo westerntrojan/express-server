@@ -23,7 +23,7 @@ export default (io: Server) => {
 	});
 
 	users.on('connection', (client: Socket) => {
-		const chatUtil = new DirectChat(client);
+		const chatUtil = new DirectChat(client, chatId);
 
 		client.join(chatId);
 
@@ -33,9 +33,39 @@ export default (io: Server) => {
 
 		client.on('user_connect', async () => {
 			try {
-				const messages = await chatUtil.getMessages({chatId});
+				const messages = await chatUtil.getMessages();
 
 				client.emit('pre_messages', {messages});
+			} catch (err) {
+				chatUtil.error(err);
+			}
+		});
+
+		client.on('new_message', async (data: {message: IMessage}) => {
+			try {
+				const message = await chatUtil.newMessage({...data.message});
+
+				users.to(chatId).emit('new_message', {message});
+			} catch (err) {
+				chatUtil.error(err);
+			}
+		});
+
+		client.on('remove_messages', async (data: {messages: string[]}) => {
+			try {
+				await Promise.all(data.messages.map(async message => chatUtil.removeMessage(message)));
+
+				users.to(chatId).emit('remove_messages', {messages: data.messages});
+			} catch (err) {
+				chatUtil.error(err);
+			}
+		});
+
+		client.on('load_more', async () => {
+			try {
+				const messages = await chatUtil.getMessages();
+
+				client.emit('load_more', {messages});
 			} catch (err) {
 				chatUtil.error(err);
 			}
@@ -52,26 +82,6 @@ export default (io: Server) => {
 		client.on('typing_end', () => {
 			try {
 				client.to(chatId).emit('typing_end');
-			} catch (err) {
-				chatUtil.error(err);
-			}
-		});
-
-		client.on('new_message', async (data: {message: IMessage}) => {
-			try {
-				const message = await chatUtil.newMessage({...data.message, chatId});
-
-				users.to(chatId).emit('new_message', {message});
-			} catch (err) {
-				chatUtil.error(err);
-			}
-		});
-
-		client.on('remove_messages', async (data: {messages: string[]}) => {
-			try {
-				await Promise.all(data.messages.map(async message => chatUtil.removeMessage(message)));
-
-				users.to(chatId).emit('remove_messages', {messages: data.messages});
 			} catch (err) {
 				chatUtil.error(err);
 			}

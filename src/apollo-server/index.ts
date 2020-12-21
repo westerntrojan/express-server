@@ -19,17 +19,15 @@ export default new ApolloServer({
 
 			const user = await verifyToken(token);
 
-			if (!user) {
-				return {
-					pubsub,
-					isAuth: false,
-				};
-			}
+			return {
+				pubsub,
+				user,
+			};
 		}
 
 		return {
 			pubsub,
-			isAuth: true,
+			user: null,
 		};
 	},
 	playground: {
