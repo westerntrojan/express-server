@@ -19,18 +19,18 @@ export const commentValidators = [
 ];
 
 export const registerValidators = [
-	check('firstName')
+	check('user.firstName')
 		.isLength({max: 20})
 		.withMessage('Invalid First Name(Max: 20)')
 		.trim(),
-	check('lastName')
+	check('user.lastName')
 		.isLength({max: 20})
 		.withMessage('Invalid Last name(Max: 20)')
 		.trim(),
-	check('email')
+	check('user.email')
 		.isEmail()
 		.withMessage('Invalid Email'),
-	check('password')
+	check('user.password')
 		.isLength({min: 4})
 		.withMessage('Invalid Password(Min: 4)')
 		.trim(),

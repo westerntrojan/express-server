@@ -96,7 +96,7 @@ class AuthController {
 
 	async passwordResetSendEmail(req: Request, res: Response, next: NextFunction) {
 		try {
-			const result = await AuthService.passwordResetSendEmail({email: req.body.email});
+			const result = await AuthService.passwordResetSendEmail(req.body);
 
 			if (!result.success) {
 				return res.json({success: false, message: result.message});

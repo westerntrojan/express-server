@@ -51,26 +51,29 @@ class AuthService {
 	async register({
 		data,
 	}: {
-		data: IUser;
+		data: {
+			user: IUser;
+			registerUri: string;
+		};
 	}): Promise<{success: true} | {success: false; message: string}> {
-		const userVerification = await User.findOne({email: data.email, isRemoved: false});
+		const userVerification = await User.findOne({email: data.user.email, isRemoved: false});
 
 		if (userVerification) {
 			return {success: false, message: 'User exists'};
 		}
 
-		const newUser = new User({...data, emailVerified: isTest});
-		newUser.password = await newUser.hashPassword(data.password);
+		const newUser = new User({...data.user, emailVerified: isTest});
+		newUser.password = await newUser.hashPassword(data.user.password);
 		newUser.avatar.color = randomColor({luminosity: 'dark', format: 'rgb'});
 		await newUser.save();
 
 		if (!isTest) {
 			const token = newUser.generateToken();
 			const html = `
-			<a href="${process.env.CLIENT_URI}/register/verify/${token}">Link</a>
+			<a href="${data.registerUri}/${token}">Link</a>
 			<br/>
 			<br/>
-			Or, copy and paste the following URL into your browser: ${process.env.CLIENT_URI}/register/verify/${token}
+			Or, copy and paste the following URL into your browser: ${data.registerUri}/${token}
 		`;
 			const result = await sendEmail(newUser.email, 'Verify your email', '', html);
 
@@ -112,8 +115,10 @@ class AuthService {
 
 	async passwordResetSendEmail({
 		email,
+		passwordResetUri,
 	}: {
 		email: string;
+		passwordResetUri: string;
 	}): Promise<{success: true} | {success: false; message: string}> {
 		const user = await User.findOne({email, emailVerified: true});
 
@@ -123,10 +128,10 @@ class AuthService {
 
 		const token = user.generateToken();
 		const html = `
-			<a href="${process.env.CLIENT_URI}/password_reset/verify/${token}">Link</a>
+			<a href="${passwordResetUri}/${token}">Link</a>
 			<br/>
 			<br/>
-			You can use the following link to reset your password: ${process.env.CLIENT_URI}/password_reset/verify/${token}
+			You can use the following link to reset your password: ${passwordResetUri}/${token}
 		`;
 		const result = await sendEmail(user.email, 'Please reset your password', '', html);
 
