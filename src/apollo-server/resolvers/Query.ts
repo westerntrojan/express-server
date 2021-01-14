@@ -110,6 +110,6 @@ export default {
 	userOnline: async (_: object, args: {userId: string}) => {
 		const result = await redisClient.getAsync(args.userId);
 
-		return {userId: args.userId, online: result ? true : false};
+		return JSON.parse(result || '');
 	},
 };

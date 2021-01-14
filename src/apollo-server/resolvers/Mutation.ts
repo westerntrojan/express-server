@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import {Article, User} from '../../models';
 import {Context} from '../types';
 import redisClient from '../../redis-client';
@@ -63,9 +65,14 @@ export default {
 			return false;
 		}
 
-		redisClient.set(user._id, user._id);
+		const userOnline = {
+			userId: user._id,
+			online: true,
+		};
 
-		pubsub.publish('user-online', {userOnline: {userId: user._id, online: true}});
+		redisClient.set(user._id, JSON.stringify(userOnline));
+
+		pubsub.publish('user-online', {userOnline});
 
 		return true;
 	},
@@ -74,9 +81,17 @@ export default {
 			return false;
 		}
 
-		redisClient.del(user._id);
+		const userOnline = {
+			userId: user._id,
+			online: false,
+			lastSeen: moment().format(),
+		};
 
-		pubsub.publish('user-online', {userOnline: {userId: user._id, online: false}});
+		redisClient.set(user._id, JSON.stringify(userOnline));
+
+		pubsub.publish('user-online', {
+			userOnline,
+		});
 
 		return true;
 	},

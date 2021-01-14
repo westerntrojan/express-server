@@ -47,6 +47,7 @@ type ArticleStatistics {
 type UserOnline {
 	userId: ID!
 	online: Boolean!
+	lastSeen: String
 }
 
 # all queries
