@@ -24,8 +24,8 @@ router.put(
 	CategoriesController.updateCategory,
 );
 
-router.post(
-	'/remove',
+router.delete(
+	'/:categoryId',
 	passport.authenticate('isAuth', {session: false}),
 	CategoriesController.removeCategories,
 );

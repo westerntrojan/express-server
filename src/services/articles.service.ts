@@ -12,11 +12,13 @@ class ArticlesService {
 		return {article};
 	}
 
-	async getArticles({skip}: {skip: number}): Promise<{articles: IArticle[]}> {
+	async getArticles({skip}: {skip: number}): Promise<{articles: IArticle[]; skip: number}> {
+		const limit = 10;
+
 		const articles = await Article.find()
 			.sort({created: -1})
 			.skip(skip)
-			.limit(10)
+			.limit(limit)
 			.populate('user category')
 			.populate({
 				path: 'comments',
@@ -34,7 +36,7 @@ class ArticlesService {
 				},
 			});
 
-		return {articles};
+		return {articles, skip: articles.length < limit ? 0 : skip + articles.length};
 	}
 
 	async getArticle({
@@ -191,11 +193,13 @@ class ArticlesService {
 	}: {
 		tag: string;
 		skip: number;
-	}): Promise<{articles: IArticle[]}> {
+	}): Promise<{articles: IArticle[]; skip: number}> {
+		const limit = 10;
+
 		const articles = await Article.find({tags: tag})
 			.sort({created: -1})
 			.skip(skip)
-			.limit(10)
+			.limit(limit)
 			.populate('user')
 			.populate({
 				path: 'comments',
@@ -206,7 +210,7 @@ class ArticlesService {
 				},
 			});
 
-		return {articles};
+		return {articles, skip: articles.length < limit ? 0 : skip + articles.length};
 	}
 }
 

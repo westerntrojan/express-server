@@ -62,16 +62,13 @@ class CategoriesService {
 		return {success: true, category: updatedCategory};
 	}
 
-	async removeCategories({categoriesIds}: {categoriesIds: string[]}): Promise<void> {
-		await Promise.all(
-			categoriesIds.map(async (categoryId: string) => {
-				await Category.deleteOne({_id: categoryId});
+	async removeCategories({categoryId}: {categoryId: string}): Promise<{categoryId: string}> {
+		await Category.deleteOne({_id: categoryId});
 
-				const articles = await Article.find({category: categoryId});
+		const articles = await Article.find({category: categoryId});
+		await Promise.all(articles.map(async article => removeArticle(article._id)));
 
-				await Promise.all(articles.map(async article => removeArticle(article._id)));
-			}),
-		);
+		return {categoryId};
 	}
 
 	async getCategoryArticles({

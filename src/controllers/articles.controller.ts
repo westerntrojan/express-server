@@ -7,6 +7,11 @@ import ArticlesService from '../services/articles.service';
 class ArticlesController {
 	async createArticle(req: Request, res: Response, next: NextFunction) {
 		try {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.json({success: false, message: errors.array()[0].msg});
+			}
+
 			const {article} = await ArticlesService.createArticle({data: req.body});
 
 			res.json({success: true, article});
@@ -17,9 +22,11 @@ class ArticlesController {
 
 	async getArticles(req: Request, res: Response, next: NextFunction) {
 		try {
-			const {articles} = await ArticlesService.getArticles({skip: Number(req.query.skip) || 0});
+			const {articles, skip} = await ArticlesService.getArticles({
+				skip: Number(req.query.skip) || 0,
+			});
 
-			res.json({articles});
+			res.json({articles, skip});
 		} catch (err) {
 			next(err);
 		}
@@ -43,6 +50,11 @@ class ArticlesController {
 
 	async updateArticle(req: Request, res: Response, next: NextFunction) {
 		try {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.json({success: false, message: errors.array()[0].msg});
+			}
+
 			const result = await ArticlesService.updateArticle({data: req.body});
 
 			if (!result.success) {
@@ -143,7 +155,7 @@ class ArticlesController {
 		try {
 			await ArticlesService.addCommentLike({commentId: req.params.commentId});
 
-			res.json({success: true});
+			res.json({success: true, commentId: req.params.commentId});
 		} catch (err) {
 			next(err);
 		}
@@ -153,7 +165,7 @@ class ArticlesController {
 		try {
 			await ArticlesService.addCommentDislike({commentId: req.params.commentId});
 
-			res.json({success: true});
+			res.json({success: true, commentId: req.params.commentId});
 		} catch (err) {
 			next(err);
 		}
@@ -161,12 +173,12 @@ class ArticlesController {
 
 	async getArticlesByTag(req: Request, res: Response, next: NextFunction) {
 		try {
-			const {articles} = await ArticlesService.getArticlesByTag({
+			const {articles, skip} = await ArticlesService.getArticlesByTag({
 				tag: req.params.tag,
 				skip: Number(req.query.skip) || 0,
 			});
 
-			res.json({articles});
+			res.json({articles, skip});
 		} catch (err) {
 			next(err);
 		}

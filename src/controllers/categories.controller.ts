@@ -1,6 +1,7 @@
 import {Request, Response, NextFunction} from 'express';
 import {validationResult} from 'express-validator';
 
+import {getNotFoundError} from '../utils/errors';
 import CategoriesService from '../services/categories.service';
 
 class CategoriesController {
@@ -8,7 +9,7 @@ class CategoriesController {
 		try {
 			const errors = validationResult(req);
 			if (!errors.isEmpty()) {
-				return res.json({errors: errors.array()});
+				return res.json({success: false, message: errors.array()[0].msg});
 			}
 
 			const result = await CategoriesService.createCategory({data: req.body});
@@ -17,7 +18,7 @@ class CategoriesController {
 				return res.json({errors: [{msg: result.message}]});
 			}
 
-			res.json({category: result.category});
+			res.json({success: true, category: result.category});
 		} catch (err) {
 			next(err);
 		}
@@ -38,7 +39,9 @@ class CategoriesController {
 			const result = await CategoriesService.getCategory({slug: req.params.slug});
 
 			if (!result.success) {
-				return res.json({success: false, message: result.message});
+				const notFoundError = getNotFoundError();
+
+				return res.status(404).json(notFoundError);
 			}
 
 			res.json({success: true, category: result.category});
@@ -71,9 +74,11 @@ class CategoriesController {
 
 	async removeCategories(req: Request, res: Response, next: NextFunction) {
 		try {
-			await CategoriesService.removeCategories({categoriesIds: req.body.categoriesIds});
+			const {categoryId} = await CategoriesService.removeCategories({
+				categoryId: req.params.categoryId,
+			});
 
-			res.json({success: true});
+			res.json({success: true, categoryId});
 		} catch (err) {
 			next(err);
 		}

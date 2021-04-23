@@ -25,7 +25,7 @@ class UsersController {
 		try {
 			const errors = validationResult(req);
 			if (!errors.isEmpty()) {
-				return res.json({success: false, messages: errors.array()[0].msg});
+				return res.json({success: false, message: errors.array()[0].msg});
 			}
 
 			const result = await UsersService.updateUser({userId: req.params.userId, data: req.body});

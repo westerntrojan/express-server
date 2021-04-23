@@ -13,9 +13,9 @@ export const articleValidators = [
 
 export const commentValidators = [
 	check('text')
+		.trim()
 		.isLength({max: 3000})
-		.withMessage('Invalid Text(Max: 3000)')
-		.trim(),
+		.withMessage('Max length 3000'),
 ];
 
 export const registerValidators = [

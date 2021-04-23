@@ -2,12 +2,14 @@ import {Router} from 'express';
 import passport from 'passport';
 
 import ArticlesController from '../../controllers/articles.controller';
+import {articleValidators, commentValidators} from '../../middlewares/validators';
 
 const router = Router();
 
 router.post(
 	'/',
 	passport.authenticate('isAuth', {session: false}),
+	articleValidators,
 	ArticlesController.createArticle,
 );
 
@@ -18,6 +20,7 @@ router.get('/:slug', ArticlesController.getArticle);
 router.put(
 	'/:articleId',
 	passport.authenticate('isAuth', {session: false}),
+	articleValidators,
 	ArticlesController.updateArticle,
 );
 
@@ -32,6 +35,7 @@ router.get('/views/:articleId', ArticlesController.addArticleView);
 router.post(
 	'/comments',
 	passport.authenticate('isAuth', {session: false}),
+	commentValidators,
 	ArticlesController.createComment,
 );
 
@@ -44,6 +48,7 @@ router.delete(
 router.post(
 	'/comments/replies',
 	passport.authenticate('isAuth', {session: false}),
+	commentValidators,
 	ArticlesController.createReply,
 );
 

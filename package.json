@@ -4,13 +4,13 @@
 	"license": "ISC",
 	"main": "build/server.js",
 	"scripts": {
-		"dev": "export NODE_ENV=development && npx nodemon src/server.ts -e js,ts,gql,json",
+		"dev": "set NODE_ENV=development && npx nodemon src/server.ts -e js,ts,gql,json",
 		"start": "node build/server.js",
 		"lint": "eslint ./src/**/*.{js,ts} ",
 		"prettify": "prettier ./src/**/*.{js,ts} --write",
 		"copy:schema": "npx cpx 'src/apollo-server/schema.gql' 'build/apollo-server'",
 		"build": "npx tsc -p . && yarn copy:schema",
-		"test:dev": "export NODE_ENV=test && nodemon --watch . --ext ts --exec \"mocha -r ts-node/register src/tests/**/*.test.ts\""
+		"test:dev": "set NODE_ENV=test && nodemon --watch . --ext ts --exec \"mocha -r ts-node/register src/tests/**/*.test.ts\""
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.11",
